@@ -9,6 +9,7 @@
 #include <iostream>
 #include <stack>
 #include "State.h"
+#include <stack>
 
 using namespace std;
 
@@ -31,9 +32,10 @@ int main() {
 		}
 	}
 
-	//State *firstState = new State(incidence);
-	//State state2 = new State(incidence);
-	State state2(&incidence);
+	State state1(&incidence);
+
+	stack<State> state_stack;
+	state_stack.push(state1);
 
 	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	return 0;
