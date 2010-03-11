@@ -16,7 +16,6 @@ int main() {
 	int size = 5;
 	matrix incidence(size, vector<int>(size));
 
-
 	int incidence_array[5][5] = {
 										{0,0,1,0,1},
 										{0,0,0,1,0},
@@ -35,6 +34,6 @@ int main() {
 	//State state2 = new State(incidence);
 	State state2(&incidence);
 
-	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
+	cout << "!!!Helloooooo World!!!" << endl; // prints !!!Hello World!!!
 	return 0;
 }
