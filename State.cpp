@@ -10,7 +10,7 @@
 
 using namespace std;
 
-State::State(matrix incidence) {
+State::State(matrix *incidence) {
 	this->incidence = incidence;
 }
 

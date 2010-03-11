@@ -13,7 +13,6 @@
 using namespace std;
 
 int main() {
-	//State firstState;
 	int size = 5;
 	matrix incidence(size, vector<int>(size));
 
@@ -32,8 +31,10 @@ int main() {
 		}
 	}
 
-	//firstState = new State(incidence);
+	//State *firstState = new State(incidence);
+	//State state2 = new State(incidence);
+	State state2(&incidence);
 
-	cout << "!!!Hellooo World!!!" << endl; // prints !!!Hello World!!!
+	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	return 0;
 }
