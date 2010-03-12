@@ -8,33 +8,57 @@
 #include "State.h"
 #include <iostream>
 
+using namespace std;
+
 
 State::State(matrix *incidence) {
-	vector<int> *v;
 	this->incidence = incidence;
-
-	for(int i = 0; i < 5; i++){
-				for(int j = 0; j < 5; j++){
-					int x = this->incidence->at(i).at(j);
-
-					/*if ( == 1){
-						numOnes++;
-					}*/
-				}
-				cout << endl;
-			}
+	this->numberOfVertices = this->incidence->size();
 }
 
-/*State** State::getSuccessor(){
-	int numOnes = 0;
-	for(int i = 0; i < 5; i++){
-		for(int j = 0; j < 5; j++){
-			//if (incidence[i][j] == 1){
-				numOnes++;
+State** State::getSuccessors(){
+
+	int numberOfSuccessors = this->getNumberOfEdges();
+	matrix** newIncidences = new matrix*[numberOfSuccessors];
+	matrix *newIncidence;
+	int iToChange = -1;
+	int jToChange = -1;
+	bool successorFound;
+
+	State** states = new State*[numberOfSuccessors];
+
+	for(int incidence_index = 0; incidence_index < numberOfSuccessors; incidence_index++ ){
+		newIncidences[incidence_index] = new matrix(this->numberOfVertices, vector<int>(this->numberOfVertices));
+		newIncidence = newIncidences[incidence_index];
+		successorFound = false;
+		for(int i = 0; i < numberOfSuccessors; i++){
+			for(int j = i; j < numberOfSuccessors; j++){
+				newIncidence->at(i).at(j) = this->incidence->at(i).at(j);
+				newIncidence->at(j).at(i) = this->incidence->at(i).at(j);
+				//cout << this->incidence->at(i).at(j) << " ";
+				if(!successorFound && numberOfSuccessors*i+j > iToChange*numberOfSuccessors+jToChange){
+					if(newIncidence->at(i).at(j) == 1){
+						iToChange = i;
+						jToChange = j;
+						successorFound = true;
+					}
+				}
 			}
+			//cout << endl;
 		}
+		if (successorFound){
+			newIncidence->at(iToChange).at(jToChange) = 0;
+			newIncidence->at(jToChange).at(iToChange) = 0;
+		}
+
 	}
-	/*numOnes = numOnes/2;
+	for (int i=0; i<numberOfSuccessors; i++){
+		states[i] = new State(newIncidences[i]);
+	}
+	return states;
+
+	/*
+	int numOnes = getNumberOfEdges();
 	State** successorArray = new State*[numOnes];
 	for(int i = 0; i < 5; i++){
 		for(int j = 0; j < 5; j++){
@@ -50,19 +74,31 @@ State::State(matrix *incidence) {
 
 		}
 	}
-}*/
+	return successorArray;*/
+}
+
+
+void State::print(){
+	cout << "State : V = " << this->numberOfVertices << endl << "*******************" << endl;
+	for(int i = 0; i < 5; i++){
+		for(int j = 0; j < 5; j++){
+			cout << this->incidence->at(i).at(j) << " ";
+		}
+		cout << endl;
+	}
+	cout << "*******************" << endl;
+}
+
 
 int State::getNumberOfEdges(){
 	int numOnes = 0;
-		for(int i = 0; i < 5; i++){
-			for(int j = 0; j < 5; j++){
-				//incidence[i][j] = 1;
-
-				/*if ( == 1){
-					numOnes++;
-				}*/
+	for(int i = 0; i < this->numberOfVertices; i++){
+		for(int j = 0; j < this->numberOfVertices; j++){
+			if (this->incidence->at(i).at(j) == 1){
+				numOnes++;
 			}
 		}
+	}
 	return numOnes/2;
 }
 

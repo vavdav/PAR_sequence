@@ -16,10 +16,11 @@ typedef std::vector<  std::vector<int> > matrix;
 class State {
 public:
 
+	int numberOfVertices;
 	matrix* incidence;
 	State(matrix *incidence);
 
-	//State** getSuccessor();
+	State** getSuccessors();
 
 	int getNumberOfEdges();
 	void print();
