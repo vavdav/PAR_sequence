@@ -21,7 +21,7 @@ public:
 
 	//State** getSuccessor();
 
-	//int getNumberOfEdges();
+	int getNumberOfEdges();
 	void print();
 	virtual ~State();
 	std::ostream& operator<<(std::ostream& os);
