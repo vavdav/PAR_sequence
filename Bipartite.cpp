@@ -38,10 +38,16 @@ int main() {
 	state_stack.push(state1);
 	while(!state_stack.empty()){
 		State *state_top = state_stack.top();
+
+		State **succesors = state_top->getSuccessors();
+		for(int i = 0; i<state_top->getNumberOfEdges(); i++){
+			succesors[i]->print();
+
+		}
+
 		state_stack.pop();
-		State *succesor = state_top->getSuccessors();
 		cout << "bla5" << endl;
-		succesor->print();
+
 		cout << "bla6" << endl;
 
 	}

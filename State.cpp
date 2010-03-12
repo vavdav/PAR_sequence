@@ -16,7 +16,7 @@ State::State(matrix *incidence) {
 	this->numberOfVertices = this->incidence->size();
 }
 
-State* State::getSuccessors(){
+State** State::getSuccessors(){
 
 	int numberOfSuccessors = this->getNumberOfEdges();
 	matrix** newIncidences = new matrix*[numberOfSuccessors];
@@ -25,18 +25,18 @@ State* State::getSuccessors(){
 	int jToChange = -1;
 	bool successorFound;
 
-
+	State** states = new State*[numberOfSuccessors];
 
 	for(int incidence_index = 0; incidence_index < numberOfSuccessors; incidence_index++ ){
 		newIncidences[incidence_index] = new matrix(this->numberOfVertices, vector<int>(this->numberOfVertices));
 		newIncidence = newIncidences[incidence_index];
 		successorFound = false;
-		for(int i = 0; i < this->numberOfVertices; i++){
-			for(int j = i; j < 5; j++){
+		for(int i = 0; i < numberOfSuccessors; i++){
+			for(int j = i; j < numberOfSuccessors; j++){
 				newIncidence->at(i).at(j) = this->incidence->at(i).at(j);
 				newIncidence->at(j).at(i) = this->incidence->at(i).at(j);
-				cout << this->incidence->at(i).at(j) << " ";
-				if(!successorFound){
+				//cout << this->incidence->at(i).at(j) << " ";
+				if(!successorFound && numberOfSuccessors*i+j > iToChange*numberOfSuccessors+jToChange){
 					if(newIncidence->at(i).at(j) == 1){
 						iToChange = i;
 						jToChange = j;
@@ -44,21 +44,18 @@ State* State::getSuccessors(){
 					}
 				}
 			}
-			cout << endl;
+			//cout << endl;
 		}
-		if (iToChange >= 0){
+		if (successorFound){
 			newIncidence->at(iToChange).at(jToChange) = 0;
 			newIncidence->at(jToChange).at(iToChange) = 0;
 		}
+
 	}
-
-
-
-
-
-	State *newState = new State(newIncidence);
-
-	return newState;
+	for (int i=0; i<numberOfSuccessors; i++){
+		states[i] = new State(newIncidences[i]);
+	}
+	return states;
 
 	/*
 	int numOnes = getNumberOfEdges();
