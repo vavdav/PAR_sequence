@@ -16,8 +16,10 @@ typedef vector<  vector<int> > matrix;
 class State {
 public:
 
-	matrix *incidence;
+	matrix* incidence;
 	State(matrix *incidence);
+	State** getSuccessor();
+
 	virtual ~State();
 };
 
