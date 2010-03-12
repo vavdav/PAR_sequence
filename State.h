@@ -20,7 +20,7 @@ public:
 	matrix* incidence;
 	State(matrix *incidence);
 
-	//State** getSuccessor();
+	State* getSuccessors();
 
 	int getNumberOfEdges();
 	void print();
