@@ -37,6 +37,6 @@ int main() {
 	stack<State> state_stack;
 	state_stack.push(state1);
 
-	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
+	cout << "!!!Hello World!!!" << state1 << endl; // prints !!!Hello World!!!
 	return 0;
 }

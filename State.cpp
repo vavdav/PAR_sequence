@@ -8,7 +8,6 @@
 #include "State.h"
 #include <iostream>
 
-using namespace std;
 
 State::State(matrix *incidence) {
 	this->incidence = incidence;
@@ -16,4 +15,8 @@ State::State(matrix *incidence) {
 
 State::~State() {
 	// TODO Auto-generated destructor stub
+}
+
+std::ostream& State::operator<<(std::ostream& os){
+	return os << "state wooooohooooo";
 }

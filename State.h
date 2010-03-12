@@ -10,15 +10,16 @@
 #ifndef STATE_H_24563457568768
 #define STATE_H_24563457568768
 
-using namespace std;
 
-typedef vector<  vector<int> > matrix;
+typedef std::vector<  std::vector<int> > matrix;
 class State {
 public:
 
 	matrix *incidence;
 	State(matrix *incidence);
 	virtual ~State();
+	std::ostream& operator<<(std::ostream& os);
+
 };
 
 #endif /* STATE_H_24563457568768 */
