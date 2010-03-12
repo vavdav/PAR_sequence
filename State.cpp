@@ -8,18 +8,22 @@
 #include "State.h"
 #include <iostream>
 
-using namespace std;
 
 State::State(matrix *incidence) {
 	this->incidence = incidence;
 }
-/*
-State** State::getSuccessor(){
 
-
-	int numberOfEdges = getNumberOfEdges();
-
-	/*State** successorArray = new State*[numberOfEdges];
+/*State** State::getSuccessor(){
+	int numOnes = 0;
+	for(int i = 0; i < 5; i++){
+		for(int j = 0; j < 5; j++){
+			//if (incidence[i][j] == 1){
+				numOnes++;
+			}
+		}
+	}
+	/*numOnes = numOnes/2;
+	State** successorArray = new State*[numOnes];
 	for(int i = 0; i < 5; i++){
 		for(int j = 0; j < 5; j++){
 			if (incidence[i][j] == 1){
@@ -34,21 +38,7 @@ State** State::getSuccessor(){
 
 		}
 	}
-}
-*/
-int State::getNumberOfEdges(){
-	int numOnes = 0;
-		for(int i = 0; i < 5; i++){
-			for(int j = 0; j < 5; j++){
-				incidence[i][j] = 1;
-
-				/*if ( == 1){
-					numOnes++;
-				}*/
-			}
-		}
-	return numOnes/2;
-}
+}*/
 
 State::~State() {
 	// TODO Auto-generated destructor stub

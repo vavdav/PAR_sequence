@@ -17,11 +17,11 @@ public:
 
 	matrix* incidence;
 	State(matrix *incidence);
-	/*
-	State** getSuccessor();
-*/
-	int getNumberOfEdges();
 
+	//State** getSuccessor();
+
+	//int getNumberOfEdges();
+	void print();
 	virtual ~State();
 	std::ostream& operator<<(std::ostream& os);
 
