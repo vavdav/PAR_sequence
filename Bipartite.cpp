@@ -10,10 +10,11 @@
 #include <stack>
 #include "State.h"
 #include <stack>
+#include <vector>
 
 using namespace std;
 
-void getSuccessors (State * state, stack<State*> *stack_state){
+vector<State> getSuccessors (State * state){
 
 }
 
@@ -38,15 +39,16 @@ int main() {
 
 	State *state1 = new State(&incidence);
 
+
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
-	cout << "!!!Hello World!!!" << state1 << endl; // prints !!!Hello World!!!
+	cout << "!!!Hello World!!!" << state1->getNumberOfEdges() << state1 << endl; // prints !!!Hello World!!!
 
 	while(!state_stack.empty()){
 		State *state_top = state_stack.top();
 		state_stack.pop();
-		getSuccessors(state_top, &state_stack);
+		getSuccessors(state_top);
 
 
 	}
