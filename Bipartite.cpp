@@ -42,6 +42,8 @@ int main() {
 	State *state1 = new State(&incidence);
 
 
+	cout << "!!!Hello World!!!" << state1->getNumberOfEdges() << endl; // prints !!!Hello World!!!
+
 	stack<State*> state_stack;
 	state_stack.push(state1);
 

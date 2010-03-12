@@ -10,7 +10,19 @@
 
 
 State::State(matrix *incidence) {
+	vector<int> *v;
 	this->incidence = incidence;
+
+	for(int i = 0; i < 5; i++){
+				for(int j = 0; j < 5; j++){
+					int x = this->incidence->at(i).at(j);
+
+					/*if ( == 1){
+						numOnes++;
+					}*/
+				}
+				cout << endl;
+			}
 }
 
 /*State** State::getSuccessor(){
@@ -39,6 +51,21 @@ State::State(matrix *incidence) {
 		}
 	}
 }*/
+
+int State::getNumberOfEdges(){
+	int numOnes = 0;
+		for(int i = 0; i < 5; i++){
+			for(int j = 0; j < 5; j++){
+				//incidence[i][j] = 1;
+
+				/*if ( == 1){
+					numOnes++;
+				}*/
+			}
+		}
+	return numOnes/2;
+}
+
 
 State::~State() {
 	// TODO Auto-generated destructor stub
