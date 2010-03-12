@@ -15,8 +15,10 @@ typedef std::vector<  std::vector<int> > matrix;
 class State {
 public:
 
-	matrix *incidence;
+	matrix* incidence;
 	State(matrix *incidence);
+	State** getSuccessor();
+
 	virtual ~State();
 	std::ostream& operator<<(std::ostream& os);
 

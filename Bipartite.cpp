@@ -13,10 +13,14 @@
 
 using namespace std;
 
+void getSuccessors (State * state, stack<State*> *stack_state){
+
+}
+
+
 int main() {
 	int size = 5;
 	matrix incidence(size, vector<int>(size));
-
 
 	int incidence_array[5][5] = {
 										{0,0,1,0,1},
@@ -32,11 +36,21 @@ int main() {
 		}
 	}
 
-	State state1(&incidence);
+	State *state1 = new State(&incidence);
 
-	stack<State> state_stack;
+	stack<State*> state_stack;
 	state_stack.push(state1);
 
 	cout << "!!!Hello World!!!" << state1 << endl; // prints !!!Hello World!!!
+
+	while(!state_stack.empty()){
+		State *state_top = state_stack.top();
+		state_stack.pop();
+		getSuccessors(state_top, &state_stack);
+
+
+	}
 	return 0;
 }
+
+
