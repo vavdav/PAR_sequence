@@ -42,12 +42,11 @@ int main() {
 	State *state1 = new State(&incidence);
 
 
-	cout << "!!!Hello World!!!" << state1->getNumberOfEdges() << endl; // prints !!!Hello World!!!
+	cout << "state1->getNumberOfEdges() = " << state1->getNumberOfEdges() << endl;
 
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
-	cout << "!!!Hello World!!!" << state1 << endl; // prints !!!Hello World!!!
 
 	while(!state_stack.empty()){
 		State *state_top = state_stack.top();

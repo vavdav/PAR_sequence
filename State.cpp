@@ -10,19 +10,8 @@
 
 
 State::State(matrix *incidence) {
-	vector<int> *v;
 	this->incidence = incidence;
-
-	for(int i = 0; i < 5; i++){
-				for(int j = 0; j < 5; j++){
-					int x = this->incidence->at(i).at(j);
-
-					/*if ( == 1){
-						numOnes++;
-					}*/
-				}
-				cout << endl;
-			}
+	this->numberOfVertices = this->incidence->size();
 }
 
 /*State** State::getSuccessor(){
@@ -54,15 +43,13 @@ State::State(matrix *incidence) {
 
 int State::getNumberOfEdges(){
 	int numOnes = 0;
-		for(int i = 0; i < 5; i++){
-			for(int j = 0; j < 5; j++){
-				//incidence[i][j] = 1;
-
-				/*if ( == 1){
-					numOnes++;
-				}*/
+	for(int i = 0; i < this->numberOfVertices; i++){
+		for(int j = 0; j < this->numberOfVertices; j++){
+			if (this->incidence->at(i).at(j) == 1){
+				numOnes++;
 			}
 		}
+	}
 	return numOnes/2;
 }
 

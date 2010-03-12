@@ -16,12 +16,13 @@ typedef std::vector<  std::vector<int> > matrix;
 class State {
 public:
 
+	int numberOfVertices;
 	matrix* incidence;
 	State(matrix *incidence);
 
 	//State** getSuccessor();
 
-	//int getNumberOfEdges();
+	int getNumberOfEdges();
 	void print();
 	virtual ~State();
 	std::ostream& operator<<(std::ostream& os);
