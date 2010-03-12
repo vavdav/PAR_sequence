@@ -12,6 +12,7 @@
 
 
 typedef std::vector<  std::vector<int> > matrix;
+
 class State {
 public:
 

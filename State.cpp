@@ -11,7 +11,19 @@
 using namespace std;
 
 State::State(matrix *incidence) {
+	vector<int> *v;
 	this->incidence = incidence;
+
+	for(int i = 0; i < 5; i++){
+				for(int j = 0; j < 5; j++){
+					int x = this->incidence->at(i).at(j);
+
+					/*if ( == 1){
+						numOnes++;
+					}*/
+				}
+				cout << endl;
+			}
 }
 /*
 State** State::getSuccessor(){
@@ -40,7 +52,7 @@ int State::getNumberOfEdges(){
 	int numOnes = 0;
 		for(int i = 0; i < 5; i++){
 			for(int j = 0; j < 5; j++){
-				incidence[i][j] = 1;
+				//incidence[i][j] = 1;
 
 				/*if ( == 1){
 					numOnes++;
