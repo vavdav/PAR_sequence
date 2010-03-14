@@ -81,7 +81,7 @@ State** State::getSuccessors(){
 
 
 void State::print(){
-	cout << "State : V = " << this->numberOfVertices << " rly" << endl << "*******************" << endl;
+	cout << "State : verticies = " << this->numberOfVertices << " rly" << endl << "*******************" << endl;
 	for(int i = 0; i < 5; i++){
 		for(int j = 0; j < 5; j++){
 			cout << this->incidence->at(i).at(j) << " ";

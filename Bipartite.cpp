@@ -59,7 +59,9 @@ int main() {
 			states_count++;
 			state_stack.push(succesors[i]);
 			if(succesors[i]->isBipartite()){
+
 				succesors[i]->print();
+				cout << "edges = " << succesors[i]->getNumberOfEdges() << endl;
 				return 0;
 
 			}
