@@ -6,6 +6,7 @@
  */
 
 #include <vector>
+#include <queue>
 
 #ifndef STATE_H_24563457568768
 #define STATE_H_24563457568768
@@ -22,7 +23,10 @@ public:
 
 	State** getSuccessors();
 
+	bool isBipartite();
+
 	int getNumberOfEdges();
+	int getNumberOfSuccessors(int index);
 	void print();
 	virtual ~State();
 	std::ostream& operator<<(std::ostream& os);
