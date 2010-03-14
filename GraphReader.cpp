@@ -19,17 +19,20 @@ State* GraphReader::getFirstStateFromFile(string fileName){
 								{1,1,1,1,0}
 	};
 
-	matrix adjacency(size, vector<int>(size));
-	for(int i = 0; i < 5; i++){
-		for(int j = 0; j < 5; j++){
+	//matrix* adjacency = new *vector<vector<int>* >();
+
+	/*
+	for(int i = 0; i < size; i++){
+		adjacency->add(new vector<int>);
+		for(int j = 0; j < size; j++){
 			adjacency[i][j] = adjacency_array[i][j];
 		}
 	}
 
+	*/
+	//State *newState = new State(adjacency,0);
 
-	State *newState = new State(&adjacency,0);
-
-	return newState;
+	//return newState;
 }
 
 GraphReader::GraphReader() {

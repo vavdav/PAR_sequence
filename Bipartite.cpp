@@ -27,6 +27,7 @@ void writeSolution(){
 int main() {
 
 	GraphReader reader;
+	/*
 
 	int size = 5;
 		int adjacency_array[5][5] = {
@@ -45,10 +46,10 @@ int main() {
 		}
 
 
-		State *state1 = new State(&adjacency,0);
+	State *state1 = new State(&adjacency,0);
+	*/
 
-
-	//State *state1 = reader.getFirstStateFromFile("zk.txt");
+	State *state1 = reader.getFirstStateFromFile("zk.txt");
 	cout << "state1->isBipartite() = " << state1->isBipartite() << endl;
 	cout << "state1->getNumberOfEdges() = " << state1->getNumberOfEdges() << endl;
 	stack<State*> state_stack;

@@ -11,8 +11,7 @@
 using namespace std;
 
 
-State::State(matrix *incidence, int depth) {
-	this->depth = depth;
+State::State(matrix *incidence) {
 	this->incidence = incidence;
 	this->numberOfVertices = this->incidence->size();
 	//cout << "verti = " << this->numberOfVertices << endl;
@@ -55,7 +54,7 @@ State** State::getSuccessors(){
 	}
 
 	for (int i=0; i<numberOfSuccessors; i++){
-		states[i] = new State(newIncidences[i], this->depth+1);
+		states[i] = new State(newIncidences[i]);
 	}
 	//cout << "this->numberOfVerticesss = " << this->numberOfVertices << endl;
 	return states;
@@ -80,8 +79,9 @@ State** State::getSuccessors(){
 	return successorArray;*/
 }
 
+
 void State::print(){
-	cout << "State : verticies = " << this->numberOfVertices << " rly" << endl << "*******************" << endl;
+	cout << "State : V = " << this->numberOfVertices << " rly" << endl << "*******************" << endl;
 	for(int i = 0; i < 5; i++){
 		for(int j = 0; j < 5; j++){
 			cout << this->incidence->at(i).at(j) << " ";
