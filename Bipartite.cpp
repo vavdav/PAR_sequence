@@ -14,6 +14,14 @@
 
 using namespace std;
 
+State *best;
+
+void writeSolution(){
+	cout << "***BEST SOLUTION:" << endl;
+	best->print();
+}
+
+
 
 int main() {
 	int size = 5;
@@ -35,39 +43,60 @@ int main() {
 											{1,1,1,1,0}
 		};
 
-	for(int i = 0; i < 5; i++){
-		for(int j = 0; j < 5; j++){
+	for(int i = 0; i < size; i++){
+		for(int j = 0; j < size; j++){
 			incidence[i][j] = incidence_array[i][j];
 		}
 	}
-	State *state1 = new State(&incidence);
+	State *state1 = new State(&incidence, 0);
 	cout << "state1->isBipartite() = " << state1->isBipartite() << endl;
 	cout << "state1->getNumberOfEdges() = " << state1->getNumberOfEdges() << endl;
 	stack<State*> state_stack;
 	state_stack.push(state1);
+
 	int states_count = 1;
-	while(!state_stack.empty()){
-		State *state_top = state_stack.top();
-		State **successors = state_top->getSuccessors();
-		state_stack.pop();
-		for(int i = 0; i<state_top->getNumberOfEdges(); i++){
-			//succesors[i]->print();
+	int best_solution = 0;
+	int state1NumberOfEdges = state1->getNumberOfEdges();
 
-		}
-		for(int i = 0; i<state_top->getNumberOfEdges(); i++){
-			states_count++;
-			state_stack.push(successors[i]);
-			if(successors[i]->isBipartite()){
-				successors[i]->print();
-				cout << "edges = " << successors[i]->getNumberOfEdges() << endl;
-				return 0;
+	if(state1->isBipartite()){
+		best = state1;
+		writeSolution();
+	} else {
+
+		while(!state_stack.empty()){
+			State *state_top = state_stack.top();
+			State **successors = state_top->getSuccessors();
+			state_stack.pop();
+			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
+				//succesors[i]->print();
+
 			}
+			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
+				states_count++;
+				if(state_top->getNumberOfEdges() >= size-1 && state1NumberOfEdges >= state_top->depth){ //musi existovat reseni s |F|=|V|-1 a max hloubka |E|
+					state_stack.push(successors[i]);
+					if(successors[i]->isBipartite()){
+						//successors[i]->print();
+						if(best_solution < successors[i]->getNumberOfEdges()){ //nalezt maximalni podmnozinu hran F (tady to asi muze skoncit)
+							best = successors[i];
+							best_solution = successors[i]->getNumberOfEdges();
+							//cout << "***** BETTER SOLUTION ***** " << best_solution << endl;
+						}
+						//cout << "edges = " << successors[i]->getNumberOfEdges() << " depth:" << successors[i]->depth << endl;
+						//return 0;
+					}
+				} else {
+					writeSolution();
+					cout << "states:" << states_count <<endl;
+					return 0;
+				}
+
+			}
+			//cout << "bla5" << endl;
+
+			//cout << "bla6" << endl;
 
 		}
-		//cout << "bla5" << endl;
-
-		//cout << "bla6" << endl;
-
 	}
 	cout << "states:" << states_count <<endl;
 
