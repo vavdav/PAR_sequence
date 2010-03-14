@@ -26,7 +26,6 @@ void writeSolution(){
 
 int main() {
 
-	int size = 5;
 	GraphReader reader;
 	State *state1 = reader.getFirstStateFromFile("zk.txt");
 	cout << "state1->isBipartite() = " << state1->isBipartite() << endl;
@@ -53,7 +52,7 @@ int main() {
 			}
 			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
 				states_count++;
-				if(state_top->getNumberOfEdges() >= size-1 && state1NumberOfEdges >= state_top->depth){ //musi existovat reseni s |F|=|V|-1 a max hloubka |E|
+				if(state_top->getNumberOfEdges() >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth){ //musi existovat reseni s |F|=|V|-1 a max hloubka |E|
 					state_stack.push(successors[i]);
 					if(successors[i]->isBipartite()){
 						//successors[i]->print();
