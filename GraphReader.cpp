@@ -27,7 +27,7 @@ State* GraphReader::getFirstStateFromFile(string fileName){
 	}
 
 
-	State *newState = new State(&adjacency);
+	State *newState = new State(&adjacency,0);
 }
 
 GraphReader::GraphReader() {

@@ -25,31 +25,10 @@ void writeSolution(){
 
 
 int main() {
+
 	int size = 5;
-	matrix incidence(size, vector<int>(size));
-
-	/*int incidence_array[5][5] = {
-										{0,1,0,1,0},
-										{1,0,1,0,1},
-										{0,1,0,1,0},
-										{1,0,1,0,1},
-										{0,1,0,1,0}
-	};*/
-
-	int incidence_array[5][5] = {
-											{0,1,1,1,1},
-											{1,0,1,1,1},
-											{1,1,0,1,1},
-											{1,1,1,0,1},
-											{1,1,1,1,0}
-		};
-
-	for(int i = 0; i < size; i++){
-		for(int j = 0; j < size; j++){
-			incidence[i][j] = incidence_array[i][j];
-		}
-	}
-	State *state1 = new State(&incidence, 0);
+	GraphReader reader;
+	State *state1 = reader.getFirstStateFromFile("zk.txt");
 	cout << "state1->isBipartite() = " << state1->isBipartite() << endl;
 	cout << "state1->getNumberOfEdges() = " << state1->getNumberOfEdges() << endl;
 	stack<State*> state_stack;
