@@ -11,6 +11,7 @@
 #include "State.h"
 #include <stack>
 #include <vector>
+#include "GraphReader.h"
 
 using namespace std;
 
