@@ -48,22 +48,19 @@ int main() {
 	int states_count = 1;
 	while(!state_stack.empty()){
 		State *state_top = state_stack.top();
-
-		State **succesors = state_top->getSuccessors();
+		State **successors = state_top->getSuccessors();
+		state_stack.pop();
 		for(int i = 0; i<state_top->getNumberOfEdges(); i++){
 			//succesors[i]->print();
 
 		}
-		state_stack.pop();
 		for(int i = 0; i<state_top->getNumberOfEdges(); i++){
 			states_count++;
-			state_stack.push(succesors[i]);
-			if(succesors[i]->isBipartite()){
-
-				succesors[i]->print();
-				cout << "edges = " << succesors[i]->getNumberOfEdges() << endl;
+			state_stack.push(successors[i]);
+			if(successors[i]->isBipartite()){
+				successors[i]->print();
+				cout << "edges = " << successors[i]->getNumberOfEdges() << endl;
 				return 0;
-
 			}
 
 		}
