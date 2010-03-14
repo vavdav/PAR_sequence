@@ -89,6 +89,51 @@ void State::print(){
 	cout << "*******************" << endl;
 }
 
+bool State::isBipartite(){
+	int* color = new int[this->numberOfVertices];
+	int* d = new int[this->numberOfVertices];
+	int* p = new int[this->numberOfVertices];
+	for (int i=0; i<this->numberOfVertices; i++){
+		color[i] = 0;
+		d[i] = 99999;
+		p[i] = 0;
+	}
+	int pom;
+	int start = 0;
+	queue <int> bfsFront;
+	color[start] = 1;
+	d[start] = 0;
+	bfsFront.push(start);
+	int path1Length;
+	int path2Length;
+
+	while (!bfsFront.empty()){
+		pom = bfsFront.front();
+		cout << "in vertex " << pom << endl;
+		bfsFront.pop();
+		for (int i=0; i<this->numberOfVertices; i++){
+			if(this->incidence->at(pom).at(i) == 1){
+				if (color[i] == 0) {
+					color[i] = 1;
+					d[i] = d[pom] + 1;
+					p[i] = pom;
+					bfsFront.push(i);
+				} else {
+					cout << "I was here " << i << " old d=" << d[i]%2 << " ?= " << (d[pom] + 1)%2 << endl;
+					path1Length = (d[i])%2;
+					path2Length = (d[pom] + 1)%2;
+					if(path1Length != path2Length){
+						return false;
+					}
+				}
+
+
+			}
+		color[pom] = 2;
+		}
+	}
+	return true;
+}
 
 int State::getNumberOfEdges(){
 	int numOnes = 0;

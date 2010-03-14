@@ -20,11 +20,11 @@ int main() {
 	matrix incidence(size, vector<int>(size));
 
 	int incidence_array[5][5] = {
-										{0,0,1,0,1},
-										{0,0,0,1,0},
-										{1,0,0,0,1},
-										{0,1,0,0,1},
-										{1,0,1,1,0}
+										{0,1,0,1,0},
+										{1,0,1,0,1},
+										{0,1,0,1,0},
+										{1,0,1,0,1},
+										{0,1,0,1,0}
 	};
 
 	for(int i = 0; i < 5; i++){
@@ -33,24 +33,26 @@ int main() {
 		}
 	}
 	State *state1 = new State(&incidence);
+	cout << "state1->isBipartite() = " << state1->isBipartite() << endl;
 	cout << "state1->getNumberOfEdges() = " << state1->getNumberOfEdges() << endl;
-	stack<State*> state_stack;
+	/*stack<State*> state_stack;
 	state_stack.push(state1);
 	while(!state_stack.empty()){
 		State *state_top = state_stack.top();
 
 		State **succesors = state_top->getSuccessors();
 		for(int i = 0; i<state_top->getNumberOfEdges(); i++){
-			succesors[i]->print();
+			//succesors[i]->print();
 
 		}
 
 		state_stack.pop();
-		cout << "bla5" << endl;
+		//cout << "bla5" << endl;
 
-		cout << "bla6" << endl;
+		//cout << "bla6" << endl;
 
 	}
+	*/
 	return 0;
 }
 

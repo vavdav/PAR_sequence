@@ -6,6 +6,7 @@
  */
 
 #include <vector>
+#include <queue>
 
 #ifndef STATE_H_24563457568768
 #define STATE_H_24563457568768
@@ -21,6 +22,8 @@ public:
 	State(matrix *incidence);
 
 	State** getSuccessors();
+
+	bool isBipartite();
 
 	int getNumberOfEdges();
 	void print();
