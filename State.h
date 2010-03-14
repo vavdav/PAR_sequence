@@ -26,6 +26,7 @@ public:
 	bool isBipartite();
 
 	int getNumberOfEdges();
+	int getNumberOfSuccessors(int index);
 	void print();
 	virtual ~State();
 	std::ostream& operator<<(std::ostream& os);
