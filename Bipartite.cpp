@@ -36,22 +36,23 @@ int main() {
 	cout << "state1->getNumberOfEdges() = " << state1->getNumberOfEdges() << endl;
 	stack<State*> state_stack;
 	state_stack.push(state1);
+	state1->print();
+	int counter = 1;
 	while(!state_stack.empty()){
 		State *state_top = state_stack.top();
-
-		State **succesors = state_top->getSuccessors();
-		for(int i = 0; i<state_top->getNumberOfEdges(); i++){
-			succesors[i]->print();
-
-		}
-
+		State **successors = state_top->getSuccessors();
 		state_stack.pop();
-		cout << "bla5" << endl;
-
-		cout << "bla6" << endl;
-
+		for(int i = 0; i<state_top->getNumberOfEdges(); i++){
+			//successors[i]->print();
+			state_stack.push(successors[i]);
+			counter+=state_top->getNumberOfEdges();
+		}
 	}
+	cout << "counter = " << counter;
 	return 0;
+
+
+
 }
 
 
