@@ -22,8 +22,8 @@ State* GraphReader::getFirstStateFromFile(char *fileName){
 
 	fscanf(fileIn, "%d\n", &numOfvertices);
 
-	if(numOfvertices<2){
-		cout << "***Error: just one vertice: " << endl;
+	if(numOfvertices<5){
+		cout << "***Error: need more vertices >=5: " << endl;
 		exit(1);
 	}
 
