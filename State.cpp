@@ -143,6 +143,7 @@ int State::getNumberOfEdges(){
 
 State::~State() {
 	for(int i = 0; i < this->numberOfVertices; i ++){
-		//this->adjacency
+		delete this->adjacency->at(i);
 	}
+	delete this->adjacency;
 }

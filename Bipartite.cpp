@@ -40,6 +40,9 @@ int main() {
 		writeSolution();
 	} else {
 		while(!state_stack.empty()){
+			if(state_top){
+				delete state_top;
+			}
 			state_top = state_stack.top();
 			State **successors = state_top->getSuccessors();
 			state_stack.pop();
@@ -53,19 +56,19 @@ int main() {
 						best_solution = successors[i]->getNumberOfEdges();
 						writeSolution();
 						cout << "states:" << states_count <<endl;
+						while(!state_stack.empty()) { // delete the rest of the states on stack
+							State* stateToBeDeleted = state_stack.top();
+							state_stack.pop();
+							delete stateToBeDeleted;
+						}
 						return 0;
 					}
-				} else {
-					writeSolution();
-					cout << "states:" << states_count <<endl;
-					return 0;
 				}
-
 			}
 		}
 	}
-	cout << "states:" << states_count <<endl;
-	return 0;
+	cout << "Error : states:" << states_count <<endl;
+	return -1;
 }
 
 
