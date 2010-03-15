@@ -18,8 +18,8 @@ class State {
 public:
 
 	int numberOfVertices;
-	matrix* incidence;
-	State(matrix *incidence, int depth);
+	matrix* adjacency;
+	State(matrix *adjacency, int depth);
 	int depth;
 	State** getSuccessors();
 
@@ -28,7 +28,6 @@ public:
 	int getNumberOfSuccessors(int index);
 	void print();
 	virtual ~State();
-	std::ostream& operator<<(std::ostream& os);
 
 };
 
