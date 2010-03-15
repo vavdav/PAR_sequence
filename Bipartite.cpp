@@ -28,29 +28,13 @@ int main() {
 
 	//GraphReader reader;
 
-	int size = 5;
-		int adjacency_array[5][5] = {
-									{0,1,1,1,1},
-									{1,0,1,1,1},
-									{1,1,0,1,1},
-									{1,1,1,0,1},
-									{1,1,1,1,0}
-		};
 
-		matrix adjacency(size, vector<int>(size));
-		for(int i = 0; i < 5; i++){
-			for(int j = 0; j < 5; j++){
-				adjacency[i][j] = adjacency_array[i][j];
-			}
-		}
-
-
-		State *state1 = new State(&adjacency,0);
-
-
-	//State *state1 = reader.getFirstStateFromFile("zk.txt");
+	State *state1 = reader.getFirstStateFromFile("zk.txt");
+	cout << "size: " << state1->incidence->size();
 	cout << "state1->isBipartite() = " << state1->isBipartite() << endl;
 	cout << "state1->getNumberOfEdges() = " << state1->getNumberOfEdges() << endl;
+
+/*
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
@@ -99,7 +83,7 @@ int main() {
 		}
 	}
 	cout << "states:" << states_count <<endl;
-
+*/
 	return 0;
 }
 

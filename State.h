@@ -12,7 +12,7 @@
 #define STATE_H_24563457568768
 
 
-typedef std::vector<  std::vector<int> > matrix;
+typedef std::vector<  std::vector<int>* > matrix;
 
 class State {
 public:
