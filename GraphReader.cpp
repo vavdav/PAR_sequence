@@ -9,43 +9,38 @@
 
 State* GraphReader::getFirstStateFromFile(char *fileName){
 	FILE *fileIn;
+	int numOfvertices;
+	int line = 0;
+	matrix* adjacency;
+
 	if((fileIn = fopen(fileName, "r")) == NULL) {
 	    cout << "***Error: cant open file: " << fileName << endl;
 	    exit(1);
 	} else {
 		cout << "*** Info: file openned: " << fileName << endl;
-
 	}
-	//fscanf(fileIn, "%d\n", &vertices);
 
+	fscanf(fileIn, "%d\n", &numOfvertices);
 
-	fclose(fileIn);
+	if(numOfvertices<2){
+		cout << "***Error: just one vertice: " << endl;
+		exit(1);
+	}
 
-	//cout << "*** Info: fvertices: " << vertices << endl;
+	adjacency = new matrix(numOfvertices);
 
-	int size = 5;
-
-	matrix* adjacency;
-
-	adjacency = new matrix();
-
-	int adjacency_array[5][5] = {
-								{0,1,1,1,1},
-								{1,0,1,1,1},
-								{1,1,0,1,1},
-								{1,1,1,0,1},
-								{1,1,1,1,0}
-	};
-
-
-	for(int i = 0; i < size;i++ ){
-		adjacency->push_back(new vector<int>);
-		for(int j = 0; j < size; j++){
-			vector<int>* v = adjacency->at(i);
-			int x = adjacency_array[i][j];
-			v->push_back(x);
+	cout << "*** LOADED MATRIX *** numOfvertices " << numOfvertices << endl;
+	while (!feof(fileIn)) {
+		adjacency->at(line) = new vector<int>(numOfvertices);
+		for(int i = 0; i < numOfvertices; i++) {
+			fscanf(fileIn, "%d ", &adjacency->at(line)->at(i));
+			cout << adjacency->at(line)->at(i) << " ";
 		}
+		cout << endl;
+		line += 1;
 	}
+	cout << "**************" << endl;
+	fclose(fileIn);
 
 	State *newState = new State(adjacency,0);
 
