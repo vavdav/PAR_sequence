@@ -36,26 +36,18 @@ State** State::getSuccessors(){
 		newIncidences[incidence_index] = adjacency;
 		newIncidence = newIncidences[incidence_index];
 		successorFound = false;
-		//this->print();
 		for(int i = 0; i < this->numberOfVertices; i++){
 			for(int j = i; j < this->numberOfVertices; j++){
-				//cout << "i = " << i << ", j = " << j << endl;
-				//cout << "newIncidence->at(" << i << ")->size() = " << newIncidence->at(i)->size()<< endl;
 				newIncidence->at(i)->at(j) = this->incidence->at(i)->at(j);
-				//cout << "dbp #6" << endl;
 				newIncidence->at(j)->at(i) = this->incidence->at(i)->at(j);
-				//cout << "dbp #7" << endl;
 				if(!successorFound && this->numberOfVertices*i+j > iToChange*this->numberOfVertices+jToChange){
 					if(newIncidence->at(i)->at(j) == 1){
 						iToChange = i;
 						jToChange = j;
 						successorFound = true;
-						//cout << "dbp #8" << endl;
 					}
 				}
-				//cout << "dbp #9" << endl;
 			}
-			//cout << endl;
 		}
 		if (successorFound){
 			newIncidence->at(iToChange)->at(jToChange) = 0;
@@ -67,27 +59,7 @@ State** State::getSuccessors(){
 	for (int i=0; i<numberOfSuccessors; i++){
 		states[i] = new State(newIncidences[i], this->depth+1);
 	}
-	//cout << "this->numberOfVerticesss = " << this->numberOfVertices << endl;
 	return states;
-
-	/*
-	int numOnes = getNumberOfEdges();
-	State** successorArray = new State*[numOnes];
-	for(int i = 0; i < 5; i++){
-		for(int j = 0; j < 5; j++){
-			if (incidence[i][j] == 1){
-				incidence[i][j] = 0;
-				incidence[j][i] = 0;
-
-				State *successorState = new State(incidence);
-
-				incidence[i][j] = 1;
-				incidence[j][i] = 1;
-			}
-
-		}
-	}
-	return successorArray;*/
 }
 
 void State::print(){
