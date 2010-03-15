@@ -19,10 +19,10 @@ class GraphReader {
 private:
 	ifstream *inputStream;
 	bool fileLoaded;
-
+	int vertices;
 public:
 	GraphReader();
-	static State* getFirstStateFromFile(string fileName);
+	static State* getFirstStateFromFile(char * fileName);
 	virtual ~GraphReader();
 };
 

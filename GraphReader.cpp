@@ -7,7 +7,21 @@
 
 #include "GraphReader.h"
 
-State* GraphReader::getFirstStateFromFile(string fileName){
+State* GraphReader::getFirstStateFromFile(char *fileName){
+	FILE *fileIn;
+	if((fileIn = fopen(fileName, "r")) == NULL) {
+	    cout << "***Error: cant open file: " << fileName << endl;
+	    exit(1);
+	} else {
+		cout << "*** Info: file openned: " << fileName << endl;
+
+	}
+	//fscanf(fileIn, "%d\n", &vertices);
+
+
+	fclose(fileIn);
+
+	//cout << "*** Info: fvertices: " << vertices << endl;
 
 	int size = 5;
 
