@@ -116,12 +116,12 @@ int State::isBipartite(){
 			}
 		color[pom] = 2;
 		}
-	}
+	}/*
 	for(int i = 0; i<this->numberOfVertices; i++){
 		if(color[i] == 0) {
 			bipartite = -1;
 		}
-	}
+	}*/
 
 	return bipartite;
 }
