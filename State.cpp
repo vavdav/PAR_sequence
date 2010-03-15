@@ -27,12 +27,13 @@ State** State::getSuccessors(){
 	bool successorFound;
 
 	State** states = new State*[numberOfSuccessors];
-
 	for(int incidence_index = 0; incidence_index < numberOfSuccessors; incidence_index++ ){
 		matrix* adjacency = new matrix();
-		for(int i = 0; i < adjacency->size();i++ ){
+		for(int i = 0; i < numberOfSuccessors;i++ ){
+			cout << "ter" << endl;
 			adjacency->push_back(new vector<int>);
 		}
+		cout << "ghfghfghfghfgh" << endl;
 		newIncidences[incidence_index] = adjacency;
 		newIncidence = newIncidences[incidence_index];
 		successorFound = false;
