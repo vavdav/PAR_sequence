@@ -26,7 +26,7 @@ void writeSolution(){
 
 int main() {
 
-	//GraphReader reader;
+	GraphReader reader;
 
 
 	State *state1 = reader.getFirstStateFromFile("zk.txt");
