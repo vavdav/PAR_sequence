@@ -8,7 +8,13 @@
 #include "GraphReader.h"
 
 State* GraphReader::getFirstStateFromFile(string fileName){
+
 	int size = 5;
+
+	vector<vector<int>* >* adjacency;
+
+	adjacency = new vector<vector<int>* >();
+
 	int adjacency_array[5][5] = {
 								{0,1,1,1,1},
 								{1,0,1,1,1},
@@ -17,15 +23,14 @@ State* GraphReader::getFirstStateFromFile(string fileName){
 								{1,1,1,1,0}
 	};
 
-	matrix adjacency(size, vector<int>(size));
-	for(int i = 0; i < 5; i++){
+	for(int i = 0; i < size;i++ ){
+		adjacency->push_back(new vector<int>);
 		for(int j = 0; j < 5; j++){
-			adjacency[i][j] = adjacency_array[i][j];
+			adjacency->at(i)->at(j) = adjacency_array[i][j];
 		}
 	}
 
-
-	State *newState = new State(&adjacency,0);
+	State *newState = new State(adjacency,0);
 
 	return newState;
 }
