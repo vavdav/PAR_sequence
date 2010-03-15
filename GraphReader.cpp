@@ -16,11 +16,11 @@ State* GraphReader::getFirstStateFromFile(string fileName){
 	adjacency = new matrix();
 
 	int adjacency_array[5][5] = {
-								{0,1,1,1,1},
-								{1,0,1,1,1},
-								{1,1,0,1,1},
-								{1,1,1,0,1},
-								{1,1,1,1,0}
+								{0,1,0,1,1},
+								{1,0,1,0,1},
+								{0,1,0,1,0},
+								{1,0,1,0,1},
+								{1,1,0,1,0}
 	};
 
 
