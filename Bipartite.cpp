@@ -40,25 +40,22 @@ int main() {
 		writeSolution();
 	} else {
 		while(!state_stack.empty()){
-			cout << "states = " << states_count << endl;
+			//cout << "states = " << states_count << endl;
 			state_top = state_stack.top();
-			cout << "b0" << endl;
-			cout << " bla :" << state_top << endl;
+			//cout << "b0" << endl;
+			//cout << " bla :" << state_top << endl;
 			State **successors = state_top->getSuccessors();
-			cout << "b1" << endl;
+			//cout << "b1" << endl;
 			states_count++;
 			state_stack.pop();
 
 			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
 				//successors[i]->print();
-				cout << "dbg1 - " << i << endl;
+				//cout << "dbg1 - " << i << endl;
 				state_stack.push(successors[i]);
-				cout << "dbg2 - " << i << endl;
+				//cout << "dbg2 - " << i << endl;
 			}
-		cout << "sdfgsdfgsdfgsdfgsdfgsdfg" << endl;
-		cout << "states = " << states_count << endl;
 		}
-		cout << "states = " << states_count << endl;
 	}/*
 			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
 				states_count++;
