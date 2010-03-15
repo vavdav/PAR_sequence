@@ -11,37 +11,36 @@
 using namespace std;
 
 
-State::State(matrix *incidence, int depth) {
+State::State(matrix *adjacency, int depth) {
 	this->depth = depth;
-	this->incidence = incidence;
-	this->numberOfVertices = this->incidence->size();
-	//cout << "verti = " << this->numberOfVertices << endl;
+	this->adjacency = adjacency;
+	this->numberOfVertices = this->adjacency->size();
 }
 
 State** State::getSuccessors(){
 	int numberOfSuccessors = this->getNumberOfEdges();
-	matrix** newIncidences = new matrix*[numberOfSuccessors];
-	matrix *newIncidence;
+	matrix** newAdjacencies = new matrix*[numberOfSuccessors];
+	matrix *newAdjacency;
 	int iToChange = -1;
 	int jToChange = -1;
 	bool successorFound;
 	vector<int> *v;
 	State** states = new State*[numberOfSuccessors];
-	for(int incidence_index = 0; incidence_index < numberOfSuccessors; incidence_index++ ){
-		matrix* adjacency = new matrix(this->numberOfVertices);
+	for(int adjacency_index = 0; adjacency_index < numberOfSuccessors; adjacency_index++ ){
+		matrix* new_adjacency = new matrix(this->numberOfVertices);
 		for(int i = 0; i < this->numberOfVertices;i++ ){
 			v = new vector<int>(this->numberOfVertices);
-			adjacency->at(i) = v;
+			new_adjacency->at(i) = v;
 		}
-		newIncidences[incidence_index] = adjacency;
-		newIncidence = newIncidences[incidence_index];
+		newAdjacencies[adjacency_index] = new_adjacency;
+		newAdjacency = newAdjacencies[adjacency_index];
 		successorFound = false;
 		for(int i = 0; i < this->numberOfVertices; i++){
 			for(int j = i; j < this->numberOfVertices; j++){
-				newIncidence->at(i)->at(j) = this->incidence->at(i)->at(j);
-				newIncidence->at(j)->at(i) = this->incidence->at(i)->at(j);
+				newAdjacency->at(i)->at(j) = this->adjacency->at(i)->at(j);
+				newAdjacency->at(j)->at(i) = this->adjacency->at(i)->at(j);
 				if(!successorFound && this->numberOfVertices*i+j > iToChange*this->numberOfVertices+jToChange){
-					if(newIncidence->at(i)->at(j) == 1){
+					if(newAdjacency->at(i)->at(j) == 1){
 						iToChange = i;
 						jToChange = j;
 						successorFound = true;
@@ -50,14 +49,14 @@ State** State::getSuccessors(){
 			}
 		}
 		if (successorFound){
-			newIncidence->at(iToChange)->at(jToChange) = 0;
-			newIncidence->at(jToChange)->at(iToChange) = 0;
+			newAdjacency->at(iToChange)->at(jToChange) = 0;
+			newAdjacency->at(jToChange)->at(iToChange) = 0;
 		}
 
 	}
 
 	for (int i=0; i<numberOfSuccessors; i++){
-		states[i] = new State(newIncidences[i], this->depth+1);
+		states[i] = new State(newAdjacencies[i], this->depth+1);
 	}
 	return states;
 }
@@ -66,7 +65,7 @@ void State::print(){
 	cout << "State : verticies = " << this->numberOfVertices << " rly" << endl << "*******************" << endl;
 	for(int i = 0; i < 5; i++){
 		for(int j = 0; j < 5; j++){
-			cout << this->incidence->at(i)->at(j) << " ";
+			cout << this->adjacency->at(i)->at(j) << " ";
 		}
 		cout << endl;
 	}
@@ -96,7 +95,7 @@ bool State::isBipartite(){
 		//cout << "in vertex " << pom << endl;
 		bfsFront.pop();
 		for (int i=0; i<this->numberOfVertices; i++){
-			if(this->incidence->at(pom)->at(i) == 1){
+			if(this->adjacency->at(pom)->at(i) == 1){
 				if (color[i] == 0) {
 					color[i] = 1;
 					d[i] = d[pom] + 1;
@@ -122,7 +121,7 @@ bool State::isBipartite(){
 int State::getNumberOfSuccessors(int index){
 	int numOnes = 0;
 	for(int j = 0; j < this->numberOfVertices; j++){
-		if (this->incidence->at(index)->at(j) == 1){
+		if (this->adjacency->at(index)->at(j) == 1){
 			numOnes++;
 		}
 	}
@@ -133,7 +132,7 @@ int State::getNumberOfEdges(){
 	int numOnes = 0;
 	for(int i = 0; i < this->numberOfVertices; i++){
 		for(int j = 0; j < this->numberOfVertices; j++){
-			if (this->incidence->at(i)->at(j) == 1){
+			if (this->adjacency->at(i)->at(j) == 1){
 				numOnes++;
 			}
 		}
@@ -143,9 +142,7 @@ int State::getNumberOfEdges(){
 
 
 State::~State() {
-	// TODO Auto-generated destructor stub
-}
-
-std::ostream& State::operator<<(std::ostream& os){
-	return os << "state wooooohooooo";
+	for(int i = 0; i < this->numberOfVertices; i ++){
+		//this->adjacency
+	}
 }
