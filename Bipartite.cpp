@@ -34,7 +34,7 @@ int main() {
 	cout << "state1->isBipartite() = " << state1->isBipartite() << endl;
 	cout << "state1->getNumberOfEdges() = " << state1->getNumberOfEdges() << endl;
 
-/*
+
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
@@ -46,11 +46,12 @@ int main() {
 		best = state1;
 		writeSolution();
 	} else {
-
 		while(!state_stack.empty()){
 			State *state_top = state_stack.top();
 			State **successors = state_top->getSuccessors();
 			state_stack.pop();
+
+
 			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
 				//succesors[i]->print();
 
@@ -83,7 +84,6 @@ int main() {
 		}
 	}
 	cout << "states:" << states_count <<endl;
-*/
 	return 0;
 }
 
