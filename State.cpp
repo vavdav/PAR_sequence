@@ -146,5 +146,4 @@ State::~State() {
 		delete this->adjacency->at(i);
 	}
 	delete this->adjacency;
-	cout << "State deleted";
 }
