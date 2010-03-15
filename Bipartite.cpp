@@ -25,16 +25,8 @@ void writeSolution(){
 
 
 int main() {
-
 	GraphReader reader;
-
-
 	State *state1 = reader.getFirstStateFromFile("zk.txt");
-	cout << "size: " << state1->incidence->size();
-	cout << "state1->isBipartite() = " << state1->isBipartite() << endl;
-	cout << "state1->getNumberOfEdges() = " << state1->getNumberOfEdges() << endl;
-
-
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
@@ -49,11 +41,13 @@ int main() {
 		while(!state_stack.empty()){
 			State *state_top = state_stack.top();
 			State **successors = state_top->getSuccessors();
-			state_stack.pop();
 
+			cout << "dbg0" <<endl;
+			state_stack.pop();
+			cout << "dbg1" <<endl;
 
 			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
-				//succesors[i]->print();
+				successors[i]->print();
 
 			}
 			for(int i = 0; i<state_top->getNumberOfEdges(); i++){

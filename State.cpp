@@ -25,21 +25,25 @@ State** State::getSuccessors(){
 	int iToChange = -1;
 	int jToChange = -1;
 	bool successorFound;
+	vector<int> *v;
 
 	State** states = new State*[numberOfSuccessors];
 	for(int incidence_index = 0; incidence_index < numberOfSuccessors; incidence_index++ ){
-		matrix* adjacency = new matrix();
+		matrix* adjacency = new matrix(numberOfSuccessors);
 		for(int i = 0; i < numberOfSuccessors;i++ ){
-			cout << "ter" << endl;
-			adjacency->push_back(new vector<int>);
+			v = new vector<int>(numberOfSuccessors);
+			adjacency->at(i) = v;
 		}
-		cout << "ghfghfghfghfgh" << endl;
 		newIncidences[incidence_index] = adjacency;
 		newIncidence = newIncidences[incidence_index];
 		successorFound = false;
 		for(int i = 0; i < this->numberOfVertices; i++){
+			//cout << "dbp #4" << endl;
 			for(int j = i; j < this->numberOfVertices; j++){
+				//cout << "dbp #5" << endl;
+				//cout << "newIncidence->at(" << i << ")size() = " << newIncidence->at(i)<< endl;
 				newIncidence->at(i)->at(j) = this->incidence->at(i)->at(j);
+				//cout << "dbp #6" << endl;
 				newIncidence->at(j)->at(i) = this->incidence->at(i)->at(j);
 				//cout << this->incidence->at(i).at(j) << " ";
 				if(!successorFound && this->numberOfVertices*i+j > iToChange*this->numberOfVertices+jToChange){
