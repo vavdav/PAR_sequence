@@ -33,30 +33,45 @@ int main() {
 	int states_count = 1;
 	int best_solution = 0;
 	int state1NumberOfEdges = state1->getNumberOfEdges();
+	State *state_top;
 
 	if(state1->isBipartite()){
 		best = state1;
 		writeSolution();
 	} else {
 		while(!state_stack.empty()){
-			State *state_top = state_stack.top();
+			cout << "states = " << states_count << endl;
+			state_top = state_stack.top();
+			cout << "b0" << endl;
+			cout << " bla :" << state_top << endl;
 			State **successors = state_top->getSuccessors();
-
-			cout << "dbg0" <<endl;
+			cout << "b1" << endl;
+			states_count++;
 			state_stack.pop();
-			cout << "dbg1" <<endl;
 
 			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
-				successors[i]->print();
-
+				//successors[i]->print();
+				cout << "dbg1 - " << i << endl;
+				state_stack.push(successors[i]);
+				cout << "dbg2 - " << i << endl;
 			}
+		cout << "sdfgsdfgsdfgsdfgsdfgsdfg" << endl;
+		cout << "states = " << states_count << endl;
+		}
+		cout << "states = " << states_count << endl;
+	}/*
 			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
 				states_count++;
+				cout << "dbg1" <<endl;
 				if(state_top->getNumberOfEdges() >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth){ //musi existovat reseni s |F|=|V|-1 a max hloubka |E|
+					cout << "dbg2" <<endl;
 					state_stack.push(successors[i]);
+					cout << "dbg3" <<endl;
 					if(successors[i]->isBipartite()){
 						//successors[i]->print();
+						cout << "dbg4" <<endl;
 						if(best_solution < successors[i]->getNumberOfEdges()){ //nalezt maximalni podmnozinu hran F (tady to asi muze skoncit)
+							cout << "dbg5" <<endl;
 							best = successors[i];
 							best_solution = successors[i]->getNumberOfEdges();
 							//cout << "***** BETTER SOLUTION ***** " << best_solution << endl;
@@ -65,19 +80,21 @@ int main() {
 						//return 0;
 					}
 				} else {
+					cout << "dbg2" <<endl;
 					writeSolution();
 					cout << "states:" << states_count <<endl;
 					return 0;
 				}
 
 			}
-			//cout << "bla5" << endl;
+			cout << "bla5" << endl;
 
 			//cout << "bla6" << endl;
 
 		}
 	}
 	cout << "states:" << states_count <<endl;
+*/
 	return 0;
 }
 
