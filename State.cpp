@@ -110,18 +110,18 @@ int State::isBipartite(){
 					if(path1Length != path2Length){
 						//return false;
 						bipartite = 0;
-						return 0;
+						//return 0;
 					}
 				}
 			}
 		color[pom] = 2;
 		}
-	}/*
+	}
 	for(int i = 0; i<this->numberOfVertices; i++){
 		if(color[i] == 0) {
 			bipartite = -1;
 		}
-	}*/
+	}
 
 	return bipartite;
 }
