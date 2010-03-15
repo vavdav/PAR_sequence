@@ -72,7 +72,7 @@ void State::print(){
 	cout << "*******************" << endl;
 }
 
-bool State::isBipartite(){
+int State::isBipartite(){
 	int* color = new int[this->numberOfVertices];
 	int* d = new int[this->numberOfVertices];
 	int* p = new int[this->numberOfVertices];
@@ -90,6 +90,8 @@ bool State::isBipartite(){
 	int path1Length;
 	int path2Length;
 
+	int bipartite = 1;
+
 	while (!bfsFront.empty()){
 		pom = bfsFront.front();
 		//cout << "in vertex " << pom << endl;
@@ -106,16 +108,22 @@ bool State::isBipartite(){
 					path1Length = (d[i])%2;
 					path2Length = (d[pom] + 1)%2;
 					if(path1Length != path2Length){
-						return false;
+						//return false;
+						bipartite = 0;
+						return 0;
 					}
 				}
-
-
 			}
 		color[pom] = 2;
 		}
 	}
-	return true;
+	for(int i = 0; i<this->numberOfVertices; i++){
+		if(color[i] == 0) {
+			bipartite = -1;
+		}
+	}
+
+	return bipartite;
 }
 
 int State::getNumberOfSuccessors(int index){
