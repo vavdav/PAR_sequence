@@ -23,10 +23,16 @@ State* GraphReader::getFirstStateFromFile(string fileName){
 								{1,1,1,1,0}
 	};
 
+
 	for(int i = 0; i < size;i++ ){
 		adjacency->push_back(new vector<int>);
-		for(int j = 0; j < 5; j++){
-			adjacency->at(i)->at(j) = adjacency_array[i][j];
+		for(int j = 0; j < size; j++){
+			vector<int>* v = adjacency->at(i);
+			cout << "t0 " << endl;
+			int x = adjacency_array[i][j];
+			cout << "x = " << x << endl;
+			v->push_back(x);
+			cout << "t1 " << endl;
 		}
 	}
 

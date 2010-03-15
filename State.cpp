@@ -29,16 +29,20 @@ State** State::getSuccessors(){
 	State** states = new State*[numberOfSuccessors];
 
 	for(int incidence_index = 0; incidence_index < numberOfSuccessors; incidence_index++ ){
-		newIncidences[incidence_index] = new matrix(this->numberOfVertices, vector<int>(this->numberOfVertices));
+		matrix* adjacency = new matrix();
+		for(int i = 0; i < adjacency->size();i++ ){
+			adjacency->push_back(new vector<int>);
+		}
+		newIncidences[incidence_index] = adjacency;
 		newIncidence = newIncidences[incidence_index];
 		successorFound = false;
 		for(int i = 0; i < this->numberOfVertices; i++){
 			for(int j = i; j < this->numberOfVertices; j++){
-				newIncidence->at(i).at(j) = this->incidence->at(i).at(j);
-				newIncidence->at(j).at(i) = this->incidence->at(i).at(j);
+				newIncidence->at(i)->at(j) = this->incidence->at(i)->at(j);
+				newIncidence->at(j)->at(i) = this->incidence->at(i)->at(j);
 				//cout << this->incidence->at(i).at(j) << " ";
 				if(!successorFound && this->numberOfVertices*i+j > iToChange*this->numberOfVertices+jToChange){
-					if(newIncidence->at(i).at(j) == 1){
+					if(newIncidence->at(i)->at(j) == 1){
 						iToChange = i;
 						jToChange = j;
 						successorFound = true;
@@ -48,8 +52,8 @@ State** State::getSuccessors(){
 			//cout << endl;
 		}
 		if (successorFound){
-			newIncidence->at(iToChange).at(jToChange) = 0;
-			newIncidence->at(jToChange).at(iToChange) = 0;
+			newIncidence->at(iToChange)->at(jToChange) = 0;
+			newIncidence->at(jToChange)->at(iToChange) = 0;
 		}
 
 	}
@@ -84,7 +88,7 @@ void State::print(){
 	cout << "State : verticies = " << this->numberOfVertices << " rly" << endl << "*******************" << endl;
 	for(int i = 0; i < 5; i++){
 		for(int j = 0; j < 5; j++){
-			cout << this->incidence->at(i).at(j) << " ";
+			cout << this->incidence->at(i)->at(j) << " ";
 		}
 		cout << endl;
 	}
@@ -114,7 +118,7 @@ bool State::isBipartite(){
 		//cout << "in vertex " << pom << endl;
 		bfsFront.pop();
 		for (int i=0; i<this->numberOfVertices; i++){
-			if(this->incidence->at(pom).at(i) == 1){
+			if(this->incidence->at(pom)->at(i) == 1){
 				if (color[i] == 0) {
 					color[i] = 1;
 					d[i] = d[pom] + 1;
@@ -140,7 +144,7 @@ bool State::isBipartite(){
 int State::getNumberOfSuccessors(int index){
 	int numOnes = 0;
 	for(int j = 0; j < this->numberOfVertices; j++){
-		if (this->incidence->at(index).at(j) == 1){
+		if (this->incidence->at(index)->at(j) == 1){
 			numOnes++;
 		}
 	}
@@ -151,7 +155,7 @@ int State::getNumberOfEdges(){
 	int numOnes = 0;
 	for(int i = 0; i < this->numberOfVertices; i++){
 		for(int j = 0; j < this->numberOfVertices; j++){
-			if (this->incidence->at(i).at(j) == 1){
+			if (this->incidence->at(i)->at(j) == 1){
 				numOnes++;
 			}
 		}
