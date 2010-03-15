@@ -49,14 +49,11 @@ int main() {
 				if(state_top->getNumberOfEdges() >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth){ //musi existovat reseni s |F|=|V|-1 a max hloubka |E|
 					state_stack.push(successors[i]);
 					if(successors[i]->isBipartite()){
-						//successors[i]->print();
-						if(best_solution < successors[i]->getNumberOfEdges()){ //nalezt maximalni podmnozinu hran F (tady to asi muze skoncit)
-							best = successors[i];
-							best_solution = successors[i]->getNumberOfEdges();
-							//cout << "***** BETTER SOLUTION ***** " << best_solution << endl;
-						}
-						//cout << "edges = " << successors[i]->getNumberOfEdges() << " depth:" << successors[i]->depth << endl;
-						//return 0;
+						best = successors[i];
+						best_solution = successors[i]->getNumberOfEdges();
+						writeSolution();
+						cout << "states:" << states_count <<endl;
+						return 0;
 					}
 				} else {
 					writeSolution();
