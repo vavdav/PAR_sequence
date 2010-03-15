@@ -26,7 +26,7 @@ void writeSolution(){
 
 int main() {
 
-	GraphReader reader;
+	//GraphReader reader;
 
 	int size = 5;
 		int adjacency_array[5][5] = {
