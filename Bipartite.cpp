@@ -37,7 +37,8 @@ int main (int argc, char *argv[] )
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
-	int states_count = 1;
+	int states_count_push = 1;
+	int states_count_pop = 0;
 	int best_solution = 0;
 	int state1NumberOfEdges = state1->getNumberOfEdges();
 	State *state_top;
@@ -56,19 +57,20 @@ int main (int argc, char *argv[] )
 			state_top = state_stack.top();
 			State **successors = state_top->getSuccessors();
 			state_stack.pop();
+			states_count_pop++;
 
 			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
 				if(state_top->getNumberOfEdges() >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth){ //musi existovat reseni s |F|=|V|-1 a max hloubka |E|
 					graphTest = successors[i]->isBipartite();
 					if(graphTest > -1){
 						state_stack.push(successors[i]);
-						states_count++;
+						states_count_push++;
 					}
 					if(graphTest == 1){
 						best = successors[i];
 						best_solution = successors[i]->getNumberOfEdges();
 						writeSolution();
-						cout << "states:" << states_count <<endl;
+						cout << "states-push:" << states_count_push << ", states-pop:" << states_count_pop <<endl;
 						while(!state_stack.empty()) { // delete the rest of the states on stack
 							State* stateToBeDeleted = state_stack.top();
 							state_stack.pop();
@@ -80,7 +82,7 @@ int main (int argc, char *argv[] )
 			}
 		}
 	}
-	cout << "Error : states:" << states_count <<endl;
+	cout << "Error : states:" << states_count_push <<endl;
 	return -1;
 }
 
