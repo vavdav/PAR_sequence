@@ -39,9 +39,12 @@ int main ( int argc, char *argv[] )
 	int state1NumberOfEdges = state1->getNumberOfEdges();
 	State *state_top;
 
-	if(state1->isBipartite()){
+	int graphTest;
+
+	if(state1->isBipartite() == 1){
 		best = state1;
 		writeSolution();
+		return 0;
 	} else {
 		while(!state_stack.empty()){
 			if(state_top){
@@ -52,10 +55,13 @@ int main ( int argc, char *argv[] )
 			state_stack.pop();
 
 			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
-				states_count++;
 				if(state_top->getNumberOfEdges() >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth){ //musi existovat reseni s |F|=|V|-1 a max hloubka |E|
-					state_stack.push(successors[i]);
-					if(successors[i]->isBipartite()){
+					graphTest = successors[i]->isBipartite();
+					if(graphTest > -1){
+						state_stack.push(successors[i]);
+						states_count++;
+					}
+					if(graphTest == 1){
 						best = successors[i];
 						best_solution = successors[i]->getNumberOfEdges();
 						writeSolution();

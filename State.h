@@ -23,7 +23,7 @@ public:
 	int depth;
 	State** getSuccessors();
 
-	bool isBipartite();
+	int isBipartite();
 	int getNumberOfEdges();
 	int getNumberOfSuccessors(int index);
 	void print();
