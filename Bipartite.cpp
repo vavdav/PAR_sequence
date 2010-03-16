@@ -23,10 +23,14 @@ void writeSolution(){
 }
 
 
+int main ( int argc, char *argv[] )
+{
+  if ( argc != 2 ) // argc should be 2 for correct execution
+    // We print argv[0] assuming it is the program name
+    cout<<"usage: "<< argv[0] <<" <filename>" << endl;
 
-int main() {
 	GraphReader reader;
-	State *state1 = reader.getFirstStateFromFile("zk.txt");
+	State *state1 = reader.getFirstStateFromFile("graph30.txt");
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
