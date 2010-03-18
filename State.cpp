@@ -17,7 +17,8 @@ State::State(matrix *adjacency, int depth) {
 	this->numberOfVertices = this->adjacency->size();
 }
 
-State** State::getSuccessors(){
+State** State::
+(){
 	int numberOfSuccessors = this->getNumberOfEdges();
 	matrix** newAdjacencies = new matrix*[numberOfSuccessors];
 	matrix *newAdjacency;

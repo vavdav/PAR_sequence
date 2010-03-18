@@ -29,11 +29,12 @@ int main (int argc, char *argv[] )
 	if ( argc != 2 ) {// argc should be 2 for correct execution
 		// We print argv[0] assuming it is the program name
 		cout<<"usage: "<< "PAR" <<" <filename>" << endl;
-		return -1;
+		//return -1;
 	}
 	fileName = argv[1];
 	GraphReader reader;
-	State *state1 = reader.getFirstStateFromFile(fileName);
+	//State *state1 = reader.getFirstStateFromFile(fileName);
+	State *state1 = reader.getFirstStateFromFile("zk.txt");
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
@@ -79,6 +80,7 @@ int main (int argc, char *argv[] )
 						return 0;
 					}
 				}
+
 			}
 		}
 	}
