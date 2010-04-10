@@ -22,14 +22,14 @@ State* State::getStateWithoutEdge(int edgeNumber){
 	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
 	int x=0;
 	for(int i = 0; i < this->numberOfVertices; i++){
-		for(int j = i; j < this->numberOfVertices; j++){
+		for(int j = i+1; j < this->numberOfVertices; j++){
+			cout << "edge no. " << x << "[" << i <<  ", " << j << "]" << endl;
 			if(x == edgeNumber){
-				cout << "edge no. " << edgeNumber << "[" << i+1 <<  ", " << j+1 << "]";
+
 			}
 
 			x++;
 		}
-		cout << endl;
 	}
 	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
 	return newState;
