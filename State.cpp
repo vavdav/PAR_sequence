@@ -23,9 +23,12 @@ State* State::getCopy(){
 	for(int i = 0; i < this->numberOfVertices;i++ ){
 		vector<int> *v = new vector<int>(this->numberOfVertices);
 		newAdjacency->at(i) = v;
+	}
+
+	for(int i = 0; i < this->numberOfVertices;i++ ){
 		for(int j = 0; j < this->numberOfVertices; j++){
-			newAdjacency->at(i)->at(j) = this->adjacency->at(i)->at(j);
-			newAdjacency->at(j)->at(i) = this->adjacency->at(i)->at(j);
+				newAdjacency->at(i)->at(j) = this->adjacency->at(i)->at(j);
+				newAdjacency->at(j)->at(i) = this->adjacency->at(i)->at(j);
 		}
 	}
 	newState = new State(newAdjacency, this->depth+1);

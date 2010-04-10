@@ -27,68 +27,48 @@ int main (int argc, char *argv[] )
 {
 	char *fileName;
 
-
+	/*
 	if ( argc != 2 ) {// argc should be 2 for correct execution
 		// We print argv[0] assuming it is the program name
 		cout<<"usage: "<< "PAR" <<" <filename>" << endl;
 		return -1;
 	}
 	fileName = argv[1];
+	*/
+	fileName = "graph5.txt";
 	GraphReader reader;
 	State *state1 = reader.getFirstStateFromFile(fileName);
+	State *state_top;
 	stack<State*> state_stack;
 	state_stack.push(state1);
+	int bipartite_graphs = 0;
+	int edgeToGetOutNumber = 0;
 
-	state1->getStateWithoutEdge(1);
-
-
+	int numberOfVertices = state1->numberOfVertices;
 	int states_count_push = 1;
 	int states_count_pop = 0;
-	int best_solution = 0;
-	int state1NumberOfEdges = state1->getNumberOfEdges();
-	State *state_top;
 
-	int graphTest;
-
-	if(state1->isBipartite() == 1){
-		best = state1;
-		writeSolution();
-		return 0;
-	} else {
-		while(!state_stack.empty()){
-			if(state_top){
-				delete state_top;
-			}
-			state_top = state_stack.top();
-			State **successors = state_top->getSuccessors();
-			state_stack.pop();
-			states_count_pop++;
-
-			for(int i = 0; i<state_top->getNumberOfEdges(); i++){
-				if(state_top->getNumberOfEdges() >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth){ //musi existovat reseni s |F|=|V|-1 a max hloubka |E|
-					graphTest = successors[i]->isBipartite();
-					if(graphTest > -1){
-						state_stack.push(successors[i]);
-						states_count_push++;
-					}
-					if(graphTest == 1){
-						best = successors[i];
-						best_solution = successors[i]->getNumberOfEdges();
-						writeSolution();
-						cout << "states-push:" << states_count_push << ", states-pop:" << states_count_pop <<endl;
-						while(!state_stack.empty()) { // delete the rest of the states on stack
-							State* stateToBeDeleted = state_stack.top();
-							state_stack.pop();
-							delete stateToBeDeleted;
-						}
-						return 0;
-					}
-				}
-			}
+	while(!state_stack.empty()){
+		cout << "pops = " << states_count_pop << ", pushes = " << states_count_push << endl;
+		state_top = state_stack.top();
+		state_stack.pop();
+		if(state_top->isBipartite() == 1){
+			bipartite_graphs++;
 		}
+		states_count_pop++;
+		if(edgeToGetOutNumber < numberOfVertices/2){
+			state_stack.push(state_top->getCopy());
+			states_count_push++;
+			state_stack.push(state_top->getStateWithoutEdge(edgeToGetOutNumber));
+			states_count_push++;
+		}
+		edgeToGetOutNumber++;
+		delete state_top;
 	}
-	cout << "Error : states_pop:" << states_count_pop <<endl;
-	return -1;
+
+	cout << "States_pop: " << states_count_pop << ". States_push: " << states_count_push <<endl;
+	cout << "Bipartite graphs = " << bipartite_graphs << endl;
+	return 0;
 }
 
 
