@@ -82,7 +82,7 @@ int main (int argc, char *argv[] )
 			}
 		}
 	}
-	cout << "Error : states:" << states_count_push <<endl;
+	cout << "Error : states_pop:" << states_count_pop <<endl;
 	return -1;
 }
 
