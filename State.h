@@ -22,8 +22,8 @@ public:
 	State(matrix *adjacency, int depth);
 	int depth;
 	State** getSuccessors();
-	State*  getStateWithoutEdge(int edgeNumber);
-
+	State* getStateWithoutEdge(int edgeNumber);
+	State* getCopy();
 	int isBipartite();
 	int getNumberOfEdges();
 	int getNumberOfSuccessors(int index);

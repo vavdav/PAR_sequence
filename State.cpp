@@ -17,21 +17,35 @@ State::State(matrix *adjacency, int depth) {
 	this->numberOfVertices = this->adjacency->size();
 }
 
-State* State::getStateWithoutEdge(int edgeNumber){
+State* State::getCopy(){
 	State *newState;
-	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
+	matrix* newAdjacency = new matrix(this->numberOfVertices);
+	for(int i = 0; i < this->numberOfVertices;i++ ){
+		vector<int> *v = new vector<int>(this->numberOfVertices);
+		newAdjacency->at(i) = v;
+		for(int j = 0; j < this->numberOfVertices; j++){
+			newAdjacency->at(i)->at(j) = this->adjacency->at(i)->at(j);
+			newAdjacency->at(j)->at(i) = this->adjacency->at(i)->at(j);
+		}
+	}
+	newState = new State(newAdjacency, this->depth+1);
+	return newState;
+}
+
+State* State::getStateWithoutEdge(int edgeNumber){
+	State *newState = this->getCopy();
 	int x=0;
 	for(int i = 0; i < this->numberOfVertices; i++){
 		for(int j = i+1; j < this->numberOfVertices; j++){
-			cout << "edge no. " << x << "[" << i <<  ", " << j << "]" << endl;
+			//cout << "edge no. " << x << "[" << i <<  ", " << j << "]" << endl;
 			if(x == edgeNumber){
-
+				newState->adjacency->at(i)->at(j) = 0;
+				newState->adjacency->at(j)->at(i) = 0;
+				return newState;
 			}
-
 			x++;
 		}
 	}
-	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
 	return newState;
 }
 
