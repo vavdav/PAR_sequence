@@ -48,6 +48,8 @@ int main (int argc, char *argv[] )
 	int states_count_pop = 0;
 	State* stateWithEdge;
 	State* stateWithoutEdge;
+	State* bestState;
+	int bestNumberOfEdges = 0;
 
 
 
@@ -56,6 +58,13 @@ int main (int argc, char *argv[] )
 		state_stack.pop();
 		if(state_top->isBipartite() == 1){
 			bipartite_graphs++;
+			int numberOfEdges = state_top->getNumberOfEdges();
+			if(numberOfEdges > bestNumberOfEdges){
+				bestNumberOfEdges = numberOfEdges;
+				if(bestState) delete bestState;
+				bestState = state_top->getCopy();
+				bestState->depth--;
+			}
 		}
 		states_count_pop++;
 		if(state_top->depth <= numberOfEdgesAtTheBeginning){
@@ -72,7 +81,12 @@ int main (int argc, char *argv[] )
 
 	cout << "States_pop: " << states_count_pop << ". States_push: " << states_count_push <<endl;
 	cout << "Bipartite graphs = " << bipartite_graphs << endl;
+
+	cout << "best state: " << endl;
+	bestState->print();
+	delete bestState;
 	return 0;
 }
+
 
 
