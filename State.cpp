@@ -98,7 +98,7 @@ State** State::getSuccessors(){
 }
 
 void State::print(){
-	cout << "State : number of verticies = " << this->numberOfVertices << endl << "*******************" << endl;
+	cout << "State : number of verticies = " << this->numberOfVertices << ", depth = " << this->depth << endl << "*******************" << endl;
 	for(int i = 0; i < this->numberOfVertices; i++){
 		for(int j = 0; j < this->numberOfVertices; j++){
 			cout << this->adjacency->at(i)->at(j) << " ";
