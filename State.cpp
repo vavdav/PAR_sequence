@@ -19,14 +19,19 @@ State::State(matrix *adjacency, int depth) {
 
 State* State::getStateWithoutEdge(int edgeNumber){
 	State *newState;
-	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
+	int x=0;
 	for(int i = 0; i < this->numberOfVertices; i++){
 		for(int j = i; j < this->numberOfVertices; j++){
-			cout << "[" << i <<  ", " << j << "]";
+			if(x == edgeNumber){
+				cout << "edge no. " << edgeNumber << "[" << i+1 <<  ", " << j+1 << "]";
+			}
+
+			x++;
 		}
 		cout << endl;
 	}
-	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
 	return newState;
 }
 
