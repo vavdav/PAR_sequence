@@ -17,6 +17,20 @@ State::State(matrix *adjacency, int depth) {
 	this->numberOfVertices = this->adjacency->size();
 }
 
+State* State::getStateWithoutEdge(int edgeNumber){
+	State *newState;
+	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+	for(int i = 0; i < this->numberOfVertices; i++){
+		for(int j = i; j < this->numberOfVertices; j++){
+			cout << "[" << i <<  ", " << j << "]";
+		}
+		cout << endl;
+	}
+	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+	return newState;
+}
+
+
 State** State::getSuccessors(){
 	int numberOfSuccessors = this->getNumberOfEdges();
 	matrix** newAdjacencies = new matrix*[numberOfSuccessors];

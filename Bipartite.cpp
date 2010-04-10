@@ -26,6 +26,8 @@ void writeSolution(){
 int main (int argc, char *argv[] )
 {
 	char *fileName;
+
+
 	if ( argc != 2 ) {// argc should be 2 for correct execution
 		// We print argv[0] assuming it is the program name
 		cout<<"usage: "<< "PAR" <<" <filename>" << endl;
@@ -36,6 +38,9 @@ int main (int argc, char *argv[] )
 	State *state1 = reader.getFirstStateFromFile(fileName);
 	stack<State*> state_stack;
 	state_stack.push(state1);
+
+	state1->getStateWithoutEdge(1);
+
 
 	int states_count_push = 1;
 	int states_count_pop = 0;
