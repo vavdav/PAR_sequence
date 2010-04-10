@@ -40,8 +40,6 @@ int main (int argc, char *argv[] )
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
-	state1->getStateWithoutEdge(1);
-
 
 	int states_count_push = 1;
 	int states_count_pop = 0;

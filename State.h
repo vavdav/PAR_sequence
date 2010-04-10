@@ -19,10 +19,13 @@ public:
 
 	int numberOfVertices;
 	matrix* adjacency;
-	State(matrix *adjacency, int depth);
+	State(matrix *adjacency, int depth, int edgeIndex);
 	int depth;
 	State** getSuccessors();
-	State*  getStateWithoutEdge(int edgeNumber);
+
+	int edgeIndex;
+
+	int getNextEdgeIndex();
 
 	int isBipartite();
 	int getNumberOfEdges();

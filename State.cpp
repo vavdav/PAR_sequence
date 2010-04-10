@@ -11,49 +11,38 @@
 using namespace std;
 
 
-State::State(matrix *adjacency, int depth) {
+State::State(matrix *adjacency, int depth, int edgeIndex) {
 	this->depth = depth;
 	this->adjacency = adjacency;
+	this->edgeIndex = edgeIndex;
 	this->numberOfVertices = this->adjacency->size();
-}
-
-State* State::getStateWithoutEdge(int edgeNumber){
-	State *newState;
-	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
-	for(int i = 0; i < this->numberOfVertices; i++){
-		for(int j = i; j < this->numberOfVertices; j++){
-			cout << "[" << i <<  ", " << j << "]";
-		}
-		cout << endl;
-	}
-	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
-	return newState;
 }
 
 
 State** State::getSuccessors(){
-	int numberOfSuccessors = this->getNumberOfEdges();
-	matrix** newAdjacencies = new matrix*[numberOfSuccessors];
+	matrix** newAdjacencies = new matrix*[2];
 	matrix *newAdjacency;
 	int iToChange = -1;
 	int jToChange = -1;
 	bool successorFound;
 	vector<int> *v;
-	State** states = new State*[numberOfSuccessors];
-	for(int adjacency_index = 0; adjacency_index < numberOfSuccessors; adjacency_index++ ){
+	State** states = new State*[2];
+	cout << "get successors" << endl;
+	successorFound = false;
+	for(int adjacency_index = 0; adjacency_index < 2; adjacency_index++ ){
 		matrix* new_adjacency = new matrix(this->numberOfVertices);
-		for(int i = 0; i < this->numberOfVertices;i++ ){
+		for(int i = 0; i < this->numberOfVertices; i++){
 			v = new vector<int>(this->numberOfVertices);
 			new_adjacency->at(i) = v;
 		}
 		newAdjacencies[adjacency_index] = new_adjacency;
 		newAdjacency = newAdjacencies[adjacency_index];
-		successorFound = false;
 		for(int i = 0; i < this->numberOfVertices; i++){
 			for(int j = i; j < this->numberOfVertices; j++){
 				newAdjacency->at(i)->at(j) = this->adjacency->at(i)->at(j);
 				newAdjacency->at(j)->at(i) = this->adjacency->at(i)->at(j);
-				if(!successorFound && this->numberOfVertices*i+j > iToChange*this->numberOfVertices+jToChange){
+				//POROVNAM ZDA JSEM ZA INDEXEM AKTUALNI HO SOUSEDA
+				if(!successorFound && this->numberOfVertices*i+j > edgeIndex){
 					if(newAdjacency->at(i)->at(j) == 1){
 						iToChange = i;
 						jToChange = j;
@@ -62,15 +51,14 @@ State** State::getSuccessors(){
 				}
 			}
 		}
-		if (successorFound){
-			newAdjacency->at(iToChange)->at(jToChange) = 0;
-			newAdjacency->at(jToChange)->at(iToChange) = 0;
-		}
-
+	}
+	if (successorFound){
+		newAdjacency->at(iToChange)->at(jToChange) = 0;
+		newAdjacency->at(jToChange)->at(iToChange) = 0;
 	}
 
-	for (int i=0; i<numberOfSuccessors; i++){
-		states[i] = new State(newAdjacencies[i], this->depth+1);
+	for (int i=0; i<2; i++){
+		states[i] = new State(newAdjacencies[i], this->depth+1, this->numberOfVertices*iToChange+jToChange);
 	}
 	return states;
 }
