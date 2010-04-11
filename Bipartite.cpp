@@ -15,11 +15,9 @@
 
 using namespace std;
 
-State *best;
-
-void writeSolution(){
+void writeSolution(State *bestSolution){
 	cout << "***BEST SOLUTION:" << endl;
-	best->print();
+	bestSolution->print();
 }
 
 
@@ -27,72 +25,69 @@ int main (int argc, char *argv[] )
 {
 	char *fileName;
 
-	/*
+
 	if ( argc != 2 ) {// argc should be 2 for correct execution
 		// We print argv[0] assuming it is the program name
 		cout<<"usage: "<< "PAR" <<" <filename>" << endl;
-		return -1;
+		//return -1;
 	}
 	fileName = argv[1];
-	*/
-	fileName = "graph20.txt";
 	GraphReader reader;
-	State *state1 = reader.getFirstStateFromFile(fileName);
-	State *state_top;
+	//State *state1 = reader.getFirstStateFromFile(fileName);
+	State *state1 = reader.getFirstStateFromFile("graph10.txt");
 	stack<State*> state_stack;
 	state_stack.push(state1);
-	int bipartite_graphs = 0;
 
-	int numberOfEdgesAtTheBeginning = state1->getNumberOfEdges();
+
 	int states_count_push = 1;
 	int states_count_pop = 0;
-	State* stateWithEdge;
-	State* stateWithoutEdge;
-	State* bestState;
-	int bestNumberOfEdges = 0;
-	int iter = 0;
+	int state1NumberOfEdges = state1->getNumberOfEdges();
+	State *state_top;
+	State **successors;
 
-	while(!state_stack.empty()){
-		//cout << "cycle no. " << iter << ", stack size: " << state_stack.size() << ", pushes = " << states_count_push << endl;
-		state_top = state_stack.top();
-		state_stack.pop();
-		if(state_top->isBipartite() == 1){
-			bipartite_graphs++;
-			if(numberOfEdges > bestNumberOfEdges){
-				bestNumberOfEdges = numberOfEdges;
-				if(bestState) delete bestState;
-				bestState = state_top->getCopy();
-				bestState->depth--;
+	State *bestSolution;
+	int bestSolutionNumberOfEdges = 0;
+	int currentSolutionNumberOfEdges;
+	int bipartityTest;
+
+	if(state1->isBipartite() == 1){
+		bestSolution = state1;
+	} else {
+		while(!state_stack.empty()){
+			state_top = state_stack.top();
+			state_stack.pop();
+			states_count_pop++;
+
+			currentSolutionNumberOfEdges = state_top->getNumberOfEdges();
+			bipartityTest = state_top->isBipartite();
+
+			if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth && bipartityTest>-1){
+				successors = state_top->getSuccessors();
+
+				//push state without edge
+				state_stack.push(successors[0]);
+				states_count_push++;
+				//push state with edge
+				state_stack.push(successors[1]);
+				states_count_push++;
+
+				delete successors;
+			}
+
+			if(bipartityTest == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
+				bestSolutionNumberOfEdges = currentSolutionNumberOfEdges;
+				bestSolution = state_top;
+			} else {
+				delete state_top;
 			}
 		}
-		states_count_pop++;
-		if(state_top->depth <= state_top->numberOfVertices*state_top->numberOfVertices/2 && (numberOfEdges > bestNumberOfEdges)){
-			//cout<< "Removing edge no. " << state_top->depth << endl;
-			stateWithEdge = state_top->getCopy();
-			stateWithoutEdge = state_top->getStateWithoutEdge(state_top->depth);
-
-			state_stack.push(stateWithEdge);
-			//cout << "with edge no. " << state_top->depth << endl;
-			//stateWithEdge->print();
-			state_stack.push(stateWithoutEdge);
-			states_count_push += 2;
-			//cout << "_______________" << endl;
-		}
-		delete state_top;
-		//cout << "_____________________________" << endl;
-		iter++;
 	}
+	cout << "Error : states_pop:" << states_count_pop <<endl;
 
+	writeSolution(bestSolution);
+	delete bestSolution;
 
-
-	cout << "States_pop: " << states_count_pop << ". States_push: " << states_count_push <<endl;
-	cout << "Bipartite graphs = " << bipartite_graphs << endl;
-
-	cout << "best state: " << endl;
-	bestState->print();
-	delete bestState;
-	return 0;
+	return -1;
 }
-
 
 
