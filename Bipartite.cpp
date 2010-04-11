@@ -34,7 +34,7 @@ int main (int argc, char *argv[] )
 	fileName = argv[1];
 	GraphReader reader;
 	//State *state1 = reader.getFirstStateFromFile(fileName);
-	State *state1 = reader.getFirstStateFromFile("graph.txt");
+	State *state1 = reader.getFirstStateFromFile("graph10.txt");
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
