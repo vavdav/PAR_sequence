@@ -18,6 +18,44 @@ State::State(matrix *adjacency, int depth, int edgeIndex) {
 	this->numberOfVertices = this->adjacency->size();
 }
 
+<<<<<<< HEAD
+=======
+State* State::getCopy(){
+	State *newState;
+	matrix* newAdjacency = new matrix(this->numberOfVertices);
+	for(int i = 0; i < this->numberOfVertices;i++ ){
+		vector<int> *v = new vector<int>(this->numberOfVertices);
+		newAdjacency->at(i) = v;
+	}
+
+	for(int i = 0; i < this->numberOfVertices;i++ ){
+		for(int j = 0; j < this->numberOfVertices; j++){
+				newAdjacency->at(i)->at(j) = this->adjacency->at(i)->at(j);
+				newAdjacency->at(j)->at(i) = this->adjacency->at(i)->at(j);
+		}
+	}
+	newState = new State(newAdjacency, this->depth+1);
+	return newState;
+}
+
+State* State::getStateWithoutEdge(int edgeNumber){
+	State *newState = this->getCopy();
+	int x=0;
+	for(int i = 0; i < this->numberOfVertices; i++){
+		for(int j = i+1; j < this->numberOfVertices; j++){
+			//cout << "edge no. " << x << "[" << i <<  ", " << j << "]" << endl;
+			if(x == edgeNumber){
+				newState->adjacency->at(i)->at(j) = 0;
+				newState->adjacency->at(j)->at(i) = 0;
+				return newState;
+			}
+			x++;
+		}
+	}
+	return newState;
+}
+
+>>>>>>> 13e4021ddee162d0c3798a3f48f36d803669c3dd
 
 State** State::getSuccessors(){
 	matrix** newAdjacencies = new matrix*[2];
@@ -64,7 +102,11 @@ State** State::getSuccessors(){
 }
 
 void State::print(){
+<<<<<<< HEAD
 	//cout << "State : number of verticies = " << this->numberOfVertices << endl << "*******************" << endl;
+=======
+	cout << "State : number of verticies = " << this->numberOfVertices << ", depth = " << this->depth << endl << "*******************" << endl;
+>>>>>>> 13e4021ddee162d0c3798a3f48f36d803669c3dd
 	for(int i = 0; i < this->numberOfVertices; i++){
 		for(int j = 0; j < this->numberOfVertices; j++){
 			cout << this->adjacency->at(i)->at(j) << " ";
