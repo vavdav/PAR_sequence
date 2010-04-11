@@ -34,7 +34,7 @@ int main (int argc, char *argv[] )
 	fileName = argv[1];
 	GraphReader reader;
 	//State *state1 = reader.getFirstStateFromFile(fileName);
-	State *state1 = reader.getFirstStateFromFile("zk.txt");
+	State *state1 = reader.getFirstStateFromFile("graph.txt");
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
@@ -44,11 +44,11 @@ int main (int argc, char *argv[] )
 	int state1NumberOfEdges = state1->getNumberOfEdges();
 	State *state_top;
 	State **successors;
-	int graphTest;
 
 	State *bestSolution;
 	int bestSolutionNumberOfEdges = 0;
 	int currentSolutionNumberOfEdges;
+	int bipartityTest;
 
 	if(state1->isBipartite() == 1){
 		bestSolution = state1;
@@ -59,8 +59,9 @@ int main (int argc, char *argv[] )
 			states_count_pop++;
 
 			currentSolutionNumberOfEdges = state_top->getNumberOfEdges();
+			bipartityTest = state_top->isBipartite();
 
-			if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth){
+			if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth && bipartityTest>-1){
 				successors = state_top->getSuccessors();
 
 				//push state without edge
@@ -73,7 +74,7 @@ int main (int argc, char *argv[] )
 				delete successors;
 			}
 
-			if(state_top->isBipartite() == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
+			if(bipartityTest == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
 				bestSolutionNumberOfEdges = currentSolutionNumberOfEdges;
 				bestSolution = state_top;
 			} else {
