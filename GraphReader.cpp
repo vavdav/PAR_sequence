@@ -42,7 +42,7 @@ State* GraphReader::getFirstStateFromFile(char *fileName){
 	cout << "**************" << endl;
 	fclose(fileIn);
 
-	State *newState = new State(adjacency,0);
+	State *newState = new State(adjacency,1);
 
 	return newState;
 }

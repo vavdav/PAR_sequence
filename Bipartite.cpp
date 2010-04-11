@@ -35,7 +35,7 @@ int main (int argc, char *argv[] )
 	}
 	fileName = argv[1];
 	*/
-	fileName = "graph5.txt";
+	fileName = "graph20.txt";
 	GraphReader reader;
 	State *state1 = reader.getFirstStateFromFile(fileName);
 	State *state_top;
@@ -50,15 +50,14 @@ int main (int argc, char *argv[] )
 	State* stateWithoutEdge;
 	State* bestState;
 	int bestNumberOfEdges = 0;
-
-
+	int iter = 0;
 
 	while(!state_stack.empty()){
+		//cout << "cycle no. " << iter << ", stack size: " << state_stack.size() << ", pushes = " << states_count_push << endl;
 		state_top = state_stack.top();
 		state_stack.pop();
 		if(state_top->isBipartite() == 1){
 			bipartite_graphs++;
-			int numberOfEdges = state_top->getNumberOfEdges();
 			if(numberOfEdges > bestNumberOfEdges){
 				bestNumberOfEdges = numberOfEdges;
 				if(bestState) delete bestState;
@@ -67,14 +66,21 @@ int main (int argc, char *argv[] )
 			}
 		}
 		states_count_pop++;
-		if(state_top->depth <= numberOfEdgesAtTheBeginning){
+		if(state_top->depth <= state_top->numberOfVertices*state_top->numberOfVertices/2 && (numberOfEdges > bestNumberOfEdges)){
+			//cout<< "Removing edge no. " << state_top->depth << endl;
 			stateWithEdge = state_top->getCopy();
 			stateWithoutEdge = state_top->getStateWithoutEdge(state_top->depth);
+
 			state_stack.push(stateWithEdge);
+			//cout << "with edge no. " << state_top->depth << endl;
+			//stateWithEdge->print();
 			state_stack.push(stateWithoutEdge);
 			states_count_push += 2;
+			//cout << "_______________" << endl;
 		}
 		delete state_top;
+		//cout << "_____________________________" << endl;
+		iter++;
 	}
 
 

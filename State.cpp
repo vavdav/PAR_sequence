@@ -34,7 +34,7 @@ State* State::getCopy(){
 	newState = new State(newAdjacency, this->depth+1);
 	return newState;
 }
-
+/*
 State* State::getStateWithoutEdge(int edgeNumber){
 	State *newState = this->getCopy();
 	int x=0;
@@ -51,6 +51,25 @@ State* State::getStateWithoutEdge(int edgeNumber){
 	}
 	return newState;
 }
+*/
+
+State* State::getStateWithoutEdge(int edgeNumber){
+	State *newState = this->getCopy();
+	int x=0;
+	for(int i = 0; i < this->numberOfVertices; i++){
+		for(int j = i+1; j < this->numberOfVertices; j++){
+			//cout << "edge no. " << x << "[" << i <<  ", " << j << "]" << endl;
+			x =
+			if(x == edgeNumber){
+				newState->adjacency->at(i)->at(j) = 0;
+				newState->adjacency->at(j)->at(i) = 0;
+				return newState;
+			}
+		}
+	}
+	return newState;
+}
+
 
 
 State** State::getSuccessors(){
