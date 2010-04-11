@@ -27,7 +27,7 @@ State** State::getSuccessors(){
 	bool successorFound;
 	vector<int> *v;
 	State** states = new State*[2];
-	cout << "get successors" << endl;
+	//cout << "get successors" << endl;
 	successorFound = false;
 	for(int adjacency_index = 0; adjacency_index < 2; adjacency_index++ ){
 		matrix* new_adjacency = new matrix(this->numberOfVertices);
@@ -53,8 +53,8 @@ State** State::getSuccessors(){
 		}
 	}
 	if (successorFound){
-		newAdjacency->at(iToChange)->at(jToChange) = 0;
-		newAdjacency->at(jToChange)->at(iToChange) = 0;
+		newAdjacencies[0]->at(iToChange)->at(jToChange) = 0;
+		newAdjacencies[0]->at(jToChange)->at(iToChange) = 0;
 	}
 
 	for (int i=0; i<2; i++){
@@ -64,7 +64,7 @@ State** State::getSuccessors(){
 }
 
 void State::print(){
-	cout << "State : number of verticies = " << this->numberOfVertices << endl << "*******************" << endl;
+	//cout << "State : number of verticies = " << this->numberOfVertices << endl << "*******************" << endl;
 	for(int i = 0; i < this->numberOfVertices; i++){
 		for(int j = 0; j < this->numberOfVertices; j++){
 			cout << this->adjacency->at(i)->at(j) << " ";
