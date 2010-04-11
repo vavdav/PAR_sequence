@@ -15,7 +15,7 @@ State* GraphReader::getFirstStateFromFile(char *fileName){
 
 	if((fileIn = fopen(fileName, "r")) == NULL) {
 	    cout << "***Error: cant open file: " << fileName << endl;
-	    exit(1);
+	    return NULL;
 	} else {
 		cout << "*** Info: file openned: " << fileName << endl;
 	}
@@ -24,7 +24,7 @@ State* GraphReader::getFirstStateFromFile(char *fileName){
 
 	if(numOfvertices<5){
 		cout << "***Error: need more vertices >=5: " << endl;
-		exit(1);
+		return NULL;
 	}
 
 	adjacency = new matrix(numOfvertices);
