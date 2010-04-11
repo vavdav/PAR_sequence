@@ -15,11 +15,9 @@
 
 using namespace std;
 
-State *best;
-
-void writeSolution(){
+void writeSolution(State *bestSolution){
 	cout << "***BEST SOLUTION:" << endl;
-	best->print();
+	bestSolution->print();
 }
 
 
@@ -43,48 +41,51 @@ int main (int argc, char *argv[] )
 
 	int states_count_push = 1;
 	int states_count_pop = 0;
-	int best_solution = 0;
 	int state1NumberOfEdges = state1->getNumberOfEdges();
 	State *state_top;
-
+	State **successors;
 	int graphTest;
+
+	State *bestSolution;
+	int bestSolutionNumberOfEdges = 0;
+	int currentSolutionNumberOfEdges;
+
 	if(state1->isBipartite() == 1){
-		best = state1;
-		writeSolution();
-		return 0;
+		bestSolution = state1;
 	} else {
 		while(!state_stack.empty()){
 			state_top = state_stack.top();
-			State **successors = state_top->getSuccessors();
 			state_stack.pop();
 			states_count_pop++;
-			for(int i = 0; i<2; i++){
-				if(state_top->getNumberOfEdges() >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth){ //musi existovat reseni s |F|=|V|-1 a max hloubka |E|
-					graphTest = successors[i]->isBipartite();
-					if(graphTest > -1){
-						state_stack.push(successors[i]);
-						states_count_push++;
-					}
-					if(graphTest == 1){
-						best = successors[i];
-						best_solution = successors[i]->getNumberOfEdges();
-						//writeSolution();
-						//cout << "states-push:" << states_count_push << ", states-pop:" << states_count_pop <<endl;
-						/*while(!state_stack.empty()) { // delete the rest of the states on stack
-							State* stateToBeDeleted = state_stack.top();
-							state_stack.pop();
-							delete stateToBeDeleted;
-						}
-						return 0;*/
-					}
-				}
 
+			currentSolutionNumberOfEdges = state_top->getNumberOfEdges();
+
+			if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth){
+				successors = state_top->getSuccessors();
+
+				//push state without edge
+				state_stack.push(successors[0]);
+				states_count_push++;
+				//push state with edge
+				state_stack.push(successors[1]);
+				states_count_push++;
+
+				delete successors;
 			}
-			delete successors;
-			delete state_top;
+
+			if(state_top->isBipartite() == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
+				bestSolutionNumberOfEdges = currentSolutionNumberOfEdges;
+				bestSolution = state_top;
+			} else {
+				delete state_top;
+			}
 		}
 	}
 	cout << "Error : states_pop:" << states_count_pop <<endl;
+
+	writeSolution(bestSolution);
+	delete bestSolution;
+
 	return -1;
 }
 
