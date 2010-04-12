@@ -49,6 +49,7 @@ int main (int argc, char *argv[] )
 	int currentSolutionNumberOfEdges;
 	int bipartityTest;
 	//main cycle
+
 	if(state1->isBipartite() == 1){
 		bestSolution = state1;
 	} else {
