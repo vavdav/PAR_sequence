@@ -26,15 +26,14 @@ int main (int argc, char *argv[] )
 	char *fileName;
 
 
-	if ( argc != 2 ) {// argc should be 2 for correct execution
-		// We print argv[0] assuming it is the program name
+	if ( argc != 2 ) {
 		cout<<"usage: "<< "PAR" <<" <filename>" << endl;
-		//return -1;
+		return -1;
 	}
 	fileName = argv[1];
+	//fileName = "graph10.txt";
 	GraphReader reader;
-	//State *state1 = reader.getFirstStateFromFile(fileName);
-	State *state1 = reader.getFirstStateFromFile("graph10.txt");
+	State *state1 = reader.getFirstStateFromFile(fileName);
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
