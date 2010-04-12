@@ -5,18 +5,18 @@
  *      Author: dawe
  */
 
-#ifndef COMMUNICATOR_H_
-#define COMMUNICATOR_H_
+#ifndef COMMUNICATOR_H_ERTH56V5YHJY45J35YJ357
+#define COMMUNICATOR_H_ERTH56V5YHJY45J35YJ357
 
 #include "mpi.h"
 
 class Communicator {
 public:
-	Communicator();
+	Communicator(int argc, char* argv[]);
 	virtual ~Communicator();
 
 
 
 };
 
-#endif /* COMMUNICATOR_H_ */
+#endif /* COMMUNICATOR_H_ERTH56V5YHJY45J35YJ357 */

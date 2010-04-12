@@ -1,0 +1,24 @@
+# all after symbol '#' is comment
+
+# === which communication library to use ===
+CC	=	mpiCC      # for ethernet and infiniband networks
+
+CFLAGS	=
+LIBS	=	-lm
+
+default:   Bipartite
+
+
+Bipartite : Bipartite.cpp State.cpp GraphReader.cpp Communicator.cp
+	$(CC) $(CFLAGS) Bipartite.cpp -o Bipartite $(LIBS) 
+GraphReader : GraphReader.cpp
+    $(CC) $(CFLAGS) $(.SOURCE) -o GraphReader.o $(LIBS) 
+Communicator: Communicator.cpp
+    $(CC) $(CFLAGS) $(.SOURCE) -o Communicator.o $(LIBS) 
+State: State.cpp   
+	$(CC) $(CFLAGS) $(.SOURCE) -o State.o  $(LIBS) 
+                          
+
+clear:
+	rm Bipartite?
+
