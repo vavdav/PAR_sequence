@@ -12,17 +12,28 @@
 #include <stack>
 #include <vector>
 #include "GraphReader.h"
+#include <fstream>
+#include "Communicator.h"
+#include <string>
 
 using namespace std;
 
-void writeSolution(State *bestSolution){
-	cout << "***BEST SOLUTION:" << endl;
-	bestSolution->print();
+void logMeIntoFile(int rank, int numProcesses){
+	ofstream myfile;
+	string fileName = "log_";
+	fileName += rank + ".txt";
+	myfile.open (fileName.c_str());
+	myfile << "I'm processor no. "<< rank << " out of " << numProcesses << ".\n";
+	myfile.close();
 }
-
 
 int main (int argc, char *argv[] )
 {
+	Communicator communicator(argc, argv);
+	logMeIntoFile(communicator.rank, communicator.numProcesses);
+	return 0;
+
+
 	char *fileName;
 
 
@@ -84,7 +95,8 @@ int main (int argc, char *argv[] )
 	}
 	cout << "Error : states_pop:" << states_count_pop <<endl;
 
-	writeSolution(bestSolution);
+	cout << "***BEST SOLUTION:" << endl;
+	bestSolution->print();
 	delete bestSolution;
 
 	return -1;

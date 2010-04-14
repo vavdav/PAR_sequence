@@ -13,23 +13,23 @@ Communicator::Communicator(int argc, char* argv[]) {
 	MPI_Comm_size(MPI_COMM_WORLD, &numProcesses);
 }
 
-int Comunicator::getRank(){
+int Communicator::getRank(){
 	return rank;
 }
 
-int Comunicator::getNumProcesses(){
+int Communicator::getNumProcesses(){
 	return numProcesses;
 }
 
-void Comunicator::finalize(){
+void Communicator::finalize(){
 	MPI_Finalize();
 }
 
-void Comunicator::sendStack(){
+void Communicator::sendStack(){
 	//todo
 }
 
-void Comunicator::receiveStack(){
+void Communicator::receiveStack(){
 	//todo
 }
 
