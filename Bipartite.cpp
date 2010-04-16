@@ -27,10 +27,15 @@ void logMeIntoFile(int rank, int numProcesses){
 	myfile.close();
 }
 
+void logMeIntoCout(int rank, int numProcesses){
+	cout << "I'm processor no. "<< rank << " out of " << numProcesses << ".\n";
+}
+
 int main (int argc, char *argv[] )
 {
 	Communicator communicator(argc, argv);
-	logMeIntoFile(communicator.rank, communicator.numProcesses);
+	//logMeIntoFile(communicator.rank, communicator.numProcesses);
+	logMeIntoCout(communicator.rank, communicator.numProcesses);
 	return 0;
 
 
