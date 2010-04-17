@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #!/bin/sh
 
 #  ===========================================================================
@@ -101,3 +102,14 @@ else
   #  -------------------------------------------------------------------------
   mpirun --mca btl tcp,self -np $NSLOTS ${MY_PARALLEL_PROGRAM}
 fi
+=======
+INFINIBAND="true"
+MY_PARALLEL_PROGRAM="./par graph5.txt"
+if 
+[[ ${INFINIBAND} = "true" ]]
+then
+mpirun -np $NSLOTS ${MY_PARALLEL_PROGRAM}
+else
+mpirun --mca btl tcp,self -np $NSLOTS ${MY_PARALLEL_PROGRAM}
+fi
+>>>>>>> 67429a0c72421566388ab553fe9c2fb85a3aa4ef
