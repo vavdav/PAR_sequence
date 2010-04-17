@@ -36,6 +36,7 @@ int main (int argc, char *argv[] )
 	Communicator communicator(argc, argv);
 	//logMeIntoFile(communicator.rank, communicator.numProcesses);
 	logMeIntoCout(communicator.rank, communicator.numProcesses);
+	communicator.finalize();
 	return 0;
 
 
