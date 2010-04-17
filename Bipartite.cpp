@@ -80,15 +80,19 @@ int main (int argc, char *argv[] )
 	{
 		MPI_Status status;
 		int numVertices;
+		cout << "p" << communicator.rank << " MPI_Recv numVertices" << endl;
 		MPI_Recv(&numVertices, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		int length = numVertices*numVertices + sizeof(int)*2;
+		cout << "p" << communicator.rank << " MPI_Recv state" << endl;
 		MPI_Recv(buffer, length, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-		State *deserializedState = State::deserialize(buffer, 0, state1->numberOfVertices);
 		cout << "Processor " << communicator.rank << ": Received: " << endl;
-		if(communicator.rank == 1) deserializedState->print();
+		State *deserializedState = State::deserialize(buffer, 0, numVertices);
+
+		deserializedState->print();
 		delete deserializedState;
 	}
-	delete buffer;
+	cout << "Processor " << communicator.rank << " end" << endl;
+	//delete buffer;
 	communicator.finalize();
 	return 0;
 
