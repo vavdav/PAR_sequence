@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <queue>
+#include "mpi.h"
 
 #ifndef STATE_H_24563457568768
 #define STATE_H_24563457568768
@@ -19,11 +20,12 @@ public:
 
 	int numberOfVertices;
 	matrix* adjacency;
-	State(matrix *adjacency, int depth, int edgeIndex);
 	int depth;
-	State** getSuccessors();
-
 	int edgeIndex;
+
+	State(matrix *adjacency, int depth, int edgeIndex);
+
+	State** getSuccessors();
 
 	int getNextEdgeIndex();
 
@@ -32,6 +34,10 @@ public:
 	int getNumberOfSuccessors(int index);
 	void print();
 	virtual ~State();
+
+	char* serialize(char * buffer, int position);
+
+	static State* deserialize(char* buffer, int position, int numberOfVertices);
 
 };
 

@@ -150,6 +150,55 @@ int State::getNumberOfEdges(){
 	return numOnes/2;
 }
 
+char * State::serialize(char * buffer, int position){
+	int length = sizeof(int)*numberOfVertices*numberOfVertices+sizeof(int)*2;
+	char ZERO = 0;
+	char ONE = 1;
+
+	MPI_Pack(&depth, 1, MPI_INT, buffer, length, &position, MPI_COMM_WORLD);
+	MPI_Pack(&edgeIndex, 1, MPI_INT, buffer, length, &position, MPI_COMM_WORLD);
+
+	for(int i = 0; i < numberOfVertices; i++){
+		for(int j = 0; j < numberOfVertices; j++){
+			if(this->adjacency->at(i)->at(j)){
+				MPI_Pack(&ONE, 1, MPI_CHAR, buffer, length, &position, MPI_COMM_WORLD);
+			} else {
+				MPI_Pack(&ZERO, 1, MPI_CHAR, buffer, length, &position, MPI_COMM_WORLD);
+			}
+		}
+	}
+	return buffer;
+}
+
+State* State::deserialize(char* buffer, int position, int numberOfVertices){
+	char ZERO = 0;
+	char ONE = 1;
+
+	int length = sizeof(int)*numberOfVertices*numberOfVertices+sizeof(int)*2;
+
+	int depth;
+	MPI_Unpack(buffer, length, &position, &depth, 1, MPI_INT, MPI_COMM_WORLD);
+	int edges;
+	MPI_Unpack(buffer, length, &position, &edges, 1, MPI_INT, MPI_COMM_WORLD);
+
+	char isEdge;
+
+	matrix* adjacency = new matrix(numberOfVertices);
+	for(int i = 0; i < numberOfVertices; i++){
+		adjacency->at(i) = new vector<int>(numberOfVertices);
+		for(int j = 0; j < numberOfVertices; j++){
+			MPI_Unpack(buffer, length, &position, &isEdge, 1, MPI_CHAR, MPI_COMM_WORLD);
+			if(isEdge == ONE){
+				adjacency->at(i)->at(j) = 1;
+			} else {
+				adjacency->at(i)->at(j) = 0;
+			}
+		}
+	}
+	State *newState = new State(adjacency, depth, edges);
+
+	return newState;
+}
 
 State::~State() {
 	for(int i = 0; i < this->numberOfVertices; i ++){

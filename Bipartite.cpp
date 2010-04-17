@@ -36,9 +36,6 @@ int main (int argc, char *argv[] )
 	Communicator communicator(argc, argv);
 	//logMeIntoFile(communicator.rank, communicator.numProcesses);
 	logMeIntoCout(communicator.rank, communicator.numProcesses);
-	communicator.finalize();
-	return 0;
-
 
 	char *fileName;
 
@@ -54,6 +51,17 @@ int main (int argc, char *argv[] )
 	stack<State*> state_stack;
 	state_stack.push(state1);
 
+	int length = state1->numberOfVertices*state1->numberOfVertices + sizeof(int)*2;
+	char *buffer = new char[length];
+
+	state1->serialize(buffer, 0);
+
+	State *deserializedState = State::deserialize(buffer, 0, state1->numberOfVertices);
+
+	deserializedState->print();
+
+	communicator.finalize();
+	return 0;
 
 	int states_count_push = 1;
 	int states_count_pop = 0;
