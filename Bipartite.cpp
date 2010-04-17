@@ -46,12 +46,14 @@ int main (int argc, char *argv[] )
 
 
 	if(communicator.rank == 0){
-		int receiver = 1;
+
 		int tag = 1;
 		//char[MESSAGE_SIZE] buffer;
-		cout << "Processor " << communicator.rank << ": Sending [" << buffer << "]" << endl;
-		MPI_Send (buffer, message_length, MPI_CHAR, receiver, tag, MPI_COMM_WORLD);
-		cout << "Processor " << communicator.rank << ": message sent" << endl;
+		for(int receiver = 1; receiver < communicator.numProcesses; receiver++){
+			cout << "Processor " << communicator.rank << ": Sending [" << buffer << "] to processor " << receiver << endl;
+			MPI_Send (buffer, message_length, MPI_CHAR, receiver, tag, MPI_COMM_WORLD);
+			cout << "Processor " << communicator.rank << ": message sent to processor " << receiver << endl;
+		}
 	}
 	else
 	{
