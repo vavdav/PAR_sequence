@@ -31,7 +31,6 @@ void Comunicator::sendStack(){
 
 void Comunicator::receiveStack(){
 	//todo
->>>>>>> 22988f890d6e49c75ad6a973bf9b256a69f024a2
 }
 
 Communicator::~Communicator() {
