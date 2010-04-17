@@ -18,6 +18,8 @@
 
 using namespace std;
 
+#define MESSAGE_SIZE = 4;
+
 void logMeIntoFile(int rank, int numProcesses){
 	ofstream myfile;
 	string fileName = "log_";
@@ -36,6 +38,42 @@ int main (int argc, char *argv[] )
 	Communicator communicator(argc, argv);
 	//logMeIntoFile(communicator.rank, communicator.numProcesses);
 	logMeIntoCout(communicator.rank, communicator.numProcesses);
+
+/*
+	string message = "Ahoj, tady je pedro!";
+	int message_length = message.length() + 1;
+	char* buffer = new char[message_length];
+	strcpy(buffer, message.c_str());
+
+
+	if(communicator.rank == 0){
+
+		int tag = 1;
+		//char[MESSAGE_SIZE] buffer;
+		for(int receiver = 1; receiver < communicator.numProcesses; receiver++){
+			cout << "Processor " << communicator.rank << ": Sending [" << buffer << "] to processor " << receiver << endl;
+			MPI_Send (buffer, message_length, MPI_CHAR, receiver, tag, MPI_COMM_WORLD);
+			cout << "Processor " << communicator.rank << ": message sent to processor " << receiver << endl;
+		}
+	}
+	else
+	{
+		MPI_Status status;
+		int length;
+		MPI_Recv(buffer, message_length, MPI_CHAR, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		      /* getting info about received message */
+		      //MPI_Get_count(&status, MPI_CHAR, &length);
+		      /* message *//*
+		      cout << "Processor " << communicator.rank << ": Received message: [" << buffer << "]" << endl;
+	}
+
+	cout << "Processor " << communicator.rank << " ending" << endl;
+	delete buffer;
+
+
+	communicator.finalize();
+	return 0;
+*/
 
 	char *fileName;
 
