@@ -74,19 +74,80 @@ State* distributeStates(Communicator *communicator, State * stateStart){
 	return state_top;
 }
 
+State* compute(stack<State*> *state_stack){
+	int states_count_push = 1;
+	int states_count_pop = 0;
+	int state1NumberOfEdges = state_stack->top()->getNumberOfEdges();
+	State *state_top;
+	State **successors;
+	State *bestSolution;
+
+	int bestSolutionNumberOfEdges = 0;
+	int currentSolutionNumberOfEdges;
+	int bipartityTest;
+
+	if(state_stack->top()->isBipartite() == 1){
+		bestSolution = state_stack->top();
+		state_stack->pop();
+	} else {
+		while(!state_stack->empty()){
+			state_top = state_stack->top();
+			state_stack->pop();
+			states_count_pop++;
+			//cout << "vertices:" << state_top->numberOfVertices << " edge index:" << state_top->edgeIndex << " depth:" << state_top->depth << endl;
+			currentSolutionNumberOfEdges = state_top->getNumberOfEdges();
+			bipartityTest = state_top->isBipartite();
+			if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth && bipartityTest>-1){
+				successors = state_top->getSuccessors();
+
+				//push state without edge
+				state_stack->push(successors[0]);
+				states_count_push++;
+				//push state with edge
+				state_stack->push(successors[1]);
+				states_count_push++;
+				delete successors;
+			}
+
+			if(bipartityTest == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
+				bestSolutionNumberOfEdges = currentSolutionNumberOfEdges;
+				bestSolution = state_top;
+			} else {
+				delete state_top;
+			}
+		}
+		cout << "end while" << endl;
+	}
+	cout << "states_pop:" << states_count_pop <<endl;
+
+	return bestSolution;
+}
+
 void mainProccessor(Communicator *communicator, stack<State*> *state_stack, State * state1, char *fileName){
 	GraphReader reader;
 	State *stateStart = reader.getFirstStateFromFile(fileName);
 
 	state1 = distributeStates(communicator, stateStart);
 	cout << "p" << communicator->rank << " got first State" << endl;
-	state1->print();
+
+	state_stack->push(state1);
+	State* bestSolution = compute(state_stack);
+
+	cout << "***BEST SOLUTION p" << communicator->rank << endl;
+	bestSolution->print();
+	delete bestSolution;
 }
 
 void otherProccessor(Communicator *communicator, stack<State*> *state_stack, State * state1){
 	state1 = communicator->receiveState();
 	cout << "p" << communicator->rank << " got first State" << endl;
-	state1->print();
+
+	state_stack->push(state1);
+	State* bestSolution = compute(state_stack);
+
+	cout << "***BEST SOLUTION p" << communicator->rank << endl;
+	bestSolution->print();
+	delete bestSolution;
 }
 
 int main (int argc, char *argv[] )
