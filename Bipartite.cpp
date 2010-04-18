@@ -9,7 +9,6 @@
 #include <iostream>
 #include <stack>
 #include "State.h"
-#include <stack>
 #include <vector>
 #include "GraphReader.h"
 #include <fstream>
@@ -22,6 +21,12 @@ using namespace std;
 
 Communicator *communicator;
 stack<State*> *state_stack;
+
+void proccessMessages(){
+	switch(communicator->getMessageType()){
+
+	}
+}
 
 State* distributeStates(State * stateStart){
 	stack<State*> distribute_stack;
@@ -77,6 +82,7 @@ State* compute(){
 	int bipartityTest;
 
 	int cycleCounter = 0;
+	communicator->stateSize = state_stack->top()->stateSize;
 
 	if(state_stack->top()->isBipartite() == 1){
 		bestSolution = state_stack->top();
@@ -132,12 +138,6 @@ State* compute(){
 	cout << "states_pop:" << states_count_pop <<endl;
 
 	return bestSolution;
-}
-
-void proccessMessages(){
-	switch(communicator->getMessageType()){
-
-	}
 }
 
 void mainProccessor(State * state1, char *fileName){

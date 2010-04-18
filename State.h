@@ -22,6 +22,7 @@ public:
 	matrix* adjacency;
 	int depth;
 	int edgeIndex;
+	int stateSize;
 
 	State(matrix *adjacency, int depth, int edgeIndex);
 

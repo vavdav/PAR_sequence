@@ -16,6 +16,7 @@ State::State(matrix *adjacency, int depth, int edgeIndex) {
 	this->adjacency = adjacency;
 	this->edgeIndex = edgeIndex;
 	this->numberOfVertices = this->adjacency->size();
+	this->stateSize = sizeof(int)*numberOfVertices*numberOfVertices+sizeof(int)*2;
 }
 
 

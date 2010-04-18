@@ -10,6 +10,9 @@
 
 #include "mpi.h"
 #include "State.h"
+#include <stack>
+
+using namespace std;
 
 class Communicator {
 
@@ -19,6 +22,7 @@ public:
 
 	static const int REQUEST_WORK = 1;
 	static const int SENDING_WORK = 2;
+	static const int SENDING_WORK_SIZE = 8;
 	static const int NO_WORK = 3;
 	static const int TOKEN_WHITE = 4;
 	static const int TOKEN_BLACK = 5;
@@ -29,8 +33,12 @@ public:
 	Communicator(int argc, char* argv[]);
 	virtual ~Communicator();
 
-	bool isWaiting = false;
-	bool hasSentToken = false;
+	int sizeSetForProccessorID;
+	int stackSize;
+	int stateSize;
+
+	bool isWaiting;
+	bool hasSentToken;
 
 	void sendWhiteToken(int toProccessor);
 	void sendBlackToken(int toProccessor);
@@ -43,8 +51,9 @@ public:
 
 	void finalize();
 
-	void sendStack();
+	void sendStack(stack<State*> *stack, int proccessorID);
 	void receiveStack();
+	void receiveStackSize();
 
 	void sendState(State* stateToSend, int proccessorID);
 	State* receiveState();
