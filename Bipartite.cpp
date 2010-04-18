@@ -74,7 +74,7 @@ State* distributeStates(Communicator *communicator, State * stateStart){
 	return state_top;
 }
 
-void mainProccessor(Communicator *communicator, stack<State*> *state_stack, State * state1, char * buffer, char *fileName){
+void mainProccessor(Communicator *communicator, stack<State*> *state_stack, State * state1, char *fileName){
 	GraphReader reader;
 	State *stateStart = reader.getFirstStateFromFile(fileName);
 
@@ -83,7 +83,7 @@ void mainProccessor(Communicator *communicator, stack<State*> *state_stack, Stat
 	state1->print();
 }
 
-void otherProccessor(Communicator *communicator, stack<State*> *state_stack, State * state1, char * buffer){
+void otherProccessor(Communicator *communicator, stack<State*> *state_stack, State * state1){
 	state1 = communicator->receiveState();
 	cout << "p" << communicator->rank << " got first State" << endl;
 	state1->print();
@@ -98,27 +98,16 @@ int main (int argc, char *argv[] )
 	}
 
 	stack<State*> state_stack;
-	State *state1;
-	char *buffer;
+	State *state1 = NULL;
 	Communicator communicator(argc, argv);
 
 	if(communicator.rank == 0){
-		mainProccessor(&communicator, &state_stack, state1, buffer, argv[1]);
+		mainProccessor(&communicator, &state_stack, state1, argv[1]);
 	} else {
-		otherProccessor(&communicator, &state_stack, state1, buffer);
+		otherProccessor(&communicator, &state_stack, state1);
 	}
 
-/*
-	string message = "Ahoj, tady je pedro!";
-	int message_length = message.length() + 1;
-	char* buffer = new char[message_length];
-	strcpy(buffer, message.c_str());
-*/
-
-	if(buffer){
-		delete buffer;
-	}
-	if(state1){
+	if(state1 != NULL){
 		delete state1;
 	}
 
@@ -126,7 +115,7 @@ int main (int argc, char *argv[] )
 
 	return 0;
  // --- KONEC
-
+/*
 	if(communicator.rank == 0){
 
 		char *fileName;
@@ -214,7 +203,7 @@ int main (int argc, char *argv[] )
 	delete bestSolution;
 
 	communicator.finalize();
-	return 0;
+	return 0;*/
 }
 
 
