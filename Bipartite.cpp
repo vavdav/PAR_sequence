@@ -33,6 +33,14 @@ void logMeIntoCout(int rank, int numProcesses){
 	cout << "I'm processor no. "<< rank << " out of " << numProcesses << ".\n";
 }
 
+void mainProccessor(){
+
+}
+
+void otherProccessor(){
+
+}
+
 int main (int argc, char *argv[] )
 {
 	stack<State*> state_stack;
@@ -68,7 +76,6 @@ int main (int argc, char *argv[] )
 		int tag = 1;
 		//char[MESSAGE_SIZE] buffer;
 		for(int receiver = 1; receiver < communicator.numProcesses; receiver++){
-			cout << "Processor " << communicator.rank << ": Sending " << endl;
 			//state1->print();
 			MPI_Send (&state1->numberOfVertices, 1, MPI_INT, receiver, tag, MPI_COMM_WORLD);
 			MPI_Send (buffer, length, MPI_PACKED, receiver, tag, MPI_COMM_WORLD);
@@ -76,19 +83,15 @@ int main (int argc, char *argv[] )
 	} else {
 		MPI_Status status;
 		int numVertices;
-		cout << "p" << communicator.rank << " MPI_Recv numVertices" << endl;
 		MPI_Recv(&numVertices, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		int length = numVertices*numVertices + sizeof(int)*2;
 		buffer = new char[length];
-		cout << "p" << communicator.rank << " MPI_Recv state length:" << length << endl;
 		MPI_Recv(buffer, length, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-		cout << "Processor " << communicator.rank << ": Received: " << endl;
 		state1 = State::deserialize(buffer, 0, numVertices);
 		state1->print();
 	}
 	state_stack.push(state1);
 
-	cout << "Processor " << communicator.rank << " start resolving" << endl;
 	//delete buffer;
 
 	int states_count_push = 1;
