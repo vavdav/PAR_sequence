@@ -29,6 +29,12 @@ public:
 	Communicator(int argc, char* argv[]);
 	virtual ~Communicator();
 
+	bool isWaiting = false;
+	bool hasSentToken = false;
+
+	void sendWhiteToken(int toProccessor);
+	void sendBlackToken(int toProccessor);
+
 	int rank;
 	int numProcesses;
 

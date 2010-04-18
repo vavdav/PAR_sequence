@@ -57,6 +57,12 @@ int Communicator::hasReceivedMessages() {
 	MPI_Iprobe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &flag, &status);
 	return flag;
 }
+void Communicator::sendWhiteToken(int toProccessor){
+
+}
+void Communicator::sendBlackToken(int toProccessor){
+
+}
 
 int Communicator::getMessageType(){
 	return status.MPI_TAG;

@@ -129,6 +129,15 @@ State* compute(){
 					}
 				}
 			}
+			// tak zasobnik je prazdny a co ted
+			communicator->isWaiting = true;
+
+			if(!communicator->hasSentToken && communicator->rank == 0){
+				if(communicator->numProcesses > 1){
+					communicator->sendWhiteToken(1);
+				}
+			}
+
 
 
 		cout << "end while" << endl;
