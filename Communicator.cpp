@@ -11,8 +11,9 @@ Communicator::Communicator(int argc, char* argv[]) {
 	MPI_Init(&argc, &argv);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &numProcesses);
-	this->hasSentToken = false;
-	this->isWaiting = false;
+	isWaiting = false;
+	hasSentToken = false;
+	sizeSetForProccessorID = -1;
 }
 
 int Communicator::getRank(){
@@ -77,14 +78,36 @@ int Communicator::getMessageType(){
 	return status.MPI_TAG;
 }
 
-void Communicator::sendStack(){
-	//todo
+void Communicator::sendStack(stack<State*> *stack, int proccessorID){
+
+	int numStatesToPop = stack->size()/2;
+	int length = sizeof(State) * stateSize;
+	int tag = SENDING_WORK_SIZE;
+
+	MPI_Send (&length, 1, MPI_INT, proccessorID, tag, MPI_COMM_WORLD);
+
+	State* state;
+	char * buffer = new char[length];
+
+	for(int i=0; i<numStatesToPop; i++){
+		state = stack->top();
+		stack->pop();
+		state->serialize(buffer, i*stateSize);
+	}
+
+	tag = SENDING_WORK;
+	MPI_Send (buffer, length, MPI_PACKED, proccessorID, tag, MPI_COMM_WORLD);
+
+	delete buffer;
 }
 
 void Communicator::receiveStack(){
-	//todo
+
+}
+void Communicator::receiveStackSize(){
+	MPI_Recv(&stackSize, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+	sizeSetForProccessorID = status.MPI_SOURCE;
 }
 
 Communicator::~Communicator() {
-
 }
