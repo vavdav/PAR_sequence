@@ -25,6 +25,33 @@ void Communicator::finalize(){
 	MPI_Finalize();
 }
 
+void Communicator::sendState(State* stateToSend, int proccessorID){
+	int length = stateToSend->numberOfVertices*stateToSend->numberOfVertices + sizeof(int)*2;
+	char * buffer = new char[length];
+	stateToSend->serialize(buffer, 0);
+
+	int tag = 1;
+	MPI_Send (&(stateToSend->numberOfVertices), 1, MPI_INT, proccessorID, tag, MPI_COMM_WORLD);
+	MPI_Send (buffer, length, MPI_PACKED, proccessorID, tag, MPI_COMM_WORLD);
+
+	delete buffer;
+}
+
+State* Communicator::receiveState(){
+	State* receivedState;
+	MPI_Status status;
+	int numVertices;
+	MPI_Recv(&numVertices, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+	int length = numVertices*numVertices + sizeof(int)*2;
+	char * buffer = new char[length];
+	MPI_Recv(buffer, length, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+	receivedState = State::deserialize(buffer, 0, numVertices);
+
+	delete buffer;
+
+	return receivedState;
+}
+
 void Communicator::sendStack(){
 	//todo
 }

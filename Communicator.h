@@ -9,6 +9,7 @@
 #define COMMUNICATOR_H_ERTH56V5YHJY45J35YJ357
 
 #include "mpi.h"
+#include "State.h"
 
 class Communicator {
 public:
@@ -25,6 +26,9 @@ public:
 
 	void sendStack();
 	void receiveStack();
+
+	void sendState(State* stateToSend, int proccessorID);
+	State* receiveState();
 };
 
 #endif /* COMMUNICATOR_H_ERTH56V5YHJY45J35YJ357 */
