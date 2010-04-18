@@ -70,11 +70,11 @@ int Communicator::hasReceivedMessages() {
 }
 void Communicator::sendWhiteToken(int toProccessor){
 	int x = 0;
-	MPI_Send (&x, 1, MPI_INT, proccessorID, Communicator::TOKEN_WHITE, MPI_COMM_WORLD);
+	MPI_Send (&x, 1, MPI_INT, toProccessor, Communicator::TOKEN_WHITE, MPI_COMM_WORLD);
 }
 void Communicator::sendBlackToken(int toProccessor){
 	int x = 0;
-	MPI_Send (&x, 1, MPI_INT, proccessorID, Communicator::TOKEN_BLACK, MPI_COMM_WORLD);
+	MPI_Send (&x, 1, MPI_INT, toProccessor, Communicator::TOKEN_BLACK, MPI_COMM_WORLD);
 }
 
 void Communicator::requestWork(){

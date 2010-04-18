@@ -17,8 +17,7 @@
 
 using namespace std;
 
-#define MESSAGE_SIZE = 4;
-#define MIN_STACK_SIZE_TO_SEND_WORK = 20;
+int MIN_STACK_SIZE_TO_SEND_WORK = 20;
 
 Communicator *communicator;
 stack<State*> *state_stack;
@@ -31,12 +30,12 @@ void processMessages(){
 		break;
 		case Communicator::REQUEST_WORK:
 
-			if(state_stack->size() > MIN_STACK_SIZE_TO_SEND_WORK){
+			if(state_stack->size() > 20){
 				communicator->sendStack(state_stack, communicator->status.MPI_SOURCE);
 			}
 			else
 			{
-				communicator->sendNoWork(communicator->status.MPI_SOURCE));
+				communicator->sendNoWork(communicator->status.MPI_SOURCE);
 			}
 		break;
 		case Communicator::SENDING_WORK:
@@ -50,7 +49,7 @@ void processMessages(){
 
 		break;
 		case Communicator::TERMINATE:
-			communicator.finalize();
+			communicator->finalize();
 		break;
 		case Communicator::TOKEN_BLACK:
 
@@ -152,7 +151,7 @@ State* compute(){
 				cycleCounter++;
 				if ((cycleCounter % 100)==0){
 					if(communicator->hasReceivedMessages()){
-						proccessMessages();
+						processMessages();
 					}
 				}
 			}
