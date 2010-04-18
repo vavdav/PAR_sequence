@@ -21,6 +21,8 @@ int MIN_STACK_SIZE_TO_SEND_WORK = 20;
 
 Communicator *communicator;
 stack<State*> *state_stack;
+State *bestSolution;
+int bestSolutionNumberOfEdges;
 
 void processMessages(){
 	switch(communicator->getMessageType()){
@@ -46,16 +48,34 @@ void processMessages(){
 			processMessages();
 		break;
 		case Communicator::SOLUTION:
-
+			State* bestSolutionReceived = communicator->receiveBestSolution();
+			if(bestSolutionReceived->getNumberOfEdges() > bestSolution->getNumberOfEdges()){
+				bestSolution = bestSolutionReceived;
+				bestSolutionNumberOfEdges = bestSolution->getNumberOfEdges();
+			}
 		break;
 		case Communicator::TERMINATE:
 			communicator->finalize();
 		break;
 		case Communicator::TOKEN_BLACK:
+			communicator->receiveTokenBlack();
+			if(communicator->rank == 0){
 
+			} else {
+				communicator->sendTokenBlack();
+			}
 		break;
 		case Communicator::TOKEN_WHITE:
-
+			communicator->receiveTokenWhite();
+			if(communicator->rank == 0){
+				communicator->sendTerminateToAll();
+			} else {
+				if(communicator->isWaiting){
+					communicator->sendTokenWhite();
+				} else {
+					communicator->sendTokenBlack();
+				}
+			}
 		break;
 	}
 }
@@ -107,9 +127,7 @@ State* compute(){
 	int state1NumberOfEdges = state_stack->top()->getNumberOfEdges();
 	State *state_top;
 	State **successors;
-	State *bestSolution;
 
-	int bestSolutionNumberOfEdges = 0;
 	int currentSolutionNumberOfEdges;
 	int bipartityTest;
 
@@ -214,6 +232,7 @@ int main (int argc, char *argv[] )
 	state_stack = new stack<State*>();
 	communicator = new Communicator(argc, argv);
 
+	bestSolutionNumberOfEdges = 0;
 	if(communicator->rank == 0){
 		mainProccessor(state1, argv[1]);
 	} else {

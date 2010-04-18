@@ -64,7 +64,7 @@ public:
 	void sendNoWork(int processorID);
 	void sendState(State* stateToSend, int proccessorID);
 	State* receiveState();
-
+	void receiveBestSolution();
 	int hasReceivedMessages();
 	int getMessageType();
 };
