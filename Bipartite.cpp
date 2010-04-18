@@ -60,7 +60,6 @@ int main (int argc, char *argv[] )
 		//fileName = "graph10.txt";
 		GraphReader reader;
 		state1 = reader.getFirstStateFromFile(fileName);
-		state_stack.push(state1);
 
 		int length = state1->numberOfVertices*state1->numberOfVertices + sizeof(int)*2;
 		buffer = new char[length];
@@ -74,27 +73,23 @@ int main (int argc, char *argv[] )
 			MPI_Send (&state1->numberOfVertices, 1, MPI_INT, receiver, tag, MPI_COMM_WORLD);
 			MPI_Send (buffer, length, MPI_PACKED, receiver, tag, MPI_COMM_WORLD);
 		}
-		delete state1;
-	}
-	else
-	{
+	} else {
 		MPI_Status status;
 		int numVertices;
 		cout << "p" << communicator.rank << " MPI_Recv numVertices" << endl;
 		MPI_Recv(&numVertices, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		int length = numVertices*numVertices + sizeof(int)*2;
-		cout << "p" << communicator.rank << " MPI_Recv state" << endl;
+		buffer = new char[length];
+		cout << "p" << communicator.rank << " MPI_Recv state length:" << length << endl;
 		MPI_Recv(buffer, length, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		cout << "Processor " << communicator.rank << ": Received: " << endl;
-		State *deserializedState = State::deserialize(buffer, 0, numVertices);
-
-		deserializedState->print();
-		delete deserializedState;
+		state1 = State::deserialize(buffer, 0, numVertices);
+		state1->print();
 	}
-	cout << "Processor " << communicator.rank << " end" << endl;
+	state_stack.push(state1);
+
+	cout << "Processor " << communicator.rank << " start resolving" << endl;
 	//delete buffer;
-	communicator.finalize();
-	return 0;
 
 	int states_count_push = 1;
 	int states_count_pop = 0;
@@ -115,10 +110,9 @@ int main (int argc, char *argv[] )
 			state_top = state_stack.top();
 			state_stack.pop();
 			states_count_pop++;
-
+			//cout << "vertices:" << state_top->numberOfVertices << " edge index:" << state_top->edgeIndex << " depth:" << state_top->depth << endl;
 			currentSolutionNumberOfEdges = state_top->getNumberOfEdges();
 			bipartityTest = state_top->isBipartite();
-
 			if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth && bipartityTest>-1){
 				successors = state_top->getSuccessors();
 
@@ -128,7 +122,6 @@ int main (int argc, char *argv[] )
 				//push state with edge
 				state_stack.push(successors[1]);
 				states_count_push++;
-
 				delete successors;
 			}
 
@@ -139,12 +132,16 @@ int main (int argc, char *argv[] )
 				delete state_top;
 			}
 		}
+		cout << "end while" << endl;
 	}
 	cout << "Error : states_pop:" << states_count_pop <<endl;
 
-	cout << "***BEST SOLUTION:" << endl;
+	cout << "***BEST SOLUTION p" << communicator.rank << endl;
 	bestSolution->print();
 	delete bestSolution;
+
+	communicator.finalize();
+	return 0;
 
 	return -1;
 }

@@ -29,6 +29,7 @@ State** State::getSuccessors(){
 	State** states = new State*[2];
 	//cout << "get successors" << endl;
 	successorFound = false;
+
 	for(int adjacency_index = 0; adjacency_index < 2; adjacency_index++ ){
 		matrix* new_adjacency = new matrix(this->numberOfVertices);
 		for(int i = 0; i < this->numberOfVertices; i++){
@@ -55,6 +56,11 @@ State** State::getSuccessors(){
 	if (successorFound){
 		newAdjacencies[0]->at(iToChange)->at(jToChange) = 0;
 		newAdjacencies[0]->at(jToChange)->at(iToChange) = 0;
+	}
+
+	int eindex = this->numberOfVertices*iToChange+jToChange;
+	if(eindex < 0){
+		eindex = 0;
 	}
 
 	for (int i=0; i<2; i++){
@@ -93,7 +99,6 @@ int State::isBipartite(){
 	int path2Length;
 
 	int bipartite = 1;
-
 	while (!bfsFront.empty()){
 		pom = bfsFront.front();
 		//cout << "in vertex " << pom << endl;
@@ -124,6 +129,10 @@ int State::isBipartite(){
 			bipartite = -1;
 		}
 	}
+
+	/*delete color;
+	delete d;
+	delete p;*/
 
 	return bipartite;
 }
@@ -171,7 +180,6 @@ char * State::serialize(char * buffer, int position){
 }
 
 State* State::deserialize(char* buffer, int position, int numberOfVertices){
-	cout << "deserialize start" << endl;
 	char ZERO = 0;
 	char ONE = 1;
 
@@ -183,7 +191,6 @@ State* State::deserialize(char* buffer, int position, int numberOfVertices){
 	MPI_Unpack(buffer, length, &position, &edges, 1, MPI_INT, MPI_COMM_WORLD);
 
 	char isEdge;
-	cout << "deserialize state0" << endl;
 	matrix* adjacency = new matrix(numberOfVertices);
 	for(int i = 0; i < numberOfVertices; i++){
 		adjacency->at(i) = new vector<int>(numberOfVertices);
@@ -196,10 +203,7 @@ State* State::deserialize(char* buffer, int position, int numberOfVertices){
 			}
 		}
 	}
-	cout << "deserialize state1" << endl;
 	State *newState = new State(adjacency, depth, edges);
-
-	cout << "deserialize end" << endl;
 	return newState;
 }
 
