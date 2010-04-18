@@ -16,8 +16,6 @@ using namespace std;
 
 class Communicator {
 
-	MPI_Status status;
-
 public:
 
 	static const int REQUEST_WORK = 1;
@@ -33,12 +31,16 @@ public:
 	Communicator(int argc, char* argv[]);
 	virtual ~Communicator();
 
+	MPI_Status status;
+
 	int sizeSetForProccessorID;
 	int stackSize;
 	int stateSize;
 
 	bool isWaiting;
 	bool hasSentToken;
+
+	int processorToAskForWork;
 
 
 	void sendWhiteToken(int toProccessor);
@@ -53,10 +55,12 @@ public:
 	void finalize();
 
 	void sendStack(stack<State*> *stack, int proccessorID);
-	void receiveStack();
+	void receiveStack(stack<State*> *stack, int proccessorID);
 	void receiveStackSize();
+	void requestWork();
 
 	void sendTerminateToAll();
+	void sendNoWork(int processorID);
 	void sendState(State* stateToSend, int proccessorID);
 	State* receiveState();
 

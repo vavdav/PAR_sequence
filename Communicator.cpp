@@ -14,6 +14,7 @@ Communicator::Communicator(int argc, char* argv[]) {
 	isWaiting = false;
 	hasSentToken = false;
 	sizeSetForProccessorID = -1;
+	processorToAskForWork = rank + 1 % numProcesses;
 }
 
 int Communicator::getRank(){
@@ -68,16 +69,26 @@ int Communicator::hasReceivedMessages() {
 	return flag;
 }
 void Communicator::sendWhiteToken(int toProccessor){
-
+	int x = 0;
+	MPI_Send (&x, 1, MPI_INT, proccessorID, Communicator::TOKEN_WHITE, MPI_COMM_WORLD);
 }
 void Communicator::sendBlackToken(int toProccessor){
+	int x = 0;
+	MPI_Send (&x, 1, MPI_INT, proccessorID, Communicator::TOKEN_BLACK, MPI_COMM_WORLD);
+}
 
+void Communicator::requestWork(){
+	int x = 0;
+	MPI_Send (&x, 1, MPI_INT, this->processorToAskForWork, Communicator::REQUEST_WORK, MPI_COMM_WORLD);
 }
 
 int Communicator::getMessageType(){
 	return status.MPI_TAG;
 }
-
+void Communicator::sendNoWork(int processorID){
+	int x = 0;
+	MPI_Send (&x, 1, MPI_INT, processorID, Communicator::NO_WORK, MPI_COMM_WORLD);
+}
 void Communicator::sendStack(stack<State*> *stack, int proccessorID){
 
 	int numStatesToPop = stack->size()/2;
@@ -101,7 +112,7 @@ void Communicator::sendStack(stack<State*> *stack, int proccessorID){
 	delete buffer;
 }
 
-void Communicator::receiveStack(){
+void Communicator::receiveStack(stack<State*> *stack, int proccessorID){
 
 }
 void Communicator::receiveStackSize(){

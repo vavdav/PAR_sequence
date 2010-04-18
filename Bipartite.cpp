@@ -18,13 +18,46 @@
 using namespace std;
 
 #define MESSAGE_SIZE = 4;
+#define MIN_STACK_SIZE_TO_SEND_WORK = 20;
 
 Communicator *communicator;
 stack<State*> *state_stack;
 
-void proccessMessages(){
+void processMessages(){
 	switch(communicator->getMessageType()){
+		case Communicator::NO_WORK:
+			communicator->processorToAskForWork = (communicator->processorToAskForWork + 1) % communicator->numProcesses;
+			communicator->requestWork();
+		break;
+		case Communicator::REQUEST_WORK:
 
+			if(state_stack->size() > MIN_STACK_SIZE_TO_SEND_WORK){
+				communicator->sendStack(state_stack, communicator->status.MPI_SOURCE);
+			}
+			else
+			{
+				communicator->sendNoWork(communicator->status.MPI_SOURCE));
+			}
+		break;
+		case Communicator::SENDING_WORK:
+			communicator->receiveStack(state_stack, communicator->status.MPI_SOURCE);
+		break;
+		case Communicator::SENDING_WORK_SIZE:
+			communicator->receiveStackSize();
+			processMessages();
+		break;
+		case Communicator::SOLUTION:
+
+		break;
+		case Communicator::TERMINATE:
+			communicator.finalize();
+		break;
+		case Communicator::TOKEN_BLACK:
+
+		break;
+		case Communicator::TOKEN_WHITE:
+
+		break;
 	}
 }
 
