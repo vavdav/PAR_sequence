@@ -29,8 +29,8 @@ public:
 	Communicator(int argc, char* argv[]);
 	virtual ~Communicator();
 
-	bool isWaiting = false;
-	bool hasSentToken = false;
+	bool isWaiting;
+	bool hasSentToken;
 
 	void sendWhiteToken(int toProccessor);
 	void sendBlackToken(int toProccessor);
@@ -46,6 +46,7 @@ public:
 	void sendStack();
 	void receiveStack();
 
+	void sendTerminateToAll();
 	void sendState(State* stateToSend, int proccessorID);
 	State* receiveState();
 

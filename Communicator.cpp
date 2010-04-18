@@ -11,6 +11,8 @@ Communicator::Communicator(int argc, char* argv[]) {
 	MPI_Init(&argc, &argv);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &numProcesses);
+	this->hasSentToken = false;
+	this->isWaiting = false;
 }
 
 int Communicator::getRank(){
@@ -23,6 +25,13 @@ int Communicator::getNumProcesses(){
 
 void Communicator::finalize(){
 	MPI_Finalize();
+}
+
+void Communicator::sendTerminateToAll(){
+	int tag = Communicator::TERMINATE;
+	for(int i = 1; i < this->numProcesses){
+		MPI_Send (&i, 1, MPI_INT, i, tag, MPI_COMM_WORLD);
+	}
 }
 
 void Communicator::sendState(State* stateToSend, int proccessorID){
