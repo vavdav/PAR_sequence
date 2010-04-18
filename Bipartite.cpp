@@ -23,19 +23,6 @@ using namespace std;
 Communicator *communicator;
 stack<State*> *state_stack;
 
-void logMeIntoFile(int rank, int numProcesses){
-	ofstream myfile;
-	string fileName = "log_";
-	fileName += rank + ".txt";
-	myfile.open (fileName.c_str());
-	myfile << "I'm processor no. "<< rank << " out of " << numProcesses << ".\n";
-	myfile.close();
-}
-
-void logMeIntoCout(int rank, int numProcesses){
-	cout << "I'm processor no. "<< rank << " out of " << numProcesses << ".\n";
-}
-
 State* distributeStates(State * stateStart){
 	stack<State*> distribute_stack;
 	distribute_stack.push(stateStart);
