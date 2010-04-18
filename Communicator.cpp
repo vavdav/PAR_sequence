@@ -124,7 +124,7 @@ void Communicator::receiveStackSize(){
 	sizeSetForProccessorID = status.MPI_SOURCE;
 }
 
-void Communicator::receiveBestSolution(){
+State* Communicator::receiveBestSolution(){
 	// TODO
 }
 
