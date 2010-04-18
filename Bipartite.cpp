@@ -209,6 +209,7 @@ int main (int argc, char *argv[] )
 	delete communicator;
 
 	return 0;
+}
  // --- KONEC
 /*
 	if(communicator.rank == 0){
@@ -298,7 +299,7 @@ int main (int argc, char *argv[] )
 	delete bestSolution;
 
 	communicator.finalize();
-	return 0;*/
-}
+	return 0; }*/
+
 
 
