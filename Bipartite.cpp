@@ -20,6 +20,9 @@ using namespace std;
 
 #define MESSAGE_SIZE = 4;
 
+Communicator *communicator;
+stack<State*> *state_stack;
+
 void logMeIntoFile(int rank, int numProcesses){
 	ofstream myfile;
 	string fileName = "log_";
@@ -33,7 +36,7 @@ void logMeIntoCout(int rank, int numProcesses){
 	cout << "I'm processor no. "<< rank << " out of " << numProcesses << ".\n";
 }
 
-State* distributeStates(Communicator *communicator, State * stateStart){
+State* distributeStates(State * stateStart){
 	stack<State*> distribute_stack;
 	distribute_stack.push(stateStart);
 	State **successors;
@@ -74,7 +77,7 @@ State* distributeStates(Communicator *communicator, State * stateStart){
 	return state_top;
 }
 
-State* compute(stack<State*> *state_stack){
+State* compute(){
 	int states_count_push = 1;
 	int states_count_pop = 0;
 	int state1NumberOfEdges = state_stack->top()->getNumberOfEdges();
@@ -86,36 +89,48 @@ State* compute(stack<State*> *state_stack){
 	int currentSolutionNumberOfEdges;
 	int bipartityTest;
 
+	int cycleCounter = 0;
+
 	if(state_stack->top()->isBipartite() == 1){
 		bestSolution = state_stack->top();
 		state_stack->pop();
 	} else {
-		while(!state_stack->empty()){
-			state_top = state_stack->top();
-			state_stack->pop();
-			states_count_pop++;
-			//cout << "vertices:" << state_top->numberOfVertices << " edge index:" << state_top->edgeIndex << " depth:" << state_top->depth << endl;
-			currentSolutionNumberOfEdges = state_top->getNumberOfEdges();
-			bipartityTest = state_top->isBipartite();
-			if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth && bipartityTest>-1){
-				successors = state_top->getSuccessors();
+			while(!state_stack->empty()){
 
-				//push state without edge
-				state_stack->push(successors[0]);
-				states_count_push++;
-				//push state with edge
-				state_stack->push(successors[1]);
-				states_count_push++;
-				delete successors;
+				state_top = state_stack->top();
+				state_stack->pop();
+				states_count_pop++;
+				//cout << "vertices:" << state_top->numberOfVertices << " edge index:" << state_top->edgeIndex << " depth:" << state_top->depth << endl;
+				currentSolutionNumberOfEdges = state_top->getNumberOfEdges();
+				bipartityTest = state_top->isBipartite();
+				if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth && bipartityTest>-1){
+					successors = state_top->getSuccessors();
+
+					//push state without edge
+					state_stack->push(successors[0]);
+					states_count_push++;
+					//push state with edge
+					state_stack->push(successors[1]);
+					states_count_push++;
+					delete successors;
+				}
+
+				if(bipartityTest == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
+					bestSolutionNumberOfEdges = currentSolutionNumberOfEdges;
+					bestSolution = state_top;
+				} else {
+					delete state_top;
+				}
+
+				cycleCounter++;
+				if ((cycleCounter % 100)==0){
+					if(communicator->hasReceivedMessages()){
+						proccessMessages();
+					}
+				}
 			}
 
-			if(bipartityTest == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
-				bestSolutionNumberOfEdges = currentSolutionNumberOfEdges;
-				bestSolution = state_top;
-			} else {
-				delete state_top;
-			}
-		}
+
 		cout << "end while" << endl;
 	}
 	cout << "states_pop:" << states_count_pop <<endl;
@@ -123,32 +138,40 @@ State* compute(stack<State*> *state_stack){
 	return bestSolution;
 }
 
-void mainProccessor(Communicator *communicator, stack<State*> *state_stack, State * state1, char *fileName){
+void proccessMessages(){
+	switch(communicator->getMessageType()){
+
+	}
+}
+
+void mainProccessor(State * state1, char *fileName){
 	GraphReader reader;
 	State *stateStart = reader.getFirstStateFromFile(fileName);
 
-	state1 = distributeStates(communicator, stateStart);
+	state1 = distributeStates(stateStart);
 	cout << "p" << communicator->rank << " got first State" << endl;
 
 	state_stack->push(state1);
-	State* bestSolution = compute(state_stack);
+	State* bestSolution = compute();
 
 	cout << "***BEST SOLUTION p" << communicator->rank << endl;
 	bestSolution->print();
 	delete bestSolution;
 }
 
-void otherProccessor(Communicator *communicator, stack<State*> *state_stack, State * state1){
+void otherProccessor(State * state1){
 	state1 = communicator->receiveState();
 	cout << "p" << communicator->rank << " got first State" << endl;
 
 	state_stack->push(state1);
-	State* bestSolution = compute(state_stack);
+	State* bestSolution = compute();
 
 	cout << "***BEST SOLUTION p" << communicator->rank << endl;
 	bestSolution->print();
 	delete bestSolution;
 }
+
+
 
 int main (int argc, char *argv[] )
 {
@@ -158,21 +181,23 @@ int main (int argc, char *argv[] )
 		return -1;
 	}
 
-	stack<State*> state_stack;
 	State *state1 = NULL;
-	Communicator communicator(argc, argv);
+	state_stack = new stack<State*>();
+	communicator = new Communicator(argc, argv);
 
-	if(communicator.rank == 0){
-		mainProccessor(&communicator, &state_stack, state1, argv[1]);
+	if(communicator->rank == 0){
+		mainProccessor(state1, argv[1]);
 	} else {
-		otherProccessor(&communicator, &state_stack, state1);
+		otherProccessor(state1);
 	}
 
 	if(state1 != NULL){
 		delete state1;
 	}
 
-	communicator.finalize();
+	communicator->finalize();
+
+	delete communicator;
 
 	return 0;
  // --- KONEC

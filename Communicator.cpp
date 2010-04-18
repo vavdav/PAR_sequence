@@ -52,6 +52,16 @@ State* Communicator::receiveState(){
 	return receivedState;
 }
 
+int Communicator::hasReceivedMessages() {
+	int flag;
+	MPI_Iprobe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &flag, &status);
+	return flag;
+}
+
+int Communicator::getMessageType(){
+	return status.MPI_TAG;
+}
+
 void Communicator::sendStack(){
 	//todo
 }
