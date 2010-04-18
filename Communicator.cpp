@@ -14,7 +14,8 @@ Communicator::Communicator(int argc, char* argv[]) {
 	isWaiting = false;
 	hasSentToken = false;
 	sizeSetForProccessorID = -1;
-	processorToAskForWork = rank + 1 % numProcesses;
+	processorToAskForWork = (rank + 1) % numProcesses;
+	processorToSendTokenTo = (rank+1)%numProcesses;
 }
 
 int Communicator::getRank(){
@@ -67,14 +68,6 @@ int Communicator::hasReceivedMessages() {
 	int flag;
 	MPI_Iprobe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &flag, &status);
 	return flag;
-}
-void Communicator::sendWhiteToken(int toProccessor){
-	int x = 0;
-	MPI_Send (&x, 1, MPI_INT, toProccessor, Communicator::TOKEN_WHITE, MPI_COMM_WORLD);
-}
-void Communicator::sendBlackToken(int toProccessor){
-	int x = 0;
-	MPI_Send (&x, 1, MPI_INT, toProccessor, Communicator::TOKEN_BLACK, MPI_COMM_WORLD);
 }
 
 void Communicator::requestWork(){
@@ -130,6 +123,21 @@ void Communicator::receiveStackSize(){
 	MPI_Recv(&stackSize, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 	sizeSetForProccessorID = status.MPI_SOURCE;
 }
-
+void Communicator::sendTokenWhite(){
+	int x = 0;
+	MPI_Send (&x, 1, MPI_INT, processorToSendTokenTo, Communicator::TOKEN_WHITE, MPI_COMM_WORLD);
+}
+void Communicator::sendTokenBlack(){
+	int x = 0;
+	MPI_Send (&x, 1, MPI_INT, processorToSendTokenTo, Communicator::TOKEN_BLACK, MPI_COMM_WORLD);
+}
+void Communicator::receiveTokenWhite(){
+	int x;
+	MPI_Recv(&x, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+}
+void Communicator::receiveTokenBlack(){
+	int x;
+	MPI_Recv(&x, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+}
 Communicator::~Communicator() {
 }
