@@ -42,10 +42,7 @@ public:
 	bool hasSentToken;
 
 	int processorToAskForWork;
-
-
-	void sendWhiteToken(int toProccessor);
-	void sendBlackToken(int toProccessor);
+	int processorToSendTokenTo;
 
 	int rank;
 	int numProcesses;
@@ -63,6 +60,12 @@ public:
 	void sendTerminateToAll();
 	void sendNoWork(int processorID);
 	void sendState(State* stateToSend, int proccessorID);
+
+	void sendTokenWhite();
+	void sendTokenBlack();
+	void receiveTokenWhite();
+	void receiveTokenBlack();
+
 	State* receiveState();
 	void receiveBestSolution();
 	int hasReceivedMessages();
