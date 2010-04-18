@@ -36,6 +36,7 @@ public:
 	int sizeSetForProccessorID;
 	int stackSize;
 	int stateSize;
+	int numOfVertices;
 
 	bool isWaiting;
 	bool hasSentToken;
@@ -53,7 +54,7 @@ public:
 	void finalize();
 
 	void sendStack(stack<State*> *stack, int proccessorID);
-	void receiveStack();
+	void receiveStack(stack<State*> *stack, int proccessorID);
 	void receiveStackSize();
 
 	void sendTerminateToAll();

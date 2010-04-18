@@ -83,6 +83,7 @@ State* compute(){
 
 	int cycleCounter = 0;
 	communicator->stateSize = state_stack->top()->stateSize;
+	communicator->numOfVertices = state_stack->top()->numberOfVertices;
 
 	if(state_stack->top()->isBipartite() == 1){
 		bestSolution = state_stack->top();
