@@ -113,7 +113,18 @@ void Communicator::sendStack(stack<State*> *stack, int proccessorID){
 }
 
 void Communicator::receiveStack(stack<State*> *stack, int proccessorID){
-
+	if(proccessorID == sizeSetForProccessorID){
+		char * buffer = new char[stackSize];
+		MPI_Recv(buffer, stackSize, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		State *state;
+		int pointer = 0;
+		while(pointer<stackSize){
+			state = State::deserialize(buffer, pointer, numOfVertices);
+			stack->push(State::deserialize(buffer, pointer, numOfVertices));
+			pointer += stateSize;
+		}
+		sizeSetForProccessorID = -1;
+	}
 }
 void Communicator::receiveStackSize(){
 	MPI_Recv(&stackSize, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);

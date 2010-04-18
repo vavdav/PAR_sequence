@@ -36,6 +36,7 @@ public:
 	int sizeSetForProccessorID;
 	int stackSize;
 	int stateSize;
+	int numOfVertices;
 
 	bool isWaiting;
 	bool hasSentToken;
