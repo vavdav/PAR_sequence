@@ -30,7 +30,7 @@ void Communicator::finalize(){
 
 void Communicator::sendTerminateToAll(){
 	int tag = Communicator::TERMINATE;
-	for(int i = 1; i < this->numProcesses){
+	for(int i = 1; i < this->numProcesses; i++){
 		MPI_Send (&i, 1, MPI_INT, i, tag, MPI_COMM_WORLD);
 	}
 }

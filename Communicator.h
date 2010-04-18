@@ -37,6 +37,9 @@ public:
 	int stackSize;
 	int stateSize;
 
+	bool isWaiting;
+	bool hasSentToken;
+
 
 	void sendWhiteToken(int toProccessor);
 	void sendBlackToken(int toProccessor);
