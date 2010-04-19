@@ -28,7 +28,7 @@ void processMessages(){
 	switch(communicator->getMessageType()){
 		case Communicator::REQUEST_WORK:
 			communicator->receiveWorkRequest();
-			if(state_stack->size() > 1){
+			if(state_stack->size() > 4){
 				communicator->sendStack(state_stack, communicator->status.MPI_SOURCE);
 			} else {
 				communicator->sendNoWork(communicator->status.MPI_SOURCE);
@@ -42,7 +42,9 @@ void processMessages(){
 			communicator->receiveStackSize();
 			break;
 		case Communicator::SENDING_WORK:
+			cout << "p" << communicator->rank << " stack:" << state_stack->size();
 			communicator->receiveStack(state_stack, communicator->status.MPI_SOURCE);
+			cout << "p" << communicator->rank << " rstack:" << state_stack->size();
 			communicator->hasRequestedWork = false;
 			break;
 		case Communicator::SOLUTION:

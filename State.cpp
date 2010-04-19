@@ -162,15 +162,12 @@ int State::getNumberOfEdges(){
 
 char * State::serialize(char * buffer, int length, int position){
 	//int length = this->stateSize;
-	cout << "toPackStart " << length << " pos " << position << endl;
 
 	char ZERO = 0;
 	char ONE = 1;
 
 	MPI_Pack(&depth, 1, MPI_INT, buffer, length, &position, MPI_COMM_WORLD);
-	cout << "toPack1 " << length << " pos " << position << endl;
 	MPI_Pack(&edgeIndex, 1, MPI_INT, buffer, length, &position, MPI_COMM_WORLD);
-	cout << "toPack2 " << length << " pos " << position << endl;
 
 	for(int i = 0; i < numberOfVertices; i++){
 		for(int j = 0; j < numberOfVertices; j++){
@@ -181,7 +178,6 @@ char * State::serialize(char * buffer, int length, int position){
 			}
 		}
 	}
-	cout << "packed " << length << " pos " << position << endl;
 	return buffer;
 }
 
