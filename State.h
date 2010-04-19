@@ -36,9 +36,9 @@ public:
 	void print();
 	virtual ~State();
 
-	char* serialize(char * buffer, int position);
+	char* serialize(char * buffer, int length, int position);
 
-	static State* deserialize(char* buffer, int position, int numberOfVertices);
+	static State* deserialize(char* buffer, int length, int position, int numberOfVertices);
 
 };
 

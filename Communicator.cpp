@@ -42,7 +42,7 @@ void Communicator::sendTerminateToAll(){
 void Communicator::sendState(State* stateToSend, int proccessorID){
 	int length = stateToSend->numberOfVertices*stateToSend->numberOfVertices + sizeof(int)*2;
 	char * buffer = new char[length];
-	stateToSend->serialize(buffer, 0);
+	stateToSend->serialize(buffer, length, 0);
 
 	int tag = 1;
 	MPI_Send (&(stateToSend->numberOfVertices), 1, MPI_INT, proccessorID, tag, MPI_COMM_WORLD);
@@ -59,7 +59,7 @@ State* Communicator::receiveState(){
 	int length = numVertices*numVertices + sizeof(int)*2;
 	char * buffer = new char[length];
 	MPI_Recv(buffer, length, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-	receivedState = State::deserialize(buffer, 0, numVertices);
+	receivedState = State::deserialize(buffer, length, 0, numVertices);
 
 	delete buffer;
 
@@ -74,7 +74,6 @@ int Communicator::hasReceivedMessages() {
 
 void Communicator::sendWorkRequest(){
 	int x = 0;
-	cout << rank << "-" << this->processorToAskForWork << endl;
 	MPI_Send (&x, 1, MPI_INT, this->processorToAskForWork, Communicator::REQUEST_WORK, MPI_COMM_WORLD);
 
 	processorToAskForWork = (processorToAskForWork+1) % numProcesses;
@@ -91,39 +90,6 @@ void Communicator::sendNoWork(int processorID){
 	MPI_Send (&x, 1, MPI_INT, processorID, Communicator::NO_WORK, MPI_COMM_WORLD);
 }
 void Communicator::sendStack(stack<State*> *stack, int proccessorID){
-/*
-		int numStatesToPop = stack->size()/2;
-		int length = numStatesToPop * stateSize;
-
-		State* state;
-		char * buffer = new char[length];
-
-		for(int i=0; i<numStatesToPop; i++){
-			state = stack->top();
-			stack->pop();
-			cout << rank << "-go serialize " << i*stateSize << endl;
-			state->serialize(buffer, i*stateSize);
-
-			cout << "insert state " << i << ":" << endl;
-			state.print();
-
-			delete state;
-		}
-
-		cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXX get stack" << endl;
-
-		int pointer = 0;
-		while(pointer<stackSize){
-			state = State::deserialize(buffer, pointer, numOfVertices);
-			stack->push(state);
-			cout << "get state " << pointer << ":" << endl;
-			state.print();
-			pointer += stateSize;
-		}
-*/
-
-	cout << rank << "-S " << proccessorID << endl;
-
 	int numStatesToPop = stack->size()/2;
 	int length = numStatesToPop * stateSize;
 	int tag = Communicator::SENDING_WORK_SIZE;
@@ -135,14 +101,11 @@ void Communicator::sendStack(stack<State*> *stack, int proccessorID){
 	for(int i=0; i<numStatesToPop; i++){
 		state = stack->top();
 		stack->pop();
-		cout << rank << "-go serialize " << i*stateSize << endl;
-		state->serialize(buffer, i*stateSize);
+		state->serialize(buffer, length, i*stateSize);
 		delete state;
 	}
-	cout << rank << "-SSP " << endl;
 	tag = Communicator::SENDING_WORK;
 	MPI_Send (buffer, length, MPI_PACKED, proccessorID, tag, MPI_COMM_WORLD);
-	cout << rank << "-SSPS " << endl;
 	delete buffer;
 }
 
@@ -150,13 +113,12 @@ void Communicator::receiveStack(stack<State*> *stack, int proccessorID){
 	//nemuze nastat situace, ze by prisel stack od jineho procesoru, nez poslal stackSize, protoze vysleme max 1 zadost. -> proto zakomentovany if
 	//if(proccessorID == sizeSetForProccessorID)
 	//{
-		cout << rank << "-RS " << sizeSetForProccessorID << "=" << proccessorID << endl;
 		char * buffer = new char[stackSize];
 		MPI_Recv(buffer, stackSize, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		State *state;
 		int pointer = 0;
 		while(pointer<stackSize){
-			state = State::deserialize(buffer, pointer, numOfVertices);
+			state = State::deserialize(buffer, stackSize, pointer, numOfVertices);
 			stack->push(state);
 			pointer += stateSize;
 		}
@@ -165,7 +127,6 @@ void Communicator::receiveStack(stack<State*> *stack, int proccessorID){
 }
 void Communicator::receiveStackSize(){
 	MPI_Recv(&stackSize, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-	cout << rank << "-R " << stackSize << endl;
 	//id procesoru si nemusime ukladat, vzdy se jedna jen o 1 zadost o praci
 	//sizeSetForProccessorID = status.MPI_SOURCE;
 }

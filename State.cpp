@@ -160,8 +160,8 @@ int State::getNumberOfEdges(){
 	return numOnes/2;
 }
 
-char * State::serialize(char * buffer, int position){
-	int length = this->stateSize;
+char * State::serialize(char * buffer, int length, int position){
+	//int length = this->stateSize;
 	cout << "toPackStart " << length << " pos " << position << endl;
 
 	char ZERO = 0;
@@ -185,11 +185,11 @@ char * State::serialize(char * buffer, int position){
 	return buffer;
 }
 
-State* State::deserialize(char* buffer, int position, int numberOfVertices){
+State* State::deserialize(char* buffer, int length, int position, int numberOfVertices){
 	char ZERO = 0;
 	char ONE = 1;
 
-	int length = sizeof(char)*numberOfVertices*numberOfVertices+sizeof(int)*2;
+	//int length = sizeof(char)*numberOfVertices*numberOfVertices+sizeof(int)*2;
 
 	int depth;
 	MPI_Unpack(buffer, length, &position, &depth, 1, MPI_INT, MPI_COMM_WORLD);

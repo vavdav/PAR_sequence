@@ -28,7 +28,6 @@ void processMessages(){
 	switch(communicator->getMessageType()){
 		case Communicator::REQUEST_WORK:
 			communicator->receiveWorkRequest();
-			cout << "s" << communicator->rank << " get wr " << state_stack->size() << " f"<< communicator->status.MPI_SOURCE << endl;
 			if(state_stack->size() > 1){
 				communicator->sendStack(state_stack, communicator->status.MPI_SOURCE);
 			} else {
@@ -43,9 +42,7 @@ void processMessages(){
 			communicator->receiveStackSize();
 			break;
 		case Communicator::SENDING_WORK:
-			//cout << "p" << communicator->rank << " before receiveWORK stackSize:" << state_stack->size() << endl;
 			communicator->receiveStack(state_stack, communicator->status.MPI_SOURCE);
-			//cout << "p" << communicator->rank << " received receiveWORK stackSize:" << state_stack->size() << endl;
 			communicator->hasRequestedWork = false;
 			break;
 		case Communicator::SOLUTION:
@@ -135,8 +132,6 @@ void compute(){
 	communicator->hasReceivedTerminationRequest = false;
 	communicator->hasRequestedWork = false;
 
-	bool printIdle = true;
-
 	while(!communicator->hasReceivedTerminationRequest){
 		communicator->isWaiting = false;
 		while(!state_stack->empty()){
@@ -145,19 +140,12 @@ void compute(){
 			cycleCounter++;
 			if (cycleCounter == 100){
 				if(communicator->hasReceivedMessages()){
-					//cout << "p" << communicator->rank << " WORK -> proccessmesage" << endl;
 					processMessages();
 				}
 				cycleCounter = 0;
 			}
-			printIdle = true;
 		}
 		communicator->isWaiting = true;
-
-		if(printIdle){
-			cout << "p" << communicator->rank << " i" << endl;
-			printIdle = false;
-		}
 
 		//p0 posle White Token
 		if(!communicator->hasSentToken && communicator->rank == 0){
@@ -177,7 +165,6 @@ void compute(){
 		cycleCounter1++;
 
 		while(communicator->hasReceivedMessages()){
-			//cout << "p" << communicator->rank << " noWORK -> proccessing all messages" << endl;
 			processMessages();
 		}
 
