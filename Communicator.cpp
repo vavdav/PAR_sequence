@@ -13,7 +13,9 @@ Communicator::Communicator(int argc, char* argv[]) {
 	MPI_Comm_size(MPI_COMM_WORLD, &numProcesses);
 	isWaiting = false;
 	hasSentToken = false;
+	hasReceivedTerminationRequest = false;
 	sizeSetForProccessorID = -1;
+
 	processorToAskForWork = (rank + 1) % numProcesses;
 	processorToSendTokenTo = (rank+1)%numProcesses;
 }
@@ -73,6 +75,11 @@ int Communicator::hasReceivedMessages() {
 void Communicator::requestWork(){
 	int x = 0;
 	MPI_Send (&x, 1, MPI_INT, this->processorToAskForWork, Communicator::REQUEST_WORK, MPI_COMM_WORLD);
+
+	processorToAskForWork = (processorToAskForWork+1) % numProcesses;
+	if(processorToAskForWork == rank){
+		processorToAskForWork = (processorToAskForWork+1) % numProcesses;
+	}
 }
 
 int Communicator::getMessageType(){
@@ -97,6 +104,7 @@ void Communicator::sendStack(stack<State*> *stack, int proccessorID){
 		state = stack->top();
 		stack->pop();
 		state->serialize(buffer, i*stateSize);
+		delete state;
 	}
 
 	tag = SENDING_WORK;
@@ -106,7 +114,9 @@ void Communicator::sendStack(stack<State*> *stack, int proccessorID){
 }
 
 void Communicator::receiveStack(stack<State*> *stack, int proccessorID){
-	if(proccessorID == sizeSetForProccessorID){
+	//nemuze nastat situace, ze by prisel stack od jineho procesoru, nez poslal stackSize, protoze vysleme max 1 zadost. -> proto zakomentovany if
+	//if(proccessorID == sizeSetForProccessorID)
+	{
 		char * buffer = new char[stackSize];
 		MPI_Recv(buffer, stackSize, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		State *state;
@@ -116,16 +126,28 @@ void Communicator::receiveStack(stack<State*> *stack, int proccessorID){
 			stack->push(State::deserialize(buffer, pointer, numOfVertices));
 			pointer += stateSize;
 		}
-		sizeSetForProccessorID = -1;
+		//sizeSetForProccessorID = -1;
 	}
 }
 void Communicator::receiveStackSize(){
 	MPI_Recv(&stackSize, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-	sizeSetForProccessorID = status.MPI_SOURCE;
+	//id procesoru si nemusime ukladat, vzdy se jedna jen o 1 zadost o praci
+	//sizeSetForProccessorID = status.MPI_SOURCE;
 }
 
 State* Communicator::receiveBestSolution(){
-	// TODO
+	State* receivedState = NULL;
+	/*MPI_Status status;
+	int numVertices;
+	MPI_Recv(&numVertices, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+	int length = numVertices*numVertices + sizeof(int)*2;
+	char * buffer = new char[length];
+	MPI_Recv(buffer, length, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+	receivedState = State::deserialize(buffer, 0, numVertices);
+
+	delete buffer;
+*/
+	return receivedState;
 }
 
 void Communicator::sendTokenWhite(){

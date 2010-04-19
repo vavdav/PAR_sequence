@@ -40,8 +40,11 @@ public:
 
 	bool isWaiting;
 	bool hasSentToken;
+	bool hasReceivedTerminationRequest;
+	bool hasRequestedWork;
 
 	int processorToAskForWork;
+
 	int processorToSendTokenTo;
 
 	int rank;
@@ -67,7 +70,7 @@ public:
 	void receiveTokenBlack();
 
 	State* receiveState();
-	void receiveBestSolution();
+	State* receiveBestSolution();
 	int hasReceivedMessages();
 	int getMessageType();
 };
