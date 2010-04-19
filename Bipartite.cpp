@@ -29,7 +29,7 @@ void processMessages(){
 		case Communicator::REQUEST_WORK:
 			communicator->receiveWorkRequest();
 			cout << "s" << communicator->rank << " get wr " << state_stack->size() << " f"<< communicator->status.MPI_SOURCE << endl;
-			if(state_stack->size() > 20){
+			if(state_stack->size() > 1){
 				communicator->sendStack(state_stack, communicator->status.MPI_SOURCE);
 			} else {
 				communicator->sendNoWork(communicator->status.MPI_SOURCE);
