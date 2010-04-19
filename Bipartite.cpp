@@ -28,6 +28,7 @@ void processMessages(){
 	switch(communicator->getMessageType()){
 		case Communicator::REQUEST_WORK:
 			communicator->receiveWorkRequest();
+			cout << "s" << communicator->rank << " get wr " << state_stack->size() << " f"<< communicator->status.MPI_SOURCE << endl;
 			if(state_stack->size() > 20){
 				communicator->sendStack(state_stack, communicator->status.MPI_SOURCE);
 			} else {
@@ -60,24 +61,20 @@ void processMessages(){
 			break;
 		case Communicator::TOKEN_BLACK:
 			communicator->receiveTokenBlack();
-			if(communicator->rank != 0){
-				cout << "p" << communicator->rank << " rBlack -> sw" << endl;
+			if(communicator->rank == 0){
 				communicator->hasSentToken = false;
 				//dalsi bily token se posle za dalsich X cyklu
 			} else {
-				cout << "p" << communicator->rank << " rBlack " << endl;
 				communicator->sendTokenBlack();
 			}
 			break;
 		case Communicator::TOKEN_WHITE:
 			communicator->receiveTokenWhite();
 			if(communicator->rank == 0){
-				cout << "p" << communicator->rank << " rW -> TERMINATE" << endl;
 				communicator->hasSentToken = true;
 				communicator->sendTerminateToAll();
 				communicator->hasReceivedTerminationRequest = true;
 			} else {
-				cout << "p" << communicator->rank << " rWhite" << endl;
 				if(communicator->isWaiting){
 					communicator->sendTokenWhite();
 				} else {
@@ -165,7 +162,6 @@ void compute(){
 		//p0 posle White Token
 		if(!communicator->hasSentToken && communicator->rank == 0){
 			if(communicator->numProcesses > 1){
-				cout << "p" << communicator->rank << " sW" << endl;
 				communicator->hasSentToken = true;
 				communicator->sendTokenWhite();
 			}
