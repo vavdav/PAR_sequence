@@ -161,12 +161,15 @@ int State::getNumberOfEdges(){
 }
 
 char * State::serialize(char * buffer, int position){
-	int length = sizeof(int)*numberOfVertices*numberOfVertices+sizeof(int)*2;
+	int length = sizeof(char)*numberOfVertices*numberOfVertices+sizeof(int)*2;
+	cout << "toPackStart " << length << " pos " << position << endl;
+
 	char ZERO = 0;
 	char ONE = 1;
 
 	MPI_Pack(&depth, 1, MPI_INT, buffer, length, &position, MPI_COMM_WORLD);
 	MPI_Pack(&edgeIndex, 1, MPI_INT, buffer, length, &position, MPI_COMM_WORLD);
+	cout << "toPack " << length << " pos " << position << endl;
 
 	for(int i = 0; i < numberOfVertices; i++){
 		for(int j = 0; j < numberOfVertices; j++){
@@ -177,6 +180,7 @@ char * State::serialize(char * buffer, int position){
 			}
 		}
 	}
+	cout << "packed " << length << " pos " << position << endl;
 	return buffer;
 }
 
@@ -184,7 +188,7 @@ State* State::deserialize(char* buffer, int position, int numberOfVertices){
 	char ZERO = 0;
 	char ONE = 1;
 
-	int length = sizeof(int)*numberOfVertices*numberOfVertices+sizeof(int)*2;
+	int length = sizeof(char)*numberOfVertices*numberOfVertices+sizeof(int)*2;
 
 	int depth;
 	MPI_Unpack(buffer, length, &position, &depth, 1, MPI_INT, MPI_COMM_WORLD);

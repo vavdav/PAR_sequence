@@ -95,24 +95,24 @@ void Communicator::sendStack(stack<State*> *stack, int proccessorID){
 	cout << rank << "-S " << proccessorID << endl;
 
 	int numStatesToPop = stack->size()/2;
-	int length = sizeof(State) * stateSize;
+	int length = numStatesToPop * stateSize;
 	int tag = Communicator::SENDING_WORK_SIZE;
 
 	MPI_Send (&length, 1, MPI_INT, proccessorID, tag, MPI_COMM_WORLD);
-
 	State* state;
 	char * buffer = new char[length];
 
 	for(int i=0; i<numStatesToPop; i++){
 		state = stack->top();
 		stack->pop();
+		cout << rank << "-go serialize " << i*stateSize << endl;
 		state->serialize(buffer, i*stateSize);
 		delete state;
 	}
-
+	cout << rank << "-SSP " << endl;
 	tag = Communicator::SENDING_WORK;
 	MPI_Send (buffer, length, MPI_PACKED, proccessorID, tag, MPI_COMM_WORLD);
-
+	cout << rank << "-SSPS " << endl;
 	delete buffer;
 }
 
