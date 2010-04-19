@@ -42,9 +42,9 @@ void processMessages(){
 			communicator->receiveStackSize();
 			break;
 		case Communicator::SENDING_WORK:
-			cout << "p" << communicator->rank << " before receiveWORK stackSize:" << state_stack->size() << endl;
+			//cout << "p" << communicator->rank << " before receiveWORK stackSize:" << state_stack->size() << endl;
 			communicator->receiveStack(state_stack, communicator->status.MPI_SOURCE);
-			cout << "p" << communicator->rank << " received receiveWORK stackSize:" << state_stack->size() << endl;
+			//cout << "p" << communicator->rank << " received receiveWORK stackSize:" << state_stack->size() << endl;
 			communicator->hasRequestedWork = false;
 			break;
 		case Communicator::SOLUTION:
@@ -75,6 +75,7 @@ void processMessages(){
 				cout << "p" << communicator->rank << " recived white token -> TERMINATE" << endl;
 				communicator->hasSentToken = true;
 				communicator->sendTerminateToAll();
+				communicator->hasReceivedTerminationRequest = true;
 			} else {
 				cout << "p" << communicator->rank << " received White Token and now isWaiting = " << communicator->isWaiting << endl;
 				if(communicator->isWaiting){
@@ -135,6 +136,8 @@ void compute(){
 	communicator->hasReceivedTerminationRequest = false;
 	communicator->hasRequestedWork = false;
 
+	bool printIdle = true;
+
 	while(!communicator->hasReceivedTerminationRequest){
 		communicator->isWaiting = false;
 		while(!state_stack->empty()){
@@ -143,13 +146,19 @@ void compute(){
 			cycleCounter++;
 			if (cycleCounter == 100){
 				if(communicator->hasReceivedMessages()){
-					cout << "p" << communicator->rank << " WORK -> proccessmesage" << endl;
+					//cout << "p" << communicator->rank << " WORK -> proccessmesage" << endl;
 					processMessages();
 				}
 				cycleCounter = 0;
 			}
+			printIdle = true;
 		}
 		communicator->isWaiting = true;
+
+		if(printIdle){
+			cout << "p" << communicator->rank << " idle" << endl;
+			printIdle = false;
+		}
 
 		//p0 posle White Token
 		if(!communicator->hasSentToken && communicator->rank == 0){
@@ -161,20 +170,20 @@ void compute(){
 		}
 
 		if(!communicator->hasRequestedWork){
-			cout << "p" << communicator->rank << " noWORK -> request work" << endl;
+			//cout << "p" << communicator->rank << " noWORK -> request work" << endl;
 			communicator->hasRequestedWork = true;
 			communicator->sendWorkRequest();
 		}
 
 		while(communicator->hasReceivedMessages()){
-			cout << "p" << communicator->rank << " noWORK -> proccessing all messages" << endl;
+			//cout << "p" << communicator->rank << " noWORK -> proccessing all messages" << endl;
 			processMessages();
 		}
 
 	}
 
 	cout << "p" << communicator->rank << "'s best solution" << endl;
-	//bestSolution->print();
+	bestSolution->print();
 
 	if(communicator->rank == 0){
 		/*State* globalBestSolution = NULL;
