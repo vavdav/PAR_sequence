@@ -55,19 +55,21 @@ public:
 
 	void finalize();
 
-	void sendStack(stack<State*> *stack, int proccessorID);
-	void receiveStack(stack<State*> *stack, int proccessorID);
-	void receiveStackSize();
-	void requestWork();
-
+	void sendWorkRequest();
 	void sendTerminateToAll();
 	void sendNoWork(int processorID);
 	void sendState(State* stateToSend, int proccessorID);
-
 	void sendTokenWhite();
 	void sendTokenBlack();
+	void sendStack(stack<State*> *stack, int proccessorID);
+
+	void receiveStack(stack<State*> *stack, int proccessorID);
+	void receiveStackSize();
 	void receiveTokenWhite();
 	void receiveTokenBlack();
+	void receiveWorkRequest();
+	void receiveNoWork();
+	void receiveTerminate();
 
 	State* receiveState();
 	State* receiveBestSolution();

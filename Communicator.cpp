@@ -72,7 +72,7 @@ int Communicator::hasReceivedMessages() {
 	return flag;
 }
 
-void Communicator::requestWork(){
+void Communicator::sendWorkRequest(){
 	int x = 0;
 	MPI_Send (&x, 1, MPI_INT, this->processorToAskForWork, Communicator::REQUEST_WORK, MPI_COMM_WORLD);
 
@@ -167,6 +167,19 @@ void Communicator::receiveTokenBlack(){
 	MPI_Recv(&x, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 }
 
+
+void Communicator::receiveWorkRequest(){
+	int x;
+	MPI_Recv(&x, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+}
+void Communicator::receiveNoWork(){
+	int x;
+	MPI_Recv(&x, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+}
+void Communicator::receiveTerminate(){
+	int x;
+	MPI_Recv(&x, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+}
 
 Communicator::~Communicator() {
 }

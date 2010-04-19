@@ -27,6 +27,7 @@ int bestSolutionNumberOfEdges;
 void processMessages(){
 	switch(communicator->getMessageType()){
 		case Communicator::REQUEST_WORK:
+			communicator->receiveWorkRequest();
 			if(state_stack->size() > 20){
 				communicator->sendStack(state_stack, communicator->status.MPI_SOURCE);
 			} else {
@@ -34,13 +35,16 @@ void processMessages(){
 			}
 			break;
 		case Communicator::NO_WORK:
+			communicator->receiveNoWork();
 			communicator->hasRequestedWork = false;
 			break;
 		case Communicator::SENDING_WORK_SIZE:
 			communicator->receiveStackSize();
 			break;
 		case Communicator::SENDING_WORK:
+			cout << "p" << communicator->rank << " before receiveWORK stackSize:" << state_stack->size() << endl;
 			communicator->receiveStack(state_stack, communicator->status.MPI_SOURCE);
+			cout << "p" << communicator->rank << " received receiveWORK stackSize:" << state_stack->size() << endl;
 			communicator->hasRequestedWork = false;
 			break;
 		case Communicator::SOLUTION:
@@ -51,25 +55,28 @@ void processMessages(){
 			}*/
 			break;
 		case Communicator::TERMINATE:
+			communicator->receiveTerminate();
 			communicator->hasReceivedTerminationRequest = true;
 			break;
 		case Communicator::TOKEN_BLACK:
 			communicator->receiveTokenBlack();
-			cout << "p" << communicator->rank << " received Black Token and now waiting = " << communicator->isWaiting << endl;
 			if(communicator->rank != 0){
+				cout << "p" << communicator->rank << " received Black -> somebody working" << endl;
 				communicator->hasSentToken = false;
 				//dalsi bily token se posle za dalsich X cyklu
 			} else {
+				cout << "p" << communicator->rank << " received Black Token and now isWaiting = " << communicator->isWaiting << endl;
 				communicator->sendTokenBlack();
 			}
 			break;
 		case Communicator::TOKEN_WHITE:
 			communicator->receiveTokenWhite();
-			cout << "p" << communicator->rank << " received White Token and now waiting = " << communicator->isWaiting << endl;
 			if(communicator->rank == 0){
+				cout << "p" << communicator->rank << " recived white token -> TERMINATE" << endl;
 				communicator->hasSentToken = true;
 				communicator->sendTerminateToAll();
 			} else {
+				cout << "p" << communicator->rank << " received White Token and now isWaiting = " << communicator->isWaiting << endl;
 				if(communicator->isWaiting){
 					communicator->sendTokenWhite();
 				} else {
@@ -115,6 +122,7 @@ void expandState(){
 }
 
 void compute(){
+	cout << "p" << communicator->rank << " compute" << endl;
 	states_count_push = 1;
 	states_count_pop = 0;
 	state1NumberOfEdges = state_stack->top()->getNumberOfEdges();
@@ -135,6 +143,7 @@ void compute(){
 			cycleCounter++;
 			if (cycleCounter == 100){
 				if(communicator->hasReceivedMessages()){
+					cout << "p" << communicator->rank << " WORK -> proccessmesage" << endl;
 					processMessages();
 				}
 				cycleCounter = 0;
@@ -145,25 +154,27 @@ void compute(){
 		//p0 posle White Token
 		if(!communicator->hasSentToken && communicator->rank == 0){
 			if(communicator->numProcesses > 1){
-				cout << "p" << communicator->rank << " sending White Token" << endl;
+				cout << "p" << communicator->rank << " noWORK -> sending White Token" << endl;
 				communicator->hasSentToken = true;
 				communicator->sendTokenWhite();
 			}
 		}
 
 		if(!communicator->hasRequestedWork){
+			cout << "p" << communicator->rank << " noWORK -> request work" << endl;
 			communicator->hasRequestedWork = true;
-			communicator->requestWork();
+			communicator->sendWorkRequest();
 		}
 
 		while(communicator->hasReceivedMessages()){
+			cout << "p" << communicator->rank << " noWORK -> proccessing all messages" << endl;
 			processMessages();
 		}
 
 	}
 
-	cout << "p" << communicator->rank << "'s best solution:" << endl;
-	bestSolution->print();
+	cout << "p" << communicator->rank << "'s best solution" << endl;
+	//bestSolution->print();
 
 	if(communicator->rank == 0){
 		/*State* globalBestSolution = NULL;
@@ -285,7 +296,7 @@ State* distributeStates(State * stateStart){
 	state_top = distribute_stack.top();
 	distribute_stack.pop();
 	cout << "firstState p0" << endl;
-	state_top->print();
+	//state_top->print();
 
 	return state_top;
 }
@@ -333,6 +344,8 @@ int main (int argc, char *argv[] )
 	if(state1 != NULL){
 		delete state1;
 	}
+
+	cout << "p" << communicator->rank << " ending" << endl;
 
 	communicator->finalize();
 
