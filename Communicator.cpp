@@ -116,11 +116,11 @@ void Communicator::receiveStack(stack<State*> *stack, int proccessorID){
 		char * buffer = new char[stackSize];
 		MPI_Recv(buffer, stackSize, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		State *state;
-		int pointer = 0;
-		while(pointer<stackSize){
+		int pointer = stackSize-stateSize;
+		while(pointer >= 0){
 			state = State::deserialize(buffer, stackSize, pointer, numOfVertices);
 			stack->push(state);
-			pointer += stateSize;
+			pointer -= stateSize;
 		}
 		//sizeSetForProccessorID = -1;
 	//}
@@ -132,18 +132,24 @@ void Communicator::receiveStackSize(){
 }
 
 State* Communicator::receiveBestSolution(){
-	State* receivedState = NULL;
-	/*MPI_Status status;
-	int numVertices;
-	MPI_Recv(&numVertices, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-	int length = numVertices*numVertices + sizeof(int)*2;
+	State* receivedState;
+	int length = stateSize;
 	char * buffer = new char[length];
 	MPI_Recv(buffer, length, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-	receivedState = State::deserialize(buffer, 0, numVertices);
+	receivedState = State::deserialize(buffer, length, 0, numOfVertices);
 
 	delete buffer;
-*/
+
 	return receivedState;
+}
+void Communicator::sendBestSolution(State* stateToSend){
+	int length = stateSize;
+	char * buffer = new char[length];
+	stateToSend->serialize(buffer, length, 0);
+	int tag = Communicator::SOLUTION;
+	MPI_Send (buffer, length, MPI_PACKED, 0, tag, MPI_COMM_WORLD);
+
+	delete buffer;
 }
 
 void Communicator::sendTokenWhite(){
@@ -179,6 +185,7 @@ void Communicator::receiveTerminate(){
 
 void Communicator::synchronizeBarrier(){
 	MPI_Barrier(MPI_COMM_WORLD);
+
 }
 
 Communicator::~Communicator() {

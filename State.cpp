@@ -7,6 +7,7 @@
 
 #include "State.h"
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -136,6 +137,74 @@ int State::isBipartite(){
 	delete p;*/
 
 	return bipartite;
+}
+
+void State::getBipartiteGroups(){
+	int* color = new int[this->numberOfVertices];
+	int* d = new int[this->numberOfVertices];
+	int* p = new int[this->numberOfVertices];
+	for (int i=0; i<this->numberOfVertices; i++){
+		color[i] = 0;
+		d[i] = 99999;
+		p[i] = 0;
+	}
+	int pom;
+	int start = 0;
+	queue <int> bfsFront;
+	color[start] = 1;
+	d[start] = 0;
+	bfsFront.push(start);
+	int path1Length;
+	int path2Length;
+
+	int bipartite = 1;
+	while (!bfsFront.empty()){
+		pom = bfsFront.front();
+		//cout << "in vertex " << pom << endl;
+		bfsFront.pop();
+		for (int i=0; i<this->numberOfVertices; i++){
+			if(this->adjacency->at(pom)->at(i) == 1){
+				if (color[i] == 0) {
+					color[i] = 1;
+					d[i] = d[pom] + 1;
+					p[i] = pom;
+					bfsFront.push(i);
+				} else {
+					//cout << "I was here " << i << " old d=" << d[i]%2 << " ?= " << (d[pom] + 1)%2 << endl;
+					path1Length = (d[i])%2;
+					path2Length = (d[pom] + 1)%2;
+					if(path1Length != path2Length){
+						//return false;
+						bipartite = 0;
+						//return 0;
+					}
+				}
+			}
+
+		color[pom] = 2;
+		}
+	}
+	ostringstream whiteGroup;
+	ostringstream blackGroup;
+	whiteGroup << "white states: (";
+	blackGroup << "black states: (";
+	for(int i = 0; i<this->numberOfVertices; i++){
+		if(d[i]%2 == 0) {
+			blackGroup << i << " ";
+		} else if(d[i]%2 == 1) {
+			whiteGroup << i << " ";
+		}
+	}
+
+	whiteGroup << ") ";
+	blackGroup << ") ";
+
+	cout << whiteGroup.str() << endl;
+	cout << blackGroup.str() << endl;
+
+	delete color;
+	delete d;
+	delete p;
 }
 
 int State::getNumberOfSuccessors(int index){

@@ -36,6 +36,7 @@ public:
 	void print();
 	virtual ~State();
 
+	void getBipartiteGroups();
 	char* serialize(char * buffer, int length, int position);
 
 	static State* deserialize(char* buffer, int length, int position, int numberOfVertices);

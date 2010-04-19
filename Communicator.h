@@ -70,7 +70,7 @@ public:
 	void receiveWorkRequest();
 	void receiveNoWork();
 	void receiveTerminate();
-
+	void sendBestSolution(State* stateToSend);
 	void synchronizeBarrier();
 
 	State* receiveState();
