@@ -16,7 +16,7 @@ State::State(matrix *adjacency, int depth, int edgeIndex) {
 	this->adjacency = adjacency;
 	this->edgeIndex = edgeIndex;
 	this->numberOfVertices = this->adjacency->size();
-	this->stateSize = sizeof(int)*numberOfVertices*numberOfVertices+sizeof(int)*2;
+	this->stateSize = sizeof(char)*numberOfVertices*numberOfVertices+sizeof(int)*2; // to same je i v staticke deserialize
 }
 
 
@@ -161,15 +161,16 @@ int State::getNumberOfEdges(){
 }
 
 char * State::serialize(char * buffer, int position){
-	int length = sizeof(char)*numberOfVertices*numberOfVertices+sizeof(int)*2;
+	int length = this->stateSize;
 	cout << "toPackStart " << length << " pos " << position << endl;
 
 	char ZERO = 0;
 	char ONE = 1;
 
 	MPI_Pack(&depth, 1, MPI_INT, buffer, length, &position, MPI_COMM_WORLD);
+	cout << "toPack1 " << length << " pos " << position << endl;
 	MPI_Pack(&edgeIndex, 1, MPI_INT, buffer, length, &position, MPI_COMM_WORLD);
-	cout << "toPack " << length << " pos " << position << endl;
+	cout << "toPack2 " << length << " pos " << position << endl;
 
 	for(int i = 0; i < numberOfVertices; i++){
 		for(int j = 0; j < numberOfVertices; j++){

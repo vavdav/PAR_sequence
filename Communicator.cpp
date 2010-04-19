@@ -91,6 +91,36 @@ void Communicator::sendNoWork(int processorID){
 	MPI_Send (&x, 1, MPI_INT, processorID, Communicator::NO_WORK, MPI_COMM_WORLD);
 }
 void Communicator::sendStack(stack<State*> *stack, int proccessorID){
+/*
+		int numStatesToPop = stack->size()/2;
+		int length = numStatesToPop * stateSize;
+
+		State* state;
+		char * buffer = new char[length];
+
+		for(int i=0; i<numStatesToPop; i++){
+			state = stack->top();
+			stack->pop();
+			cout << rank << "-go serialize " << i*stateSize << endl;
+			state->serialize(buffer, i*stateSize);
+
+			cout << "insert state " << i << ":" << endl;
+			state.print();
+
+			delete state;
+		}
+
+		cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXX get stack" << endl;
+
+		int pointer = 0;
+		while(pointer<stackSize){
+			state = State::deserialize(buffer, pointer, numOfVertices);
+			stack->push(state);
+			cout << "get state " << pointer << ":" << endl;
+			state.print();
+			pointer += stateSize;
+		}
+*/
 
 	cout << rank << "-S " << proccessorID << endl;
 
@@ -127,7 +157,7 @@ void Communicator::receiveStack(stack<State*> *stack, int proccessorID){
 		int pointer = 0;
 		while(pointer<stackSize){
 			state = State::deserialize(buffer, pointer, numOfVertices);
-			stack->push(State::deserialize(buffer, pointer, numOfVertices));
+			stack->push(state);
 			pointer += stateSize;
 		}
 		//sizeSetForProccessorID = -1;
