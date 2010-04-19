@@ -74,6 +74,7 @@ int Communicator::hasReceivedMessages() {
 
 void Communicator::sendWorkRequest(){
 	int x = 0;
+	cout << rank << "-" << this->processorToAskForWork << endl;
 	MPI_Send (&x, 1, MPI_INT, this->processorToAskForWork, Communicator::REQUEST_WORK, MPI_COMM_WORLD);
 
 	processorToAskForWork = (processorToAskForWork+1) % numProcesses;
@@ -91,9 +92,11 @@ void Communicator::sendNoWork(int processorID){
 }
 void Communicator::sendStack(stack<State*> *stack, int proccessorID){
 
+	cout << rank << "-S " << proccessorID << endl;
+
 	int numStatesToPop = stack->size()/2;
 	int length = sizeof(State) * stateSize;
-	int tag = SENDING_WORK_SIZE;
+	int tag = Communicator::SENDING_WORK_SIZE;
 
 	MPI_Send (&length, 1, MPI_INT, proccessorID, tag, MPI_COMM_WORLD);
 
@@ -107,7 +110,7 @@ void Communicator::sendStack(stack<State*> *stack, int proccessorID){
 		delete state;
 	}
 
-	tag = SENDING_WORK;
+	tag = Communicator::SENDING_WORK;
 	MPI_Send (buffer, length, MPI_PACKED, proccessorID, tag, MPI_COMM_WORLD);
 
 	delete buffer;
@@ -116,7 +119,8 @@ void Communicator::sendStack(stack<State*> *stack, int proccessorID){
 void Communicator::receiveStack(stack<State*> *stack, int proccessorID){
 	//nemuze nastat situace, ze by prisel stack od jineho procesoru, nez poslal stackSize, protoze vysleme max 1 zadost. -> proto zakomentovany if
 	//if(proccessorID == sizeSetForProccessorID)
-	{
+	//{
+		cout << rank << "-RS " << sizeSetForProccessorID << "=" << proccessorID << endl;
 		char * buffer = new char[stackSize];
 		MPI_Recv(buffer, stackSize, MPI_PACKED, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		State *state;
@@ -127,10 +131,11 @@ void Communicator::receiveStack(stack<State*> *stack, int proccessorID){
 			pointer += stateSize;
 		}
 		//sizeSetForProccessorID = -1;
-	}
+	//}
 }
 void Communicator::receiveStackSize(){
 	MPI_Recv(&stackSize, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+	cout << rank << "-R " << stackSize << endl;
 	//id procesoru si nemusime ukladat, vzdy se jedna jen o 1 zadost o praci
 	//sizeSetForProccessorID = status.MPI_SOURCE;
 }
@@ -179,6 +184,10 @@ void Communicator::receiveNoWork(){
 void Communicator::receiveTerminate(){
 	int x;
 	MPI_Recv(&x, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+}
+
+void Communicator::synchronizeBarrier(){
+	MPI_Barrier(MPI_COMM_WORLD);
 }
 
 Communicator::~Communicator() {

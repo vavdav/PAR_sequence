@@ -71,6 +71,8 @@ public:
 	void receiveNoWork();
 	void receiveTerminate();
 
+	void synchronizeBarrier();
+
 	State* receiveState();
 	State* receiveBestSolution();
 	int hasReceivedMessages();

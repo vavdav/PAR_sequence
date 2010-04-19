@@ -61,23 +61,23 @@ void processMessages(){
 		case Communicator::TOKEN_BLACK:
 			communicator->receiveTokenBlack();
 			if(communicator->rank != 0){
-				cout << "p" << communicator->rank << " received Black -> somebody working" << endl;
+				cout << "p" << communicator->rank << " rBlack -> sw" << endl;
 				communicator->hasSentToken = false;
 				//dalsi bily token se posle za dalsich X cyklu
 			} else {
-				cout << "p" << communicator->rank << " received Black Token and now isWaiting = " << communicator->isWaiting << endl;
+				cout << "p" << communicator->rank << " rBlack " << endl;
 				communicator->sendTokenBlack();
 			}
 			break;
 		case Communicator::TOKEN_WHITE:
 			communicator->receiveTokenWhite();
 			if(communicator->rank == 0){
-				cout << "p" << communicator->rank << " recived white token -> TERMINATE" << endl;
+				cout << "p" << communicator->rank << " rW -> TERMINATE" << endl;
 				communicator->hasSentToken = true;
 				communicator->sendTerminateToAll();
 				communicator->hasReceivedTerminationRequest = true;
 			} else {
-				cout << "p" << communicator->rank << " received White Token and now isWaiting = " << communicator->isWaiting << endl;
+				cout << "p" << communicator->rank << " rWhite" << endl;
 				if(communicator->isWaiting){
 					communicator->sendTokenWhite();
 				} else {
@@ -123,12 +123,14 @@ void expandState(){
 }
 
 void compute(){
+	communicator->synchronizeBarrier();
 	cout << "p" << communicator->rank << " compute" << endl;
 	states_count_push = 1;
 	states_count_pop = 0;
 	state1NumberOfEdges = state_stack->top()->getNumberOfEdges();
 
 	int cycleCounter = 0;
+	int cycleCounter1 = 100;
 
 	communicator->stateSize = state_stack->top()->stateSize;
 	communicator->numOfVertices = state_stack->top()->numberOfVertices;
@@ -156,24 +158,27 @@ void compute(){
 		communicator->isWaiting = true;
 
 		if(printIdle){
-			cout << "p" << communicator->rank << " idle" << endl;
+			cout << "p" << communicator->rank << " i" << endl;
 			printIdle = false;
 		}
 
 		//p0 posle White Token
 		if(!communicator->hasSentToken && communicator->rank == 0){
 			if(communicator->numProcesses > 1){
-				cout << "p" << communicator->rank << " noWORK -> sending White Token" << endl;
+				cout << "p" << communicator->rank << " sW" << endl;
 				communicator->hasSentToken = true;
 				communicator->sendTokenWhite();
 			}
 		}
 
-		if(!communicator->hasRequestedWork){
-			//cout << "p" << communicator->rank << " noWORK -> request work" << endl;
-			communicator->hasRequestedWork = true;
-			communicator->sendWorkRequest();
+		if (cycleCounter1 == 200){
+			if(!communicator->hasRequestedWork){
+				communicator->hasRequestedWork = true;
+				communicator->sendWorkRequest();
+			}
+			cycleCounter1 = 0;
 		}
+		cycleCounter1++;
 
 		while(communicator->hasReceivedMessages()){
 			//cout << "p" << communicator->rank << " noWORK -> proccessing all messages" << endl;
