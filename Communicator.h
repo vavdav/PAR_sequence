@@ -26,6 +26,7 @@ public:
 	static const int TOKEN_BLACK = 5;
 	static const int TERMINATE = 6;
 	static const int SOLUTION = 7;
+	static const int NO_SOLUTION = 9;
 
 
 	Communicator(int argc, char* argv[]);
@@ -63,6 +64,7 @@ public:
 	void sendTokenBlack();
 	void sendStack(stack<State*> *stack, int proccessorID);
 
+	void receiveNoSolution();
 	void receiveStack(stack<State*> *stack, int proccessorID);
 	void receiveStackSize();
 	void receiveTokenWhite();
