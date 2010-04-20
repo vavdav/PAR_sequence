@@ -109,7 +109,7 @@ void expandState(){
 		//push state with edge
 		state_stack->push(successors[1]);
 		states_count_push++;
-		delete successors;
+		delete[] successors;
 	}
 
 	if(bipartityTest == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
