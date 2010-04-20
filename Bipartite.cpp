@@ -73,6 +73,8 @@ void processMessages(){
 				communicator->sendTerminateToAll();
 				communicator->hasReceivedTerminationRequest = true;
 			} else {
+
+				//procesor ktery odeslal praci si ulozi flag komu, kdyz prijde pesek a on poslal praci nizsimu procesoru tak MUSI poslat cerny token
 				if(communicator->isWaiting){
 					// zpetne poslani prace
 					if(communicator->hasReceivedWorkFromLowerNumber) {
@@ -88,17 +90,21 @@ void processMessages(){
 		break;
 	}
 }
-void processSolution(){
+void processSolution(int * counter){
+	cout << "message type " << communicator->getMessageType() << endl;
 	switch(communicator->getMessageType()){
 		case Communicator::SOLUTION:
+			cout << "sol " << counter << endl;
 			State * receivedBest;
 			receivedBest = communicator->receiveBestSolution();
 			if(bestSolutionNumberOfEdges < receivedBest->getNumberOfEdges()){
 				bestSolution = receivedBest;
 			}
+			counter--;
 			break;
 		case Communicator::NO_SOLUTION:
 			communicator->receiveNoSolution();
+			counter--;
 		break;
 	}
 }
@@ -198,8 +204,14 @@ void compute(){
 	t2=MPI_Wtime();
 
 	if(communicator->rank == 0){
-		for(int i = 1; i<communicator->numProcesses; i++){
-			processSolution();
+		int counter = communicator->numProcesses;
+		int maxCycle = 0;
+		while(counter != 1){
+			processSolution(&counter);
+			if(maxCycle == 200) {
+				break;
+			}
+			maxCycle++;
 		}
 		bestSolution->print();
 		bestSolution->getBipartiteGroups();
