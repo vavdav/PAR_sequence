@@ -38,6 +38,7 @@ void processMessages(){
 					communicator->hasReceivedWorkFromLowerNumber = false;
 				}
 				communicator->sendStack(state_stack, communicator->status.MPI_SOURCE);
+			}
 			break;
 		case Communicator::NO_WORK:
 			communicator->receiveNoWork();
@@ -77,10 +78,7 @@ void processMessages(){
 					if(communicator->hasReceivedWorkFromLowerNumber) {
 						communicator->sendTokenBlack();
 						communicator->hasReceivedWorkFromLowerNumber;
-					}
-					else
-					{
-
+					} else {
 						communicator->sendTokenWhite();
 					}
 				} else {
