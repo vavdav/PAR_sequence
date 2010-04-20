@@ -50,6 +50,7 @@ public:
 
 	int rank;
 	int numProcesses;
+	bool hasReceivedWorkFromLowerNumber;
 
 	int getRank();
 	int getNumProcesses();

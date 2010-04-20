@@ -15,6 +15,7 @@ Communicator::Communicator(int argc, char* argv[]) {
 	hasSentToken = false;
 	hasReceivedTerminationRequest = false;
 	sizeSetForProccessorID = -1;
+	hasReceivedWorkFromLowerNumber = false;
 
 	processorToAskForWork = (rank + 1) % numProcesses;
 	processorToSendTokenTo = (rank+1)%numProcesses;

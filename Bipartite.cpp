@@ -31,10 +31,13 @@ void processMessages(){
 		case Communicator::REQUEST_WORK:
 			communicator->receiveWorkRequest();
 			if(state_stack->size() > 4){
+				if(communicator->status.MPI_SOURCE > communicator->rank) {
+					communicator->hasReceivedWorkFromLowerNumber = true;
+				}
+				else {
+					communicator->hasReceivedWorkFromLowerNumber = false;
+				}
 				communicator->sendStack(state_stack, communicator->status.MPI_SOURCE);
-			} else {
-				communicator->sendNoWork(communicator->status.MPI_SOURCE);
-			}
 			break;
 		case Communicator::NO_WORK:
 			communicator->receiveNoWork();
@@ -70,7 +73,16 @@ void processMessages(){
 				communicator->hasReceivedTerminationRequest = true;
 			} else {
 				if(communicator->isWaiting){
-					communicator->sendTokenWhite();
+					// zpetne poslani prace
+					if(communicator->hasReceivedWorkFromLowerNumber) {
+						communicator->sendTokenBlack();
+						communicator->hasReceivedWorkFromLowerNumber;
+					}
+					else
+					{
+
+						communicator->sendTokenWhite();
+					}
 				} else {
 					communicator->sendTokenBlack();
 				}
