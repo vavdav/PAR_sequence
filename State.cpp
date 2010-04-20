@@ -186,8 +186,8 @@ void State::getBipartiteGroups(){
 	}
 	ostringstream whiteGroup;
 	ostringstream blackGroup;
-	whiteGroup << "white states: (";
-	blackGroup << "black states: (";
+	whiteGroup << "white vertices: ( ";
+	blackGroup << "black vertices: ( ";
 	for(int i = 0; i<this->numberOfVertices; i++){
 		if(d[i]%2 == 0) {
 			blackGroup << i << " ";

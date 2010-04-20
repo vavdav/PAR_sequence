@@ -49,13 +49,6 @@ void processMessages(){
 			//cout << "p" << communicator->rank << " rstack:" << state_stack->size() << endl;
 			communicator->hasRequestedWork = false;
 			break;
-		case Communicator::SOLUTION:
-			/*State* bestSolutionReceived = communicator->receiveBestSolution();
-			if(bestSolutionReceived->getNumberOfEdges() > bestSolution->getNumberOfEdges()){
-				bestSolution = bestSolutionReceived;
-				bestSolutionNumberOfEdges = bestSolution->getNumberOfEdges();
-			}*/
-			break;
 		case Communicator::TERMINATE:
 			communicator->receiveTerminate();
 			communicator->hasReceivedTerminationRequest = true;
@@ -85,6 +78,21 @@ void processMessages(){
 		break;
 	}
 }
+void processSolution(){
+	switch(communicator->getMessageType()){
+		case Communicator::SOLUTION:
+			State * receivedBest;
+			receivedBest = communicator->receiveBestSolution();
+			if(bestSolutionNumberOfEdges < receivedBest->getNumberOfEdges()){
+				bestSolution = receivedBest;
+			}
+			break;
+		case Communicator::NO_SOLUTION:
+			communicator->receiveNoSolution();
+		break;
+	}
+}
+
 int states_count_push;
 int states_count_pop;
 int state1NumberOfEdges;
@@ -175,20 +183,14 @@ void compute(){
 		}
 
 	}
+
 	communicator->synchronizeBarrier();
 	t2=MPI_Wtime();
 
 	if(communicator->rank == 0){
-		State * receivedBest;
 		for(int i = 1; i<communicator->numProcesses; i++){
- 			receivedBest = communicator->receiveBestSolution();
-			if(bestSolutionNumberOfEdges < receivedBest->getNumberOfEdges()){
-				cout << "lepsi reseni " << i << endl;
-				bestSolution = receivedBest;
-			}
+			processSolution();
 		}
-		cout << "time is:" << (t2-t1) << endl;
-		cout << "best solution is:" << endl;
 		bestSolution->print();
 		bestSolution->getBipartiteGroups();
 		delete bestSolution;

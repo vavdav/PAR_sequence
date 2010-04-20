@@ -143,15 +143,26 @@ State* Communicator::receiveBestSolution(){
 	return receivedState;
 }
 void Communicator::sendBestSolution(State* stateToSend){
-	int length = stateSize;
-	char * buffer = new char[length];
-	stateToSend->serialize(buffer, length, 0);
-	int tag = Communicator::SOLUTION;
-	MPI_Send (buffer, length, MPI_PACKED, 0, tag, MPI_COMM_WORLD);
+	if(stateToSend){
+		int length = stateSize;
+		char * buffer = new char[length];
+		stateToSend->serialize(buffer, length, 0);
+		int tag = Communicator::SOLUTION;
+		MPI_Send (buffer, length, MPI_PACKED, 0, tag, MPI_COMM_WORLD);
 
-	delete buffer;
+		delete buffer;
+	} else {
+		int tag = Communicator::NO_SOLUTION;
+		int x = 0;
+		MPI_Send (&x, 1, MPI_INT, 0, tag, MPI_COMM_WORLD);
+
+	}
 }
+void Communicator::receiveNoSolution(){
+	int x;
+	MPI_Recv(&x, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
+}
 void Communicator::sendTokenWhite(){
 	int x = 0;
 	MPI_Send (&x, 1, MPI_INT, processorToSendTokenTo, Communicator::TOKEN_WHITE, MPI_COMM_WORLD);
