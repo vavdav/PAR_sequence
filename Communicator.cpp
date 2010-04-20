@@ -140,10 +140,12 @@ State* Communicator::receiveBestSolution(){
 
 	delete buffer;
 
+	cout << rank << " received bestsol" << endl;
 	return receivedState;
 }
 void Communicator::sendBestSolution(State* stateToSend){
 	if(stateToSend){
+		cout << rank << " sending bestsol" << endl;
 		int length = stateSize;
 		char * buffer = new char[length];
 		stateToSend->serialize(buffer, length, 0);
@@ -152,6 +154,7 @@ void Communicator::sendBestSolution(State* stateToSend){
 
 		delete buffer;
 	} else {
+		cout << rank << " sending noSol" << endl;
 		int tag = Communicator::NO_SOLUTION;
 		int x = 0;
 		MPI_Send (&x, 1, MPI_INT, 0, tag, MPI_COMM_WORLD);
@@ -161,6 +164,8 @@ void Communicator::sendBestSolution(State* stateToSend){
 void Communicator::receiveNoSolution(){
 	int x;
 	MPI_Recv(&x, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+
+	cout << rank << " received nobestsol" << endl;
 
 }
 void Communicator::sendTokenWhite(){

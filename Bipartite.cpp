@@ -81,8 +81,10 @@ void processMessages(){
 	}
 }
 void processSolution(int * counter){
+	cout << "message type " << communicator->getMessageType() << endl;
 	switch(communicator->getMessageType()){
 		case Communicator::SOLUTION:
+			cout << "sol " << counter << endl;
 			State * receivedBest;
 			receivedBest = communicator->receiveBestSolution();
 			if(bestSolutionNumberOfEdges < receivedBest->getNumberOfEdges()){
@@ -193,9 +195,13 @@ void compute(){
 
 	if(communicator->rank == 0){
 		int counter = communicator->numProcesses;
-
+		int maxCycle = 0;
 		while(counter != 1){
 			processSolution(&counter);
+			if(maxCycle == 200) {
+				break;
+			}
+			maxCycle++;
 		}
 		bestSolution->print();
 		bestSolution->getBipartiteGroups();
