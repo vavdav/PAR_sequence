@@ -1,0 +1,1 @@
+./par data12.txt

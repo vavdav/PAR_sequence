@@ -22,10 +22,6 @@ State::State(matrix *adjacency, int depth, int edgeIndex)
 
 
 State** State::getSuccessors(){
-	if(edgeIndex == 1){
-		cout << "branch" << endl;
-		this->print();
-	}
 	matrix** newAdjacencies = new matrix*[2];
 	matrix *newAdjacency;
 	vector<int> *v;

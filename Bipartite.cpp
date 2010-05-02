@@ -35,7 +35,7 @@ int main (int argc, char *argv[] )
 		return -1;
 	}
 	fileName = argv[1];*/
-	fileName = "data/data12-7.txt";
+	fileName = "data10b.txt";
 	GraphReader reader;
 	State *state1 = reader.getFirstStateFromFile(fileName);
 	stack<State*> state_stack;
@@ -81,9 +81,6 @@ int main (int argc, char *argv[] )
 			if(bipartityTest == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
 				bestSolutionNumberOfEdges = currentSolutionNumberOfEdges;
 				bestSolution = state_top;
-				cout << "have best solution " << bestSolutionNumberOfEdges << endl;
-				seconds1 = time (NULL);
-				cout << "time:" << (seconds1-seconds0) << endl;
 			} else {
 				delete state_top;
 			}
