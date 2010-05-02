@@ -11,30 +11,40 @@
 using namespace std;
 
 
-State::State(matrix *adjacency, int depth, int edgeIndex) {
+State::State(matrix *adjacency, int depth, int edgeIndex)
+{
 	this->depth = depth;
 	this->adjacency = adjacency;
 	this->edgeIndex = edgeIndex;
 	this->numberOfVertices = this->adjacency->size();
+
 }
 
 
 State** State::getSuccessors(){
+	if(edgeIndex == 1){
+		cout << "branch" << endl;
+		this->print();
+	}
 	matrix** newAdjacencies = new matrix*[2];
 	matrix *newAdjacency;
+	vector<int> *v;
+	State** states = new State*[2];
+
 	int iToChange = -1;
 	int jToChange = -1;
 	bool successorFound;
-	vector<int> *v;
-	State** states = new State*[2];
-	//cout << "get successors" << endl;
+
 	successorFound = false;
+
 	for(int adjacency_index = 0; adjacency_index < 2; adjacency_index++ ){
 		matrix* new_adjacency = new matrix(this->numberOfVertices);
+
 		for(int i = 0; i < this->numberOfVertices; i++){
 			v = new vector<int>(this->numberOfVertices);
 			new_adjacency->at(i) = v;
 		}
+
 		newAdjacencies[adjacency_index] = new_adjacency;
 		newAdjacency = newAdjacencies[adjacency_index];
 		for(int i = 0; i < this->numberOfVertices; i++){
@@ -51,15 +61,26 @@ State** State::getSuccessors(){
 				}
 			}
 		}
+
 	}
 	if (successorFound){
 		newAdjacencies[0]->at(iToChange)->at(jToChange) = 0;
 		newAdjacencies[0]->at(jToChange)->at(iToChange) = 0;
+		for (int i=0; i<2; i++){
+			states[i] = new State(newAdjacencies[i], this->depth+1, this->numberOfVertices*iToChange+jToChange);
+		}
+	} else {
+		for(int adjacency_index = 0; adjacency_index < 2; adjacency_index++ ){
+			for(int i = 0; i < this->numberOfVertices; i++){
+				delete newAdjacencies[adjacency_index]->at(i);
+			}
+		}
+		delete newAdjacency;
+		delete [] states;
+		delete [] newAdjacencies;
+		states = NULL;
 	}
 
-	for (int i=0; i<2; i++){
-		states[i] = new State(newAdjacencies[i], this->depth+1, this->numberOfVertices*iToChange+jToChange);
-	}
 	return states;
 }
 
@@ -124,6 +145,9 @@ int State::isBipartite(){
 			bipartite = -1;
 		}
 	}
+	delete [] color;
+	delete [] d;
+	delete [] p;
 
 	return bipartite;
 }
