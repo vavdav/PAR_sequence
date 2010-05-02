@@ -35,7 +35,7 @@ int main (int argc, char *argv[] )
 		return -1;
 	}
 	fileName = argv[1];*/
-	fileName = "graph4.txt";
+	fileName = "data/data12-7.txt";
 	GraphReader reader;
 	State *state1 = reader.getFirstStateFromFile(fileName);
 	stack<State*> state_stack;
@@ -76,10 +76,7 @@ int main (int argc, char *argv[] )
 					state_stack.push(successors[1]);
 					states_count_push++;
 					delete [] successors;
-				} else {
-					//cout << "NULL" << endl;
 				}
-
 			}
 			if(bipartityTest == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
 				bestSolutionNumberOfEdges = currentSolutionNumberOfEdges;
