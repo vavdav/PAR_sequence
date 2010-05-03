@@ -114,7 +114,7 @@ void expandState(){
 	states_count_pop++;
 	currentSolutionNumberOfEdges = state_top->getNumberOfEdges();
 	bipartityTest = state_top->isBipartite();
-	if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth && bipartityTest>-1){
+	if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges > state_top->depth && bipartityTest>-1){
 		successors = state_top->getSuccessors();
 
 		//push state without edge
@@ -192,22 +192,22 @@ void compute(){
 
 	communicator->synchronizeBarrier();
 	t2=MPI_Wtime();
-
+	cout << (t2-t1) << endl;
 	if(communicator->rank == 0){
 		int counter = communicator->numProcesses;
 		int maxCycle = 0;
-		while(counter != 1){
+		/*while(counter != 1){
 			processSolution(&counter);
 			if(maxCycle == 200) {
 				break;
 			}
 			maxCycle++;
-		}
+		}*/
 		bestSolution->print();
 		bestSolution->getBipartiteGroups();
 		delete bestSolution;
 	} else {
-		communicator->sendBestSolution(bestSolution);
+		//communicator->sendBestSolution(bestSolution);
 		delete bestSolution;
 	}
 
