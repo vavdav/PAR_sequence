@@ -33,9 +33,9 @@ int main (int argc, char *argv[] )
 	/*if ( argc != 2 ) {
 		cout<<"usage: "<< "PAR" <<" <filename>" << endl;
 		return -1;
-	}
-	fileName = argv[1];*/
-	fileName = "data10b.txt";
+	}*/
+	fileName = argv[1];
+	fileName = "data10.txt";
 	GraphReader reader;
 	State *state1 = reader.getFirstStateFromFile(fileName);
 	stack<State*> state_stack;
@@ -66,7 +66,7 @@ int main (int argc, char *argv[] )
 			states_count_pop++;
 			currentSolutionNumberOfEdges = state_top->getNumberOfEdges();
 			bipartityTest = state_top->isBipartite();
-			if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth && bipartityTest>-1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
+			if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges > state_top->depth && bipartityTest>-1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
 				successors = state_top->getSuccessors();
 				if(successors != NULL){
 					//push state without edge
