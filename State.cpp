@@ -22,7 +22,59 @@ State::State(matrix *adjacency, int depth, int edgeIndex)
 
 
 State** State::getSuccessors(){
-	matrix** newAdjacencies = new matrix*[2];
+	matrix *newAdjacency0 = new matrix(this->numberOfVertices);
+	matrix *newAdjacency1 = new matrix(this->numberOfVertices);
+	State** states = new State*[2];
+	int iToChange = -1;
+	int jToChange = -1;
+	bool successorFound;
+
+	for(int i = 0; i < this->numberOfVertices; i++){
+		newAdjacency0->at(i) = new vector<int>(this->numberOfVertices);
+		newAdjacency1->at(i) = new vector<int>(this->numberOfVertices);
+	}
+	for(int i = 0; i < this->numberOfVertices; i++){
+		for(int j = i; j < this->numberOfVertices; j++){
+			newAdjacency0->at(i)->at(j) = this->adjacency->at(i)->at(j);
+			newAdjacency0->at(j)->at(i) = this->adjacency->at(i)->at(j);
+			newAdjacency1->at(i)->at(j) = this->adjacency->at(i)->at(j);
+			newAdjacency1->at(j)->at(i) = this->adjacency->at(i)->at(j);
+
+			//POROVNAM ZDA JSEM ZA INDEXEM AKTUALNI HO SOUSEDA
+			if(!successorFound && this->numberOfVertices*i+j > edgeIndex){
+				if(this->adjacency->at(i)->at(j) == 1){
+					iToChange = i;
+					jToChange = j;
+					successorFound = true;
+				}
+			}
+		}
+	}
+	if (successorFound){
+		newAdjacency0->at(iToChange)->at(jToChange) = 0;
+		newAdjacency0->at(jToChange)->at(iToChange) = 0;
+
+		states[0] = new State(newAdjacency0, this->depth+1, this->numberOfVertices*iToChange+jToChange);
+		states[1] = new State(newAdjacency1, this->depth+1, this->numberOfVertices*iToChange+jToChange);
+
+		newAdjacency0 = NULL;
+		newAdjacency1 = NULL;
+		delete newAdjacency0;
+		delete newAdjacency1;
+	} else {
+		for(int i = 0; i < this->numberOfVertices; i++){
+			delete newAdjacency0->at(i);
+			delete newAdjacency1->at(i);
+		}
+		delete newAdjacency0;
+		delete newAdjacency1;
+		delete [] states;
+		states = NULL;
+	}
+
+	return states;
+
+	/*matrix** newAdjacencies = new matrix*[2];
 	matrix *newAdjacency;
 	vector<int> *v;
 	State** states = new State*[2];
@@ -39,6 +91,7 @@ State** State::getSuccessors(){
 		for(int i = 0; i < this->numberOfVertices; i++){
 			v = new vector<int>(this->numberOfVertices);
 			new_adjacency->at(i) = v;
+			v = NULL;
 		}
 
 		newAdjacencies[adjacency_index] = new_adjacency;
@@ -64,7 +117,12 @@ State** State::getSuccessors(){
 		newAdjacencies[0]->at(jToChange)->at(iToChange) = 0;
 		for (int i=0; i<2; i++){
 			states[i] = new State(newAdjacencies[i], this->depth+1, this->numberOfVertices*iToChange+jToChange);
+			newAdjacencies[i] = NULL;
 		}
+		newAdjacency = NULL;
+		delete [] newAdjacencies;
+		delete newAdjacency;
+		delete v;
 	} else {
 		for(int adjacency_index = 0; adjacency_index < 2; adjacency_index++ ){
 			for(int i = 0; i < this->numberOfVertices; i++){
@@ -75,9 +133,10 @@ State** State::getSuccessors(){
 		delete [] states;
 		delete [] newAdjacencies;
 		states = NULL;
+		delete v;
 	}
 
-	return states;
+	return states;*/
 }
 
 void State::print(){

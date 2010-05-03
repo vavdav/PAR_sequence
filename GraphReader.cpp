@@ -44,6 +44,7 @@ State* GraphReader::getFirstStateFromFile(char *fileName){
 
 	State *newState = new State(adjacency, 0, 0);
 
+	adjacency = NULL;
 	return newState;
 }
 
