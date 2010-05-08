@@ -1,0 +1,2 @@
+MY_PARALLEL_PROGRAM="./par graph5.txt"
+mpirun -np $NSLOTS ${MY_PARALLEL_PROGRAM}
