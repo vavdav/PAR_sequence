@@ -56,7 +56,6 @@ State** State::getSuccessors(){
 
 		states[0] = new State(newAdjacency0, this->depth+1, this->numberOfVertices*iToChange+jToChange);
 		states[1] = new State(newAdjacency1, this->depth+1, this->numberOfVertices*iToChange+jToChange);
-
 		newAdjacency0 = NULL;
 		newAdjacency1 = NULL;
 		delete newAdjacency0;
