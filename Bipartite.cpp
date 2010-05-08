@@ -114,6 +114,7 @@ void expandState(){
 	states_count_pop++;
 	currentSolutionNumberOfEdges = state_top->getNumberOfEdges();
 	bipartityTest = state_top->isBipartite();
+
 	if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges > state_top->depth && bipartityTest>-1){
 		successors = state_top->getSuccessors();
 
@@ -152,7 +153,9 @@ void compute(){
 	communicator->hasReceivedTerminationRequest = false;
 	communicator->hasRequestedWork = false;
 
+	cout << "compute " << communicator->rank << endl;
 	while(!communicator->hasReceivedTerminationRequest){
+		cout << "notreceived terminate " << communicator->rank << endl;
 		communicator->isWaiting = false;
 		while(!state_stack->empty()){
 			expandState();
@@ -189,6 +192,7 @@ void compute(){
 		}
 
 	}
+	cout << "compute end " << communicator->rank << endl;
 
 	communicator->synchronizeBarrier();
 	t2=MPI_Wtime();

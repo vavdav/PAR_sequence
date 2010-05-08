@@ -58,6 +58,7 @@ State** State::getSuccessors(){
 		states[1] = new State(newAdjacency1, this->depth+1, this->numberOfVertices*iToChange+jToChange);
 
 	} else {
+		cout << "successor not found" << endl;
 		for(int i = 0; i < this->numberOfVertices; i++){
 			delete newAdjacency0->at(i);
 			delete newAdjacency1->at(i);
