@@ -1,1 +1,1 @@
-./par new_data12-29.txt
+./par data/new_data12-29.txt

@@ -238,7 +238,7 @@ State* distributeStates(State * stateStart){
 			distribute_stack.push(successors[0]);
 			//push state with edge
 			distribute_stack.push(successors[1]);
-			delete successors;
+			delete [] successors;
 		}
 		delete state_top;
 	}
