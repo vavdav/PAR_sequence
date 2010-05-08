@@ -117,14 +117,15 @@ void expandState(){
 
 	if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges > state_top->depth && bipartityTest>-1){
 		successors = state_top->getSuccessors();
-
-		//push state without edge
-		state_stack->push(successors[0]);
-		states_count_push++;
-		//push state with edge
-		state_stack->push(successors[1]);
-		states_count_push++;
-		delete successors;
+    if(successors != NULL){
+  		//push state without edge
+  		state_stack->push(successors[0]);
+  		states_count_push++;
+  		//push state with edge
+  		state_stack->push(successors[1]);
+  		states_count_push++;
+  		delete [] successors;
+		}
 	}
 
 	if(bipartityTest == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
@@ -225,7 +226,7 @@ State* distributeStates(State * stateStart){
 	int state1NumberOfEdges = stateStart->getNumberOfEdges();
 	int currentSolutionNumberOfEdges;
 	int bipartityTest;
-
+	cout << "distributing states start " << communicator->rank << endl;
 	while(distribute_stack.size() != communicator->numProcesses){
 		state_top = distribute_stack.top();
 		distribute_stack.pop();
@@ -234,11 +235,13 @@ State* distributeStates(State * stateStart){
 
 		if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges >= state_top->depth && bipartityTest>-1){
 			successors = state_top->getSuccessors();
-			//push state without edge
-			distribute_stack.push(successors[0]);
-			//push state with edge
-			distribute_stack.push(successors[1]);
-			if (successors ) delete [] successors;
+			if(successors != NULL){
+  			//push state without edge
+  			distribute_stack.push(successors[0]);
+  			//push state with edge
+  			distribute_stack.push(successors[1]);
+  			delete [] successors;
+			}
 		}
 		delete state_top;
 	}
@@ -292,6 +295,7 @@ int main (int argc, char *argv[] )
 	communicator = new Communicator(argc, argv);
 
 	bestSolutionNumberOfEdges = 0;
+	cout << "hello from " << communicator->rank << " numProc: " << communicator->numProcesses << endl;
 	if(communicator->rank == 0){
 		mainProccessor(state1, argv[1]);
 	} else {
