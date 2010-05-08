@@ -62,6 +62,7 @@ State** State::getSuccessors(){
 		delete newAdjacency0;
 		delete newAdjacency1;
 	} else {
+		cout << "successor not found" << endl;
 		for(int i = 0; i < this->numberOfVertices; i++){
 			delete newAdjacency0->at(i);
 			delete newAdjacency1->at(i);
