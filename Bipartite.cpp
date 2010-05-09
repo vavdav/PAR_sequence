@@ -23,13 +23,23 @@ Communicator *communicator;
 stack<State*> *state_stack;
 State *bestSolution;
 int bestSolutionNumberOfEdges;
-
+int bestSolutionNumberOfEdgesIncome;
 int maxEdgeIndex;
 
 double t1, t2;
 
 void processMessages(){
 	switch(communicator->getMessageType()){
+		case Communicator::NEW_CURRENT_BEST:
+			bestSolutionNumberOfEdgesIncome = communicator->receiveNewBestSoultionNumberOfEdges();
+			if(bestSolutionNumberOfEdges < bestSolutionNumberOfEdgesIncome){
+				bestSolutionNumberOfEdges = bestSolutionNumberOfEdgesIncome;
+				delete bestSolution;
+				bestSolution = NULL;
+			} else {
+				communicator->sendNewBestSolutionNumberOfEdgesToAll(bestSolutionNumberOfEdges);
+			}
+			break;
 		case Communicator::REQUEST_WORK:
 			communicator->receiveWorkRequest();
 			if(state_stack->size() > 4){
@@ -132,6 +142,7 @@ void expandState(){
 		cout << communicator->rank << " best sol:" << currentSolutionNumberOfEdges << endl;
 		bestSolutionNumberOfEdges = currentSolutionNumberOfEdges;
 		bestSolution = state_top;
+		communicator->sendNewBestSolutionNumberOfEdgesToAll(bestSolutionNumberOfEdges);
 	} else {
 		delete state_top;
 	}
@@ -206,12 +217,16 @@ void compute(){
 			}
 			maxCycle++;
 		}*/
-		bestSolution->print();
-		bestSolution->getBipartiteGroups();
-		delete bestSolution;
+		if(bestSolution != NULL){
+			bestSolution->getBipartiteGroups();
+			delete bestSolution;
+		}
 	} else {
 		//communicator->sendBestSolution(bestSolution);
-		delete bestSolution;
+		if(bestSolution != NULL){
+			bestSolution->getBipartiteGroups();
+			delete bestSolution;
+		}
 	}
 
 }
