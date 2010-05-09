@@ -41,18 +41,14 @@ void Communicator::sendTerminateToAll(){
 
 void Communicator::sendNewBestSolutionNumberOfEdgesToAll(int bestSolutionNumberOfEdges){
 	int tag = Communicator::NEW_CURRENT_BEST;
-	cout << "start sendingBest" << endl;
 	for(int i = 0; i < this->numProcesses; i++){
 		if(i != this->rank) MPI_Send (&bestSolutionNumberOfEdges, 1, MPI_INT, i, tag, MPI_COMM_WORLD);
 	}
-	cout << "send sendingBest" << endl;
 }   
 
 int Communicator::receiveNewBestSoultionNumberOfEdges(){
-	cout << "receiving receiveBest" << endl;
 	int newBest;
 	MPI_Recv(&newBest, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-	cout << "received receiveBest" << endl;
 	return newBest;
 }
 
@@ -157,7 +153,6 @@ State* Communicator::receiveBestSolution(){
 
 	delete buffer;
 
-	cout << rank << " received bestsol" << endl;
 	return receivedState;
 }
 void Communicator::sendBestSolution(State* stateToSend){
@@ -181,8 +176,6 @@ void Communicator::sendBestSolution(State* stateToSend){
 void Communicator::receiveNoSolution(){
 	int x;
 	MPI_Recv(&x, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-
-	cout << rank << " received nobestsol" << endl;
 
 }
 void Communicator::sendTokenWhite(){

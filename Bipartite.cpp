@@ -139,7 +139,7 @@ void expandState(){
 		}
 	}
 	if(bipartityTest == 1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
-		cout << communicator->rank << " best sol:" << currentSolutionNumberOfEdges << endl;
+		//cout << communicator->rank << " best sol:" << currentSolutionNumberOfEdges << endl;
 		bestSolutionNumberOfEdges = currentSolutionNumberOfEdges;
 		bestSolution = state_top;
 		communicator->sendNewBestSolutionNumberOfEdgesToAll(bestSolutionNumberOfEdges);
@@ -239,7 +239,6 @@ State* distributeStates(State * stateStart){
 	int state1NumberOfEdges = stateStart->getNumberOfEdges();
 	int currentSolutionNumberOfEdges;
 	int bipartityTest;
-	cout << "distributing states start " << communicator->rank << endl;
 	while(distribute_stack.size() != communicator->numProcesses){
 		state_top = distribute_stack.top();
 		distribute_stack.pop();
@@ -257,7 +256,6 @@ State* distributeStates(State * stateStart){
 		}
 		delete state_top;
 	}
-	cout << "distribute_stack.size " << distribute_stack.size() << endl;
 
 	for(int i = 1; i<communicator->numProcesses; i++){
 		state_top = distribute_stack.top();
