@@ -27,7 +27,6 @@ public:
 	static const int TERMINATE = 6;
 	static const int SOLUTION = 7;
 	static const int NO_SOLUTION = 9;    
-	static const int NO_SOLUTION = 9;
 	static const int NEW_CURRENT_BEST = 10;
 
 
