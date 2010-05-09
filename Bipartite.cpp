@@ -31,7 +31,6 @@ double t1, t2;
 void processMessages(){
 	switch(communicator->getMessageType()){
 		case Communicator::REQUEST_WORK:
-			cout << "request work " << communicator->rank << endl;
 			communicator->receiveWorkRequest();
 			if(state_stack->size() > 4){
 				communicator->sendStack(state_stack, communicator->status.MPI_SOURCE);
@@ -84,10 +83,8 @@ void processMessages(){
 	}
 }
 void processSolution(int * counter){
-	cout << "message type " << communicator->getMessageType() << endl;
 	switch(communicator->getMessageType()){
 		case Communicator::SOLUTION:
-			cout << "sol " << counter << endl;
 			State * receivedBest;
 			receivedBest = communicator->receiveBestSolution();
 			if(bestSolutionNumberOfEdges < receivedBest->getNumberOfEdges()){
@@ -117,16 +114,9 @@ void expandState(){
 	states_count_pop++;
 	currentSolutionNumberOfEdges = state_top->getNumberOfEdges();
 	bipartityTest = state_top->isBipartite();
-	if(maxEdgeIndex < state_top->edgeIndex){
-		maxEdgeIndex = state_top->edgeIndex;
-		cout << communicator->rank << " next level - " << maxEdgeIndex << " bestsol: " << bestSolutionNumberOfEdges << " state1NumberOfEdges:" << state1NumberOfEdges << " depth:" << state_top->depth << endl;
-	}
-	/*if(communicator->rank == 0 && state_top->edgeIndex == 83){
-		cout << communicator->rank << "stack size:" << state_stack->size() << endl;
-	} else if(communicator->rank == 1 && state_top->edgeIndex == 105){
-		cout << communicator->rank << "stack size:" << state_stack->size() << endl;
-	}*/
-	if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges > state_top->depth && bipartityTest>-1){
+
+	//ma graf vic hran nez uzlu? && pokud je hloubka vetsi nez pocet hran, tak uz nema cenu jet dal && je graf souvisly && muze byt toto reseni vubec lepsi nez nejlepsi nalezene?
+	if(currentSolutionNumberOfEdges >= state_top->numberOfVertices-1 && state1NumberOfEdges > state_top->depth && bipartityTest>-1 && currentSolutionNumberOfEdges > bestSolutionNumberOfEdges){
 		successors = state_top->getSuccessors();
 		if(successors != NULL){
 			//push state without edge
@@ -151,7 +141,7 @@ void compute(){
 	communicator->synchronizeBarrier();
 	t1=MPI_Wtime();
 
-	cout << "p" << communicator->rank << " compute" << endl;
+	cout << "compute start" << communicator->rank << endl;
 	states_count_push = 1;
 	states_count_pop = 0;
 	state1NumberOfEdges = state_stack->top()->getNumberOfEdges();
@@ -165,27 +155,23 @@ void compute(){
 	communicator->hasReceivedTerminationRequest = false;
 	communicator->hasRequestedWork = false;
 
-	cout << "compute " << communicator->rank << endl;
 	while(!communicator->hasReceivedTerminationRequest){
-		cout << "notreceived terminate " << communicator->rank << endl;
 		communicator->isWaiting = false;
 		while(!state_stack->empty()){
 			expandState();
 			cycleCounter++;
-			/*if (cycleCounter == 100){
+			if (cycleCounter == 100){
 				if(communicator->hasReceivedMessages()){
 					processMessages();
 				}
 				cycleCounter = 0;
-			}*/
+			}
 		}
-		cout << "stackempty " << communicator->rank << endl;
 		communicator->isWaiting = true;
 
 		//p0 posle White Token
 		if(!communicator->hasSentToken && communicator->rank == 0){
 			if(communicator->numProcesses > 1){
-				cout << "white token" << endl;
 				communicator->hasSentToken = true;
 				communicator->sendTokenWhite();
 			}
