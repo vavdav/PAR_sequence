@@ -148,8 +148,10 @@ void expandState(){
 	}
 }
 
-void compute(){
-	communicator->synchronizeBarrier();
+void compute(){   
+	bool isSingleProcessor = communicator->getNumProcesses() == 1 ? true : false;  
+	if(isSingleProcessor) cout << "SINGLE PROCESSOR" << endl;
+	if(!isSingleProcessor) communicator->synchronizeBarrier();
 	t1=MPI_Wtime();
 
 	cout << "compute start" << communicator->rank << endl;
@@ -171,7 +173,7 @@ void compute(){
 		while(!state_stack->empty()){
 			expandState();
 			cycleCounter++;
-			if (cycleCounter == 100){
+			if (cycleCounter == 100 && !isSingleProcessor){
 				if(communicator->hasReceivedMessages()){
 					processMessages();
 				}
@@ -179,56 +181,59 @@ void compute(){
 			}
 		}
 		communicator->isWaiting = true;
-
-		//p0 posle White Token
-		if(!communicator->hasSentToken && communicator->rank == 0){
-			if(communicator->numProcesses > 1){
+        
+		 
+		if(!isSingleProcessor){ 
+			//p0 posle White Token 
+			cycleCounter1++;  
+			if(!communicator->hasSentToken && communicator->rank == 0){
 				communicator->hasSentToken = true;
 				communicator->sendTokenWhite();
 			}
+			if (cycleCounter1 == 200){
+				if(!communicator->hasRequestedWork){
+					communicator->hasRequestedWork = true;
+					communicator->sendWorkRequest();
+				}
+				cycleCounter1 = 0;
+			}                 
+			while(communicator->hasReceivedMessages()){
+				processMessages();
+			} 
+		} 
+		else
+		{
+			communicator->hasReceivedTerminationRequest = true;
 		}
-
-		if (cycleCounter1 == 200){
-			if(!communicator->hasRequestedWork){
-				communicator->hasRequestedWork = true;
-				communicator->sendWorkRequest();
-			}
-			cycleCounter1 = 0;
-		}
-		cycleCounter1++;
-
-		while(communicator->hasReceivedMessages()){
-			processMessages();
-		}
-
+         
 	}
 	cout << "compute end " << communicator->rank << endl;
 
-	communicator->synchronizeBarrier();
+	if(!isSingleProcessor) communicator->synchronizeBarrier();
 	t2=MPI_Wtime();
 	cout << (t2-t1) << endl;
-	if(communicator->rank == 0){
-		int counter = communicator->numProcesses;
-		int maxCycle = 0;
-		/*while(counter != 1){
-			processSolution(&counter);
-			if(maxCycle == 200) {
-				break;
+	if(!isSingleProcessor){
+		if(communicator->rank == 0){
+			int counter = communicator->numProcesses;
+			int maxCycle = 0;
+			while(counter > 1){
+				processSolution(&counter);
+				if(maxCycle == 200) {
+					break;
+				}
+				maxCycle++;
 			}
-			maxCycle++;
-		}*/
-		if(bestSolution != NULL){
-			bestSolution->getBipartiteGroups();
-			delete bestSolution;
+			
+		} else {
+			communicator->sendBestSolution(bestSolution);
 		}
+	}       
+	if(bestSolution != NULL){
+		bestSolution->getBipartiteGroups();
+		delete bestSolution;
 	} else {
-		//communicator->sendBestSolution(bestSolution);
-		if(bestSolution != NULL){
-			bestSolution->getBipartiteGroups();
-			delete bestSolution;
-		}
-	}
-
+		cout << "No solution found" << endl;
+    } 
 }
 
 State* distributeStates(State * stateStart){
@@ -275,9 +280,14 @@ void mainProccessor(State * state1, char *fileName){
 	GraphReader reader;
 	State *stateStart = reader.getFirstStateFromFile(fileName);
 
-	state1 = distributeStates(stateStart);
+	if (communicator->getNumProcesses() > 1) {
+		state1 = distributeStates(stateStart); 
+	} else {
+		state1 = stateStart;
+	}
 	cout << "p" << communicator->rank << " got first State" << endl;
-
+	cout << "p0 loaded: " << endl;
+   	state1->print();
 	state_stack->push(state1);
 	compute();
 }
