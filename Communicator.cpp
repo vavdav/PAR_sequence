@@ -37,6 +37,20 @@ void Communicator::sendTerminateToAll(){
 	for(int i = 1; i < this->numProcesses; i++){
 		MPI_Send (&i, 1, MPI_INT, i, tag, MPI_COMM_WORLD);
 	}
+}   
+
+void Communicator::sendNewBestSolutionNumberOfEdgesToAll(int bestSolutionNumberOfEdges){
+	int tag = Communicator::NEW_CURRENT_BEST;
+	   
+	for(int i = 0; i < this->numProcesses; i++){
+		if(i != this->rank) MPI_Send (&bestSolutionNumberOfEdges, 1, MPI_INT, i, tag, MPI_COMM_WORLD);
+	}
+}   
+
+int Communicator::receiveNewBestSoultionNumberOfEdges(){
+	int newBest;
+	MPI_Recv(&newBest, 1, MPI_INT, Communicator::NEW_CURRENT_BEST, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+	return newBest;
 }
 
 void Communicator::sendState(State* stateToSend, int proccessorID){
