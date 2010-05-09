@@ -1,0 +1,2 @@
+MY_PARALLEL_PROGRAM="./par gen7_5_1"
+mpirun -np $NSLOTS ${MY_PARALLEL_PROGRAM}
