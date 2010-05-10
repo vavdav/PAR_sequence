@@ -1,0 +1,46 @@
+hello from 0 numProc: 2
+*** Info: file openned: new_data12-29.txt
+hello from 1 numProc: 2
+*** LOADED MATRIX *** numOfvertices 12
+0 0 1 1 0 0 0 0 1 1 1 0 
+0 0 1 1 0 0 1 1 0 1 1 0 
+1 1 0 0 0 0 1 0 1 0 1 1 
+1 1 0 0 1 1 0 1 0 0 0 1 
+0 0 0 1 0 0 1 0 1 0 0 1 
+0 0 0 1 0 0 0 0 0 0 1 0 
+0 1 1 0 1 0 0 1 1 1 1 1 
+0 1 0 1 0 0 1 0 0 0 0 0 
+1 0 1 0 1 0 1 0 0 1 0 0 
+1 1 0 0 0 0 1 0 1 0 0 0 
+1 1 1 0 0 1 1 0 0 0 0 0 
+0 0 1 1 1 0 1 0 0 0 0 0 
+**************
+firstState p0
+p0 got first State
+p0 loaded: 
+0 0 0 1 0 0 0 0 1 1 1 0 
+0 0 1 1 0 0 1 1 0 1 1 0 
+0 1 0 0 0 0 1 0 1 0 1 1 
+1 1 0 0 1 1 0 1 0 0 0 1 
+0 0 0 1 0 0 1 0 1 0 0 1 
+0 0 0 1 0 0 0 0 0 0 1 0 
+0 1 1 0 1 0 0 1 1 1 1 1 
+0 1 0 1 0 0 1 0 0 0 0 0 
+1 0 1 0 1 0 1 0 0 1 0 0 
+1 1 0 0 0 0 1 0 1 0 0 0 
+1 1 1 0 0 1 1 0 0 0 0 0 
+0 0 1 1 1 0 1 0 0 0 0 0 
+*******************
+p1 got first State
+compute start0
+compute start1
+compute end 0
+compute end 1
+182.299
+No solution found
+p0 ending
+182.299
+1 sending bestsol
+white vertices: ( 2 3 4 7 9 10 ) 
+black vertices: ( 0 1 5 6 8 11 ) 
+p1 ending
