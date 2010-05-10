@@ -1,0 +1,45 @@
+\setlength{\unitlength}{0.0125in}
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined
+% extract first six characters in \fmtname
+\def\x#1#2#3#4#5#6#7\relax{\def\x{#1#2#3#4#5#6}}%
+\expandafter\x\fmtname xxxxxx\relax \def\y{splain}%
+\ifx\x\y   % LaTeX or SliTeX?
+\gdef\SetFigFont#1#2#3{%
+  \ifnum #1<17\tiny\else \ifnum #1<20\small\else
+  \ifnum #1<24\normalsize\else \ifnum #1<29\large\else
+  \ifnum #1<34\Large\else \ifnum #1<41\LARGE\else
+     \huge\fi\fi\fi\fi\fi\fi
+  \csname #3\endcsname}%
+\else
+\gdef\SetFigFont#1#2#3{\begingroup
+  \count@#1\relax \ifnum 25<\count@\count@25\fi
+  \def\x{\endgroup\@setsize\SetFigFont{#2pt}}%
+  \expandafter\x
+    \csname \romannumeral\the\count@ pt\expandafter\endcsname
+    \csname @\romannumeral\the\count@ pt\endcsname
+  \csname #3\endcsname}%
+\fi
+\fi\endgroup
+\begin{picture}(111,105)(63,654)
+\thinlines
+\put(117,675){\oval(24,42)}
+\put(105,693){\line( 0, 1){ 24}}
+\put(105,717){\line(-5, 3){ 20.735}}
+\put( 84,729){\line(-5,-3){ 20.735}}
+\put( 63,717){\line( 0,-1){ 24}}
+\put( 63,693){\line( 5,-3){ 20.735}}
+\put( 84,681){\line( 5, 3){ 20.735}}
+\put(102,678){\line( 1, 0){ 33}}
+\put(135,676){\line( 5, 6){ 20.902}}
+\put(156,701){\line(-1, 6){  5.324}}
+\put(151,733){\line(-5, 3){ 28.382}}
+\put(122,749){\line(-5,-2){ 30.345}}
+\put( 92,736){\line(-1,-4){  8.059}}
+\put( 83,704){\line( 3,-4){ 19.320}}
+\put(129,690){\framebox(45,30){}}
+\put(159,735){\line( 0, 1){ 24}}
+\put(159,759){\line(-1, 0){ 75}}
+\put( 84,759){\line( 0,-1){ 24}}
+\put( 84,735){\line( 1, 0){ 75}}
+\end{picture}
