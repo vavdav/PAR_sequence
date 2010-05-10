@@ -304,7 +304,6 @@ void otherProccessor(State * state1){
 
 int main (int argc, char *argv[] )
 {
-
 	if ( argc != 2 ) {
 		cout<<"usage: "<< "PAR" <<" <filename>" << endl;
 		return -1;

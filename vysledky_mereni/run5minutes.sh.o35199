@@ -1,0 +1,126 @@
+hello from 6 numProc: 12
+hello from 11 numProc: 12
+hello from 0 numProc: 12
+*** Info: file openned: new_data12-29.txt
+*** LOADED MATRIX *** numOfvertices 12
+hello from 7 numProc: 12
+0 0 1 1 0 0 0 0 1 1 1 0 
+0 0 1 1 0 0 1 1 0 1 1 0 
+1 1 0 0 0 0 1 0 1 0 1 1 
+1 1 0 0 1 1 0 1 0 0 0 1 
+0 0 0 1 0 0 1 0 1 0 0 1 
+0 0 0 1 0 0 0 0 0 0 1 0 
+0 1 1 0 1 0 0 1 1 1 1 1 
+0 1 0 1 0 0 1 0 0 0 0 0 
+1 0 1 0 1 0 1 0 0 1 0 0 
+1 1 0 0 0 0 1 0 1 0 0 0 
+1 1 1 0 0 1 1 0 0 0 0 0 
+0 0 1 1 1 0 1 0 0 0 0 0 
+**************
+hello from 2 numProc: 12
+p2 got first State
+hello from 3 numProc: 12
+p3 got first State
+hello from 4 numProc: 12
+hello from 5 numProc: 12
+hello from 10 numProc: 12
+hello from 8 numProc: 12
+hello from 1 numProc: 12
+p1 got first State
+p4 got first State
+hello from 9 numProc: 12
+p5 got first State
+p6 got first State
+p7 got first State
+p8 got first State
+p9 got first State
+p10 got first State
+firstState p0
+p0 got first State
+p0 loaded: 
+0 0 0 1 0 0 0 0 1 1 1 0 
+0 0 1 1 0 0 1 1 0 1 1 0 
+0 1 0 0 0 0 1 0 1 0 1 1 
+1 1 0 0 1 1 0 1 0 0 0 1 
+0 0 0 1 0 0 1 0 1 0 0 1 
+0 0 0 1 0 0 0 0 0 0 1 0 
+0 1 1 0 1 0 0 1 1 1 1 1 
+0 1 0 1 0 0 1 0 0 0 0 0 
+1 0 1 0 1 0 1 0 0 1 0 0 
+1 1 0 0 0 0 1 0 1 0 0 0 
+1 1 1 0 0 1 1 0 0 0 0 0 
+0 0 1 1 1 0 1 0 0 0 0 0 
+*******************
+p11 got first State
+compute start0
+compute start8
+compute start4
+compute start10
+compute start2
+compute start6
+compute start1
+compute start9
+compute start5
+compute start3
+compute start7
+compute start11
+compute end 1
+compute end 2
+compute end 3
+compute end 0
+compute end 6
+compute end 4
+compute end 8
+compute end 10
+compute end 5
+21.3932
+3 sending noSol
+No solution found
+p3 ending
+compute end 9
+compute end 11
+21.3955
+1 sending bestsol
+compute end 7
+21.424
+No solution found
+p0 ending
+21.3955
+white vertices: ( 2 3 4 7 9 10 ) 
+black vertices: ( 0 1 5 6 8 11 ) 
+p1 ending
+21.3956
+9 sending noSol
+No solution found
+p9 ending
+21.3931
+7 sending noSol
+No solution found
+p7 ending
+21.3931
+21.424
+4 sending noSol
+11 sending noSol
+No solution found
+p4 ending
+No solution found
+5 sending noSol
+p11 ending
+No solution found
+p5 ending
+21.4241
+8 sending noSol
+No solution found
+21.4132
+2 sending noSol
+No solution found
+p2 ending
+p8 ending
+21.4132
+10 sending noSol
+21.4131
+6 sending noSol
+No solution found
+p10 ending
+No solution found
+p6 ending
