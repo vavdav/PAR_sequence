@@ -1,0 +1,4 @@
+namerena data:
+Z namerenych dat je videt, ze namerene casy pro site InfiniBand a Ethernet jsou temer stejne, lisi se v radu par sekund. Vyssi casy jsou prevazne u site Ethernet. S ohlednutim na mozne spozdeni, které nemusi vzniknout primo algoritmem, lze rici, ze namerene casy jsou pro obe site stejne. To znamena, ze se neprenasi velke mnozstvi zprav, ktere by algoritmus zpomalovaly.
+
+zpozdeni:
