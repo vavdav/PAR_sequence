@@ -23,7 +23,7 @@
 
 \subsubsection{Vstupni data}
 
-n = prirozene cislo predstavujici pocet uzlu grafu, n � 5\\
+n = prirozene cislo predstavujici pocet uzlu grafu, n ≥ 5\\
 k = prirozene cislo radu jednotek predstavujici maximalni stupen uzlu grafu\\
 G(V,E) = jednoduchy neorientovany neohodnoceny souvisly graf o n uzlech a stupni nejvyse k\\
 Doporuceni pro algoritmus generovani G:\\
@@ -37,39 +37,73 @@ Graf G(V,E) je bipartitni jestlize muzeme rozdelit mnozinu uzlu na disjunktni po
 Graf G(V,E) je definovan mnozinou uzlu V a mnozinou hran E. Ukolem je nalezt maximalni podmnozinu hran F takovou, ze graf G(V,F) je bipartitni (viz obrazek).
 
 \subsection{Popis sekvencniho algoritmu}
-Zakladnim algoritmem bylo prochazeni stavoveho prostoru do hloubky. Hloubka stavoveho stromu je omezena na $|$E$|$. Pro reprezentaci stavu jsme si vytvorili tridu State, ktera obsahuje matici sousednosti grafu. Pripustny mezistav je podmnozina hran F, ktera tvori bipartitni podgraf G(V,F). Cena, kterou maximalizujeme, je pocet hran v F. Pokud je graf G bipartitni, pak trivialne F=E, jinak F je podmnozinou E. Vstupni graf nejprve otestujeme, zda je bipartitni (linearni algoritmus) a pokud ne, pouzijeme algoritmus prohledavani do hloubky. Zakladni myslenkou algoritmu je postupne odebirani hran. Na zasobnik se vlozi pocatecni stav, reprezentujici zadany graf. Dale se postupuje podle algoritmu prohledavani do hloubky, pri expanzi se na zasobnik vlozi 2 nove stavy, jeden s hranou n a jeden bez ni. Celkovy pocet hran n urcuje maximalni hloubku stromu reprezentujiciho graf stavoveho prostoru. Pro orezavani stavoveho prostoru vyuzivame techniky branch and bounds, cely algoritmus je tedy DFS-BB. Jedna se o uplne prohledavani stavoveho prostoru do hloubky $|$E$|$-$|$V$|$. Prohledavani se muze navracet v mezistavech s $|$F$|$=$|$V$|$-1 (strom je trivialne bipartitni, proto musi existovat reseni s $|$F$|$=$|$V$|$-1).Trivialni dolni mez je $|$F$|$=$|$V$|$-1.Tesna horni mez neni znama. Trivialni horni mez je $|$F$|$=$|$E$|$. 
+Zakladnim algoritmem bylo prochazeni stavoveho prostoru do hloubky. Hloubka stavoveho stromu je omezena na $|$E$|$. Pro reprezentaci stavu jsme si vytvorili tridu State, ktera obsahuje matici sousednosti grafu. Pripustny mezistav je podmnozina hran F, ktera tvori bipartitni podgraf G(V,F). Cena, kterou maximalizujeme, je pocet hran v F. Pokud je graf G bipartitni, pak trivialne F=E, jinak F je podmnozinou E. Vstupni graf nejprve otestujeme, zda je bipartitni (linearni algoritmus) a pokud ne, pouzijeme algoritmus prohledavani do hloubky. Zakladni myslenkou algoritmu je postupne odebirani hran. Na zasobnik se vlozi pocatecni stav, reprezentujici zadany graf. Dale se postupuje podle algoritmu prohledavani do hloubky, pri expanzi se na zasobnik vlozi 2 nove stavy, jeden s hranou n a jeden bez ni. Celkovy pocet hran n urcuje maximalni hloubku stromu reprezentujiciho graf stavoveho prostoru. Pro orezavani stavoveho prostoru vyuzivame techniky branch and bounds, cely algoritmus je tedy DFS-BB. Jedna se o uplne prohledavani stavoveho prostoru do hloubky $|$E$|$-$|$V$|$. Prohledavani se muze navracet v mezistavech s $|$F$|$=$|$V$|$-1 (strom je trivialne bipartitni, proto musi existovat reseni s $|$F$|$=$|$V$|$-1).Trivialni dolni mez je $|$F$|$=$|$V$|$-1.Tesna horni mez neni znama. Trivialni horni mez je $|$F$|$=$|$E$|$. \\
 
 
-Uvedte tabulku namerenych casu sekvencniho algoritmu pro ruzne
-velka data.
+!!!!!!!!!!!!TABULKA SEKVENCNICH CASU !!!!!!!!!!!!\\
+
+
 
 \section{Popis paralelniho algoritmu a jeho implementace v MPI}
-Zakladem paralelniho algoritmu je sekvencni algoritmus. S tim rozdilem, ze stavovy prostor se disjunktne rozdeli mezi vice procesoru, ktere ho samostatne zpracovaji. Kvuli omezujicim podminkam algoritmu DFS-BB si procesory mezi sebou posilaji nalezena nova nejlepsi reseni. Jednotlive procesory maji svuj vlastni lokalni zasobnik a pouziva se dynamicke vyvazovani vypocetni zateze (load balancing). Vyvazovani zateze je implementovano pomoci 2 algoritmu: algoritmu pro deleni zasobniku (ADZ) a algoritmu pro hledani darce (AHD), kterymi necinny procesor s prazdnym lokalnim zasobnikem (stav I=idle) ziskava praci od vhodneho darce, coz je aktivni procesor s neprazdnym zasobnikem (stav A=active), jehoz zasobnik odpovida dostatecne velkemu stavovemu podprostoru. Procesor si o praci zada procesor s cislem o jedno vetsi, pokud ten praci nema, zvysi se citac o jednicku, takto cyklicky zada procesory dokud neobdrzi praci nebo pozadavek na ukonceni. Na pocatku procesor P1 zna pocet procesoru p, na kterych se uloha bude resit. Provede dostatecny pocet expanzi pocatecniho stavu, rozdeli svuj zasobnik na p casti a rozesle jednotlive casti ostatnim procesorum. Vsechny procesory zacnou prohledavat svuj prideleny podprostor a pritom realizuji programovou smycku naznacenou na tomto obrazku.
+Zakladem paralelniho algoritmu je sekvencni algoritmus. S tim rozdilem, ze stavovy prostor se disjunktne rozdeli mezi vice procesoru, ktere ho samostatne zpracovaji. Kvuli omezujicim podminkam algoritmu DFS-BB si procesory mezi sebou posilaji nalezena nova nejlepsi reseni. Jednotlive procesory maji svuj vlastni lokalni zasobnik a pouziva se dynamicke vyvazovani vypocetni zateze (load balancing). Vyvazovani zateze je implementovano pomoci 2 algoritmu: algoritmu pro deleni zasobniku (ADZ) a algoritmu pro hledani darce (AHD), kterymi necinny procesor s prazdnym lokalnim zasobnikem (stav I=idle) ziskava praci od vhodneho darce, coz je aktivni procesor s neprazdnym zasobnikem (stav A=active), jehoz zasobnik odpovida dostatecne velkemu stavovemu podprostoru. Procesor si o praci zada procesor s cislem o jedno vetsi, pokud ten praci nema, zvysi se citac o jednicku, takto cyklicky zada procesory dokud neobdrzi praci nebo pozadavek na ukonceni. Na pocatku procesor P1 zna pocet procesoru p, na kterych se uloha bude resit. Provede dostatecny pocet expanzi pocatecniho stavu, rozdeli svuj zasobnik na p casti a rozesle jednotlive casti ostatnim procesorum. Vsechny procesory zacnou prohledavat svuj prideleny podprostor a pritom realizuji programovou smycku naznacenou na tomto obrazku.\\
 
-OBRAZEK
+!!!!!!!!!!!  OBRAZEK algoritmu !!!!!!!!!!!!\\
 
 Aktivni procesor, ktery vycerpa svuj prideleny dil prace, se stane necinny a pomoci algoritmu pro hledani darce AHD vybere darce a posle mu zadost o praci. Pokud mu darce praci posle, prepne se zpet do stavu aktivni. Pokud se mu vrati odmitnuti, vse se opakuje. Procesor ve stavu necinny musi take periodicky kontrolovat, zda nema ve fronte zadosti o praci, na ktere odpovida odmitnutim, nebo zpravy o nalezeni reseni jinym procesorem. V pripade, ze se jedna o optimalni reseni, jsou to v podstate zadosti o ukonceni vypoctu. Aktivni procesor provadi fixni objem prace nad lokalnim zasobnikem (expanduje urcity dany pocet stavu na lokalnim zasobniku) a pak kontroluje frontu zprav. V te mohou byt zadosti o praci, informace o nalezeni reseni jinym procesorem a zadosti o ukonceni vypoctu. Aktivni procesor zpracovava zadosti o praci nasledujicim zpusobem: Pokud je velikost lokalniho zasobniku vetsi nez nastavena minimalni mez, tak se zasobnik rozdeli na polovinu a jedna cast se zasle zadateli o praci. Pokud neni, tak procesor pozadavek odmitne.
 
-
-
-
-Popiste paralelni algoritmus, opet vyjdete ze zadani a presne vymezte
-odchylky, zvlaste u algoritmu pro vyvazovani zateze, hledani darce, ci
-ukonceni vypoctu.  Popiste a vysvetlete strukturu celkoveho
-paralelniho algoritmu na urovni procesuu v MPI a strukturu kodu
-jednotlivych procesu. Napr. jak je naimplemtovana smycka pro cinnost
-procesu v aktivnim stavu i v stavu necinnosti. Jake jste zvolili
-konstanty a parametry pro skalovani algoritmu. Struktura a semantika
-prikazove radky pro spousteni programu.
-
 \section{Analyza slozitosti paralelniho reseni}
 
-Pokuste se analyticky stanovit ocekavanou slozitost vaseho reseni: paralelni cas,
-prace, naklady, zrychleni, efektivnost, ap.  Odhadnete optimalni
-granularitu, tj., stupen paralelismu pro danou velikost reseneho
-problemu. Stanovte kriteria pro stanoveni mezi, za kterymi jiz neni
-ucinne rozkladat vypocet na mensi procesy, protoze by komunikacni
-naklady prevazily urychleni paralelnim vypoctem.
+\subsection{Analyza sekvencniho reseni}
+Slozitost sekvencniho reseni lze rozdelit na dve casti. Nejprve na to, kolik stav; se projde, cili jak je velky stavovy prostor a pro kazdy stav se pak jeste provadi algoritmus BFS pro testovani bipartitnosti.
+Orezavani algoritmem Branch and Bound se neda odhadnout, proto ho neuvazujeme. Vyska stromu stavoveho prostoru odpovida poctu hran. V kazdem kroku jednu hranu bud odeberu, nebo necham. \\
+
+Pocet prohledavanych stavu je tedy:\\
+
+\begin{math}
+\sum_{i = 0}^{|E|} 2^i = 2^{|E|} + 2^{|E|-1} + ... + 2^0 = O(2^{|E|})\\
+\end{math}
+
+Test bipartitnosti se provadi prochazenim do sirky. Slozitost tohoto alogirtmus je :\\
+
+\begin{math}
+O(|E| + |V|)\\
+\end{math}
+
+Celkova slozitost je tedy:\\
+
+\begin{math}
+SU(|E|, |V|) = O(|E| + |V|) \times O(2^{|E|}) = O(2^{|E|} \times (|E| + |V|))\\
+\end{math}
+
+
+\subsection{Analyza paralelniho reseni}
+Pri paralelnim algoritmu se nejprve expanduje prvnich p stavu, ktere se rozeslou, potom si p procesoru rozdeli stejnou praci, jakou mel sekvencni algoritmus. Toto tvori vypocetni slozku slozitosti. Vedle te jeste musime zapocist slozku komunikacni, ktera vyjadruje komunikac mezi procesory a predavani prace. Tato slozka je uzce zavisla na rovnomernem rozdeleni prace a poloze hledaneho reseni ve stavovem prostoru. Konkretne tuto slozku tedy vyjadrit nemuzeme, nicmene rozhodne neni zanedbatelna, proto ji ve vzorci uvadime symbolicky.\\
+
+Paralelni cas tedy je:\\
+
+\begin{math}
+T(|E|,|V|,p) = T{_{v}}(|E|,|V|,p) + T{_{k}}(|E|, |V|,p) =  O(p + \frac{2^{|E|} \times (|E| + |V|)}{p}) + T{_{k}}(|E|,|V|,p)\\
+\end{math}
+
+Teoreticka paralelní cena:\\ 
+
+\begin{math}
+C(|E|,|V|,p) = p*T(|E|,|V|,p) =  O(p^2 + (2^{|E|} \times (|E| + |V|)) + T{_{k}}(|E|,|V|,p) \times p\\
+\end{math}
+
+Efektivnost:\\
+
+\begin{math}
+E(|E|,|V|,p) = \frac{SU(|E|,|V|)}{C(|E|,|V|,p)} = \frac{O(2^{|E|} \times (|E| + |V|)} { O(p^2 + (2^{|E|} \times (|E| + |V|))) + T{_{k}}(|E|,|V|,p) \times p}\\
+\end{math}
+
+A zrychleni:\\
+
+\begin{math}
+S(|E|,|V|,p) = \frac{SU(|E|,|V|)}{T(|E|,|V|,p)} =  \frac{ O(2^{|E|} \times (|E| + |V|))}{O(p + \frac{2^{|E|} \times (|E| + |V|)}{p}) + T{_{k}}(|E|,|V|,p)} =O(p + \frac{2^{|E|} \times (|E| + |V|)}{p}) + T{_{k}}(|E|,|V|,p)\\
+\end{math}
+
+
 
 \section{Namerene vysledky a vyhodnoceni}
 
