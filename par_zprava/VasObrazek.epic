@@ -1,0 +1,33 @@
+\begingroup\makeatletter\ifx\SetFigFont\undefined
+% extract first six characters in \fmtname
+\def\x#1#2#3#4#5#6#7\relax{\def\x{#1#2#3#4#5#6}}%
+\expandafter\x\fmtname xxxxxx\relax \def\y{splain}%
+\ifx\x\y   % LaTeX or SliTeX?
+\gdef\SetFigFont#1#2#3{%
+  \ifnum #1<17\tiny\else \ifnum #1<20\small\else
+  \ifnum #1<24\normalsize\else \ifnum #1<29\large\else
+  \ifnum #1<34\Large\else \ifnum #1<41\LARGE\else
+     \huge\fi\fi\fi\fi\fi\fi
+  \csname #3\endcsname}%
+\else
+\gdef\SetFigFont#1#2#3{\begingroup
+  \count@#1\relax \ifnum 25<\count@\count@25\fi
+  \def\x{\endgroup\@setsize\SetFigFont{#2pt}}%
+  \expandafter\x
+    \csname \romannumeral\the\count@ pt\expandafter\endcsname
+    \csname @\romannumeral\the\count@ pt\endcsname
+  \csname #3\endcsname}%
+\fi
+\fi\endgroup
+\begin{picture}(111,120)(0,-10)
+\put(54,21){\oval(24,42)}
+\drawline(42,39)(42,63)(21,75)
+	(0,63)(0,39)(21,27)(42,39)
+\drawline(39,24)(72,22)(93,47)
+	(88,79)(59,95)(29,82)
+	(20,50)(39,24)
+\drawline(111,36)(111,66)(66,66)
+	(66,36)(111,36)
+\drawline(96,81)(96,105)(21,105)
+	(21,81)(96,81)
+\end{picture}

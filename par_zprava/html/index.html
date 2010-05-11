@@ -1,0 +1,216 @@
+<html>
+<head>
+<title>Semestralni projekt PAR 2009/2010</title>
+</head>
+
+<body>
+<P ALIGN="center">
+<b>Paralelni algoritmus pro reseni problemu bipartitniho podgrafu</b><br/>
+<b>Petr Smejkal</b><br/>
+<b>David Vavrousek</b><br/>
+<b>5. rocnik, obor pocitace, K336 FEL CVUT, Karlovo nam. 13, 121 35 Praha 2</b><br/>
+<b>May 10, 2010</b><br/>
+</P>
+
+<h1>1 Definice problemu a popis sekvencniho algoritmu</h1>
+<h2>1.1 Definice problemu BPG: bipartitni podgraf</h2>
+<h3>1.1.1 Vstupni data</h3>
+<i>n</i> = prirozene cislo predstavujici pocet uzlu grafu, <i>n &#8805; 5</i><br>
+<i>k</i> = prirozene cislo radu jednotek predstavujici maximalni stupen uzlu grafu<br>
+<i>G(V,E)</i> = jednoduchy neorientovany neohodnoceny souvisly graf o <i>n</i> uzlech a stupni nejvyse <i>k</i><br>
+
+Pouzijte <a href="http://service.felk.cvut.cz/courses/X36PAR/semestralka/graf_gen/index.html">generator</a> grafu <b>Generator1</b> s typem grafu "<b>-t 1</b>", ktery vygeneruje
+souvisly neorientovany neohodnoceny graf.
+
+<h3>1.1.2 Definice</h3> 
+
+Graf <i>G(V,E)</i> je <b>bipartitni</b> jestlize muzeme rozdelit mnozinu uzlu
+na disjunktni pomnoziny U a W tak, ze kazda hrana v G spojuje uzel z U s uzlem z W. 
+Bipartitni graf je mozne uzlove obarvit 2 barvami.
+
+<h3>1.1.3 Ukol</h3> 
+
+Graf <i>G(V,E)</i> je definovan mnozinou uzlu <i>V</i> a mnozinou hran
+
+<i>E</i>.  Ukolem je nalezt maximalni podmnozinu hran <i>F</i> takovou, 
+ze graf <i>G(V,F)</i> je bipartitni (viz obrazek).<br><br>
+
+<center><img src="bpg.jpg" align="bottom">
+<p>Bipartitni podgraf <i>G(V,F)</i> grafu <i>G(V,E)</i>.</p>
+
+</center>
+
+<h2>1.2 Popis sekvencniho algoritmu</h2>
+Zakladnim algoritmem bylo prochazeni stavoveho prostoru do hloubky. Hloubka stavoveho stromu je omezena na |E|. Pro reprezentaci stavu jsme si vytvorili tridu State, ktera obsahuje matici sousednosti grafu. Pripustny mezistav je podmnozina hran F, ktera tvori bipartitni podgraf G(V,F). Cena, kterou maximalizujeme, je pocet hran v F. Pokud je graf G bipartitni, pak trivialne F=E, jinak F je podmnozinou E. Vstupni graf nejprve otestujeme, zda je bipartitni (linearni algoritmus) a pokud ne, pouzijeme algoritmus prohledavani do hloubky. Zakladni myslenkou algoritmu je postupne odebirani hran. Na zasobnik se vlozi pocatecni stav, reprezentujici zadany graf. Dale se postupuje podle algoritmu prohledavani do hloubky, pri expanzi se na zasobnik vlozi 2 nove stavy, jeden s hranou n a jeden bez ni. Celkovy pocet hran n urcuje maximalni hloubku stromu reprezentujiciho graf stavoveho prostoru. Pro orezavani stavoveho prostoru vyuzivame techniky branch and bounds, cely algoritmus je tedy DFS-BB. Jedna se o uplne prohledavani stavoveho prostoru do hloubky |E|-|V|. Prohledavani se muze navracet v mezistavech s |F|=|V|-1 (strom je trivialne bipartitni, proto musi existovat reseni s |F|=|V|-1).Trivialni dolni mez je |F|=|V|-1.Tesna horni mez neni znama. Trivialni horni mez je |F|=|E|.
+
+<h1>2 Popis paralelniho algoritmu a jeho implementace v MPI</h1>
+Zakladem paralelniho algoritmu je sekvencni algoritmus. S tim rozdilem, ze stavovy prostor se disjunktne rozdeli mezi vice procesoru, ktere ho samostatne zpracovaji. Kvuli omezujicim podminkam algoritmu DFS-BB si procesory mezi sebou posilaji nalezena nova nejlepsi reseni. Jednotlive procesory maji svuj vlastni lokalni zasobnik a pouziva se dynamicke vyvazovani vypocetni zateze (load balancing). Vyvazovani zateze je implementovano pomoci 2 algoritmu: algoritmu pro deleni zasobniku (ADZ) a algoritmu pro hledani darce (AHD), kterymi necinny procesor s prazdnym lokalnim zasobnikem (stav I=idle) ziskava praci od vhodneho darce, coz je aktivni procesor s neprazdnym zasobnikem (stav A=active), jehoz zasobnik odpovida dostatecne velkemu stavovemu podprostoru. Procesor si o praci zada procesor s cislem o jedno vetsi, pokud ten praci nema, zvysi se citac o jednicku, takto cyklicky zada procesory dokud neobdrzi praci nebo pozadavek na ukonceni. Na pocatku procesor P1 zna pocet procesoru p, na kterych se uloha bude resit. Provede dostatecny pocet expanzi pocatecniho stavu, rozdeli svuj zasobnik na p casti a rozesle jednotlive casti ostatnim procesorum. Vsechny procesory zacnou prohledavat svuj prideleny podprostor a pritom realizuji programovou smycku naznacenou na tomto obrazku.<br>
+
+<center><img src="CZstatediagram.gif" align="bottom"></center>
+
+Aktivni procesor, ktery vycerpa svuj prideleny dil prace, se stane necinny a pomoci algoritmu pro hledani darce AHD vybere darce a posle mu zadost o praci. Pokud mu darce praci posle, prepne se zpet do stavu aktivni. Pokud se mu vrati odmitnuti, vse se opakuje. Procesor ve stavu necinny musi take periodicky kontrolovat, zda nema ve fronte zadosti o praci, na ktere odpovida odmitnutim, nebo zpravy o nalezeni reseni jinym procesorem. V pripade, ze se jedna o optimalni reseni, jsou to v podstate zadosti o ukonceni vypoctu. Aktivni procesor provadi fixni objem prace nad lokalnim zasobnikem (expanduje urcity dany pocet stavu na lokalnim zasobniku) a pak kontroluje frontu zprav. V te mohou byt zadosti o praci, informace o nalezeni reseni jinym procesorem a zadosti o ukonceni vypoctu. Aktivni procesor zpracovava zadosti o praci nasledujicim zpusobem: Pokud je velikost lokalniho zasobniku vetsi nez nastavena minimalni mez, tak se zasobnik rozdeli na polovinu a jedna cast se zasle zadateli o praci. Pokud neni, tak procesor pozadavek odmitne.
+
+<h1>3 Analyza slozitosti reseni</h1>
+<h2>3.1 Analyza sekvencniho reseni</h2>
+Slozitost sekvencniho reseni lze rozdelit na dve casti. Nejprve na to, kolik stav; se projde, cili jak je velky stavovy prostor a pro kazdy stav se pak jeste provadi algoritmus BFS pro testovani bipartitnosti.
+Orezavani algoritmem Branch and Bound se neda odhadnout, proto ho neuvazujeme. Vyska stromu stavoveho prostoru odpovida poctu hran. V kazdem kroku jednu hranu bud odeberu, nebo necham.
+<br><br>
+Pocet prohledavanych stavu je tedy:<br>
+<img src="pocet_stavu.png" align="bottom">
+<br>Test bipartitnosti se provadi prochazenim do sirky. Slozitost tohoto alogirtmus je:<br>
+<img src="test_bpg.png" align="bottom">
+<br>Celkova slozitost je tedy:<br>
+<img src="celkova.png" align="bottom">
+
+<h2>3.2 Analyza paralelniho reseni</h2>
+Pri paralelnim algoritmu se nejprve expanduje prvnich p stavu, ktere se rozeslou, potom si p procesoru rozdeli stejnou praci, jakou mel sekvencni algoritmus. Toto tvori vypocetni slozku slozitosti. Vedle te jeste musime zapocist slozku komunikacni, ktera vyjadruje komunikac mezi procesory a predavani prace. Tato slozka je uzce zavisla na rovnomernem rozdeleni prace a poloze hledaneho reseni ve stavovem prostoru. Konkretne tuto slozku tedy vyjadrit nemuzeme, nicmene rozhodne neni zanedbatelna, proto ji ve vzorci uvadime symbolicky.
+
+<br>Paralelni cas tedy je:<br>
+<img src="paralelni_cas.png" align="bottom">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>Pøíklad</h3>
+x1' zna&#269;&iacute; negaci x1.<br>
+<br>
+<span style="font-style: italic;">n</span>= 4<br>
+<span style="font-style: italic;">F</span> = (x1 + x3' + x4).(x1' + x2
++ x3').(x3 + x4).(x1 + x2 + x3' + x4').(x2' + x3).(x3' + x4')<br>
+<span style="font-style: italic;">W</span> = (2, 4, 1, 6)<br>
+
+<br>
+P&#345;&iacute;pustn&eacute; konfigurace, kde <span
+ style="font-style: italic;">F</span>=1 (&#345;e&#353;en&iacute;):<br>
+<span style="font-style: italic;">X</span> = <span
+ style="font-style: italic;">{</span><span style="font-style: italic;">x<sub>1</sub>
+
+... </span><span style="font-style: italic;">x<sub>n</sub></span>} =
+{0, 0, 0, 1},&nbsp; <span style="font-style: italic;">S</span> = 6<br>
+<span style="font-style: italic;">X</span> = <span
+ style="font-style: italic;">{</span><span style="font-style: italic;">x<sub>1</sub>
+... </span><span style="font-style: italic;">x<sub>n</sub></span>} =
+{1, 0, 0, 1},&nbsp; <span style="font-style: italic;">S</span> = 2 + 6
+= 8 (optim&aacute;ln&iacute;)<br>
+
+<span style="font-style: italic;">X</span> = <span
+ style="font-style: italic;">{</span><span style="font-style: italic;">x<sub>1</sub>
+... </span><span style="font-style: italic;">x<sub>n</sub></span>} =
+{1, 1, 1, 0},&nbsp; <span style="font-style: italic;">S</span> = 2 + 4
++ 1 = 7<br>
+<br>
+
+Tato instance v DIMACS CNF form&aacute;tu<br>
+<br>
+<code>c Priklad CNF<br>
+c 4 promenne a 6 klauzuli<br>
+c kazda klauzule konci nulou (ne novym radkem)<br>
+p cnf 4 6<br>
+1 -3 4 0<br>
+-1 2 -3 0<br>
+3 4 0<br>
+
+1 2 -3 -4 0<br>
+-2 3 0<br>
+-3 -4 0</code>
+<h3>Pokyny k øešení</h3>
+Problém øešte nìkterou z pokroèilých lokálních heuristik (simulované ochlazování, genetické algoritmy, tabu prohledávání).  Øešení jinými metodami prosím zkonzultovat se cvièícím nebo pøednášejícím. Volby konkrétních parametrù heuristiky a jejích detailù (operace nad stavovým prostorem, kritérium ukonèení, atd. atd.) proveïte sami, tyto volby pokud možno zdùvodnìte a ovìøte experimentálním vyhodnocením. 
+
+<h2>Úvod</h2>
+ V této úloze je úkolem naprogramovat øešení vážené splnitelnosti booleovské formule. V páté úloze jsem se seznámil s algoritmem simulované ochlazování, a proto jsem se rozhodl øešit tuto úlohu také tímto algoritmem. Základní struktura algoritmu je stejná. Musel jsem upravit zpùsob naèítání do pamìti, a pak upravit algoritmus výbìru souseda. Ten se liší v tom, že se mùže dostat do stavu, který není správný. Pøi každém spravném stavu porovnám se stávajícím øešením a pokud je lepší, tak si ho uložím. Na konci využiji toto nejlepší øešení jako výsledek. Úèelem je nalézt øešení, které ma nejlepší ohodnocení vah. 
+ 
+ <h2>Simulované ochlazování</h2>
+Jedná se o proces snižování teploty až do fáze tuhnutí. Náhodnì prohledává okolí stavu a pøejde do nového stavu, pokud má stav lepší hodnocení nebo jestli projde funkcí, která dovolí zhoršení. Tato funkce je závislá právì na teplotì a srovnání cen. To zpùsobí, že algoritmus nemusí uváznout v lokálním minimu.
+
+
+<h2>Øešení</h2>
+
+Pro mìøení jsem si zvolil SATLIB data. Z uf20-91 jsem si vzal prvních 50 instancí, které jsem omezil na nìkolik stupòù poètu klauzulí. Pøidal jsem náhodné váhy. Dále jsem si upravil algoritmus, tak aby každou instanci 20x prošel pøi teplotì 1000, faktoru 0.99, vnitøních smyèek 400 a teplotu mrznutí 0.1. Z tìchto 20ti prùchodù se vybere nejlepší øešení, které je považováno za maximalní možné.<br>
+<ul>
+  <li>20 promìnných - 25 klauzulí - 50 instancí</li>
+  <li>20 promìnných - 50 klauzulí - 50 instancí</li>
+  <li>20 promìnných - 70 klauzulí - 50 instancí</li>
+  <li>20 promìnných - 90 klauzulí - 50 instancí</li>
+</ul>
+<b>vygenerování maximálního možného øešení:</b> 
+<ul>
+  <li>20 prùchodù a to nejlepší z nich.</li>
+  <li>poèáteèní teplota: 1000</li>
+  <li>faktor: 0.99</li>
+  <li>vnitøní smyèka: 400</li>
+  <li>teplota mrznutí: 0.1</li>
+</ul>
+
+<h3>Namìøené hodnoty</h3>
+
+<b>Výchozí nastavení parametrù (pokud není tabulkou øeèeno jinak, jsou využity tyto parametry):</b> 
+<ul>
+  <li>poèáteèní teplota: 1000</li>
+  <li>faktor: 0.99</li>
+  <li>vnitøní smyèka: 200</li>
+  <li>teplota mrznutí: 0.1</li>
+</ul>
+
+<b>testované parametry:</b> 
+<ul>
+  <li>teploty: 2000,1750,1500,1250,1000,750,500,250,100</li>
+  <li>faktory: 0.99,0.99,0.95,0.90,0.85,0.8,0.75,0.7,0.65</li>
+  <li>vnitøní smyèky: 20,20*2,20*5,20*7,20*10,20*13,20*16,20*18,20*20</li>
+  <li>teploty mrznutí: 0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8</li>
+</ul>
+
+<u>mìøeno na:</u> Intel Core 2 Duo 2530 Mhz, 4096 MB RAM DDR2 800 Mhz  <br>
+<hr align=left width=700 />
+Data namìøená s ohledem na teplotu<br>
+<hr align=left width=700 />
+<img src="teplota_data.png" alt="teplota_data.png" title="teplota_data" border="0" /> <br><br>
+<img src="teplota_graf.png" alt="teplota_graf.png" title="teplota_graf" border="0" /> <br><br>
+<hr align=left width=700 />
+Data namìøená s ohledem na faktor<br>
+<hr align=left width=700 />
+<img src="faktor_data.png" alt="faktor_data.png" title="faktor_data" border="0" /> <br><br>
+<img src="faktor_graf.png" alt="faktor_graf.png" title="faktor_graf" border="0" /> <br><br>
+<hr align=left width=700 />
+Data namìøená s ohledem na velikost vnitøní smyèky<br>
+<hr align=left width=700 />
+<img src="smycka_data.png" alt="smycka_data.png" title="smycka_data" border="0" /> <br><br>
+<img src="smycka_graf.png" alt="smycka_graf.png" title="smycka_graf" border="0" /> <br><br>
+<hr align=left width=700 />
+Data namìøená s ohledem na bod mrznutí
+<hr align=left width=700 />
+<img src="mrznuti_data.png" alt="mrznuti_data.png" title="mrznuti_data" border="0" /> <br><br>
+<img src="mrznuti_graf.png" alt="mrznuti_graf.png" title="mrznuti_graf" border="0" /> <br><br>
+
+Na tìchto zmìøených datech je vidìt, že nejvìtší vliv na výsledek má hodnota faktoru, která pokud je vyšší, tak vrací menší chybu. Ale zase je znatelnì nároènìjší na èas. Ostatní parametry se v èase nijak více nevychylují. Teplota nemá vìtší vliv na chybu. To lze øíci i o bodu mrznutí. Tyto výsledky se mi nezdají dostateènì pøesné, a tak jsem se rozhodl upravit algoritmus. Pro ohodnocení delta jsem zmìnil výpoèet ceny. Pro stavy, které nemají øešení jsem stanovil penalizaci (penalizace = prùmìr_všech_vah * pocet_klauzulí/pocet_promìnných), dále jsem si pøi testování správnosti stavu zavedl funkci na zjištìní poètu nesplnìných klauzulí. Pokud narazím na nesprávný stav, tak od jeho váhy (ceny) odeètu poèet_nesplnìných_klauzulí*penalizace.
+<hr align=left width=700 size=9 noshade="noshade" />
+<hr align=left width=700 />
+Data namìøená s ohledem na penalizaci.
+<hr align=left width=700 />
+Tento algoritmus jsem porovnal s pøedchozím algoritmem na dvou nastaveních parametrù (viz tabulka níže).<br><br>
+a) první standartní nastavení<br>
+<img src="penalizace_stand.png" alt="penalizace_stand.png" title="penalizace_stand" border="0" /> <br><br>
+<img src="penalizace_stand_graf.png" alt="penalizace_stand_graf.png" title="penalizace_stand_graf" border="0" /> <br><br>
+b) druhé rychlejší nastavení<br>
+<img src="penalizace_lepsi.png" alt="penalizace_lepsi.png" title="penalizace_lepsi" border="0" /> <br><br>
+<img src="penalizace_lepsi_graf.png" alt="penalizace_lepsi_graf.png" title="penalizace_lepsi_graf" border="0" /> <br><br>
+V grafech je vidìt znatelný rozdíl pøi vyšším poètu klauzulí, kde je chyba u algoritmu s penalizaci minimální. Èas vychází mírnì lépe. 
+
+<h2>Závìr</h2>
+V této úloze jsem upravil algoritmus z pøedchozí úlohy, simulované ochlazování. Pro vygenerovaná data jsem si pøipravil náhodné váhy. Pro získání nejlepšího øešení jsem každou instanci 20x prošel a vzal nejlepší øešení, které jsem považoval za moje maximum a poèítal vúèi nìmu chybu. Dále jsem si stanovil parametry na kterých jsem data testoval. Mìøil jsem èas, prùmìrnou chybu a relativní chybu. Nejvíce chybu ovlivòoval faktor, který také znaènì ovlivnil èas. Menší vliv na chybu mìla velikost vnitøní smyèky a nejmenší vliv velikost teploty a bodu tuhnutí. Protože algoritmus vracel øešení s velikou chybou, tak jsem se rozhodl ho upravit a zavedl jsem penalizaci. Tato penalizace znaènì zlepšila výsledek øešení. Chyba je mnohokrát menší pro více klauzulí než u øešení bez penalizace. Vìøím, že postupným ladìním programu a parametrù bych dosáhl ještì lepších výsledkù. 
+<hr>
+zdrojové kódy (java): <br> <a href="Constants.java">Constants.java</a>, <a href="Main.java">Main.java</a>, <a href="BoolFormule.java">BoolFormule.java</a><br>
+vstupní data: <a href="vstupni_data.zip">vstupni_data.zip</a><br>
+výstup: <a href="vystup.zip">vystup.zip</a><br>
+excel se zpracovanými výsledky: <a href="resulty.xlsx">resulty.xlsx</a><br>
+jednoduchý generátor vah pro 20 promìnných: <a href="generator_vah.swf">generator_vah.swf</a><br>
+<hr>
+</body></html>
